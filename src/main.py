@@ -10,12 +10,14 @@ class MyMainWindow(QMainWindow, Ui_mainWindow):
         super(MyMainWindow,self).__init__(parent)
         self.setupUi(self)
 
-    def button(self):
-        self.Text_display.setText("OK")
+        self.installBtn.clicked.connect(lambda x:print(213))
 
 def main():
     app = QApplication(sys.argv)
-    myWin = MyMainWindow()
-    myWin.show()
+    window = MyMainWindow()
+    window.show()
     sys.exit(app.exec_())
     pass
+
+if __name__ == "__main__":
+    main()
