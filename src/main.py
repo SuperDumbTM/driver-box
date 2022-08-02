@@ -8,13 +8,15 @@ from PyQt5.QtWidgets import *
 from main_drawer import *
 from ui_main import Ui_mainWindow
 from element_factory import ElementFactory
-from configuration import Config        
+from configuration import Config     
+from install_manager import InstallManager
 
 class MyMainWindow(QMainWindow, Ui_mainWindow):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setupUi(self)
         self.el = ElementFactory()
+        self.mgt = InstallManager.get_instance()
         
         # hardware info
         self.hwinfo = HwInfoDrawer(parent=self)
@@ -37,6 +39,8 @@ class MyMainWindow(QMainWindow, Ui_mainWindow):
         
         # event listener
         self.hwInfoRefreshBtn.clicked.connect(self.refresh_hwinfo)
+        self.diskMgtBtn.clicked.connect(lambda x: self.mgt.execute(["start", "diskmgmt.msc"], shell=True))
+        self.installBtn.clicked.connect(self.install)
         # self.lanDriverDd.activated.connect(lambda x: print(self.lanDriverDd.currentData()))
         # self.displayDriverDd.activated.connect(lambda x: print(self.displayDriverDd.currentData()))
         
@@ -46,6 +50,8 @@ class MyMainWindow(QMainWindow, Ui_mainWindow):
             self.hwInfoVBox.itemAt(i).widget().setParent(None)
         self.hwinfo.start()
     
+    def install(self):
+        pass
     
         
 

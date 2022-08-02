@@ -75,3 +75,5 @@ class InstallManager:
             Task(task['args'][0]).start()
             task['label'].setText("已開啟安裝程式")
     
+    def execute(self, args: list, kwargs):
+        return subprocess.Popen(args, kwargs)
