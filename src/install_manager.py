@@ -6,16 +6,17 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 class InstallManager(QThread):
     
-    _progress =  pyqtSignal(str, QWidget)
+    _progress =  pyqtSignal(str)
     _finish = pyqtSignal(str)
-    _status = pyqtSignal(str)
+    _print = pyqtSignal(str)
+    _success = pyqtSignal(bool)
     
     def __init__(self, parent = None) -> None:
-        self.tasks = queue.Queue(QThread)
+        self.tasks = queue.Queue()
         self.error = False
         super().__init__(parent)
             
-    def add_task(self, label: QWidget, cmd: list, kwargs: dict = None):
+    def add_task(self,cmd: list, kwargs: dict = None):
         """insert new install task to install queue
 
         Args:
@@ -23,28 +24,26 @@ class InstallManager(QThread):
                 `args` (list) installer executable path, flags
                 `kwargs` (dict) argurment for subprocess.Popen
         """
-        self.tasks.put_nowait((Task(cmd, kwargs), label))
+        self.tasks.put_nowait((Task(cmd, kwargs)))
         
     def is_finished(self) -> bool:
         return self.tasks.qsize() == 0
     
-    def execute(self, label: QWidget, cmd: list, **kwargs):
+    def execute(self, cmd: list, **kwargs):
         Task(cmd, kwargs).execute()
-        self._finish.emit("已開啟安裝程式", label)
+        self._print.emit(f"已開啟 {str(cmd[1:])}")
     
     def auto_install(self):
         fails = []
         progress = ("-","\\","|","/")
         while self.tasks.qsize() != 0:
-            task: tuple[Task, QWidget] = self.tasks.get()
-            thd = task[0]
+            task: Task = self.tasks.get()
             
             i = 0
-            thd.start()
-            while thd.rtcode is None:
+            task.start()
+            while task.rtcode is None:
                 time.sleep(0.1)
-                self._progress.emit(progress[i % len(progress)], task[1])
-                # task[1].setText(process[i % len(process)])
+                self._progress.emit(progress[i % len(progress)])
                 i += 1
             """    
             Intel igfx
@@ -54,24 +53,21 @@ class InstallManager(QThread):
             Custom return code
             -999: exception occurs during installing
             """
-            if thd.rtcode not in (0, 13, 14, 15):
-                if thd.rtcode == -999:
-                    self._progress.emit(f"程式出錯\n{thd.err_msg}", task[1])
-                    # task[1].setText(f"程式出錯\n{thd.err_msg}")
+            if task.rtcode not in (0, 13, 14, 15):
+                if task.rtcode == -999:
+                    self._progress.emit(f"程式出錯\n{task.err_msg}")
                 else:
-                    self._progress.emit(f"失敗，錯誤代碼：[{thd.rtcode}]", task[1])
-                    # task[1].setText(f"失敗，錯誤代碼：[{thd.rtcode}]")
+                    self._progress.emit(f"失敗，錯誤代碼：[{task.rtcode}]")
                 fails.append(task)
                 self.error = True
-            elif thd.time <= 5:
-                self._finish.emit("執行時間小於5秒，錯誤", task[1])
-                # task[1].setText("執行時間小於5秒，錯誤")
+            elif task.time <= 5:
+                self._progress.emit("執行時間小於5秒，錯誤")
                 fails.append(task)
                 self.error = True
             else:
-                self._finish.emit("完成", task[1])
-                # task[1].setText("完成")
-                
+                self._progress.emit("完成")
+        
+        self._success.emit(len(fails) == 0)
         if self.error:
             for task in fails: self.tasks.put(task)
             self.error = False
@@ -79,8 +75,6 @@ class InstallManager(QThread):
         
     def manual_install(self):
         while self.tasks.qsize() != 0:
-            task: dict[list, QWidget] = self.tasks.get()
-            # self.execute(task[1], task[0])
-            self._finish.emit("已開啟安裝程式", task[1])
-            # task[0].start()
-            # task[1].setText("已開啟安裝程式")
+            task: Task = self.tasks.get()
+            task.execute()
+            self._print.emit("已開啟安裝程式")

@@ -164,9 +164,9 @@
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>500</y>
-      <width>181</width>
+      <x>20</x>
+      <y>520</y>
+      <width>191</width>
       <height>86</height>
      </rect>
     </property>
@@ -367,48 +367,48 @@
    <widget class="QGroupBox" name="runStatGroupBox">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>230</x>
       <y>490</y>
-      <width>281</width>
+      <width>291</width>
       <height>181</height>
      </rect>
     </property>
     <property name="title">
-     <string>輸出</string>
+     <string>Console Output</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
     </property>
-    <widget class="QScrollArea" name="runStatSa">
+    <widget class="QListWidget" name="stdoutArea">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>261</width>
+       <width>271</width>
        <height>151</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">border :0px;</string>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
      </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
-     <widget class="QWidget" name="runStatContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>261</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <layout class="QVBoxLayout" name="runStatVBox_2"/>
-       </item>
-      </layout>
-     </widget>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="showDropIndicator" stdset="0">
+      <bool>false</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
     </widget>
    </widget>
   </widget>

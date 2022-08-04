@@ -6,9 +6,10 @@ from timeit import default_timer as timer
 
 class Task(threading.Thread):
     
-    def __init__(self, cmd: Union(str, list), kwargs) -> None:
+    def __init__(self, cmd: Union[str, list], kwargs) -> None:
         super().__init__()
         self._cmd = cmd
+        if kwargs == None: kwargs = {}
         self._kwargs = kwargs
         self.rtcode = None
         self.err_msg = ""
