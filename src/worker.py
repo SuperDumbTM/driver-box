@@ -1,21 +1,12 @@
-from abc import abstractmethod
 from PyQt5 import QtCore, QtGui, QtWidgets
 from hw_info import HwInfo
 from element_factory import ElementFactory
 import pythoncom
 
-class Drawer(QtCore.QThread):
-    
-    update_signal: QtCore.pyqtSignal
-    
-    def __init__(self, parent: QtCore.QObject = None) -> None:
-        self.el = ElementFactory()
-        super().__init__(parent)
-
-class HwInfoDrawer(QtCore.QThread):
+class HwInfoWorker(QtCore.QThread):
     
     el = ElementFactory()
-    trigger = QtCore.pyqtSignal(object, str)
+    _trigger = QtCore.pyqtSignal(object, str)
     
     def __init__(self, parent: QtCore.QObject = None) -> None:
         super().__init__(parent)
@@ -27,24 +18,24 @@ class HwInfoDrawer(QtCore.QThread):
         pythoncom.CoInitialize()
         self.hwi = HwInfo()
         
-        self.trigger.emit(self.el.createHwInfoTitle, "底版 MOTHERBOARD")
+        self._trigger.emit(self.el.createHwInfoTitle, "底版 MOTHERBOARD")
         for item in self.hwi.get_mb_descr():
-            self.trigger.emit(self.el.createHwInfoText, item)
-        self.trigger.emit(self.el.createHwInfoTitle, "中央處理器 CPU")
+            self._trigger.emit(self.el.createHwInfoText, item)
+        self._trigger.emit(self.el.createHwInfoTitle, "中央處理器 CPU")
         for item in self.hwi.get_cpu_descr():
-            self.trigger.emit(self.el.createHwInfoText, item)
-        self.trigger.emit(self.el.createHwInfoTitle, "記憶體 RAM")
+            self._trigger.emit(self.el.createHwInfoText, item)
+        self._trigger.emit(self.el.createHwInfoTitle, "記憶體 RAM")
         for item in self.hwi.get_ram_descr():
-            self.trigger.emit(self.el.createHwInfoText, item)
-        self.trigger.emit(self.el.createHwInfoTitle, "顯示卡 GPU")
+            self._trigger.emit(self.el.createHwInfoText, item)
+        self._trigger.emit(self.el.createHwInfoTitle, "顯示卡 GPU")
         for item in self.hwi.get_gpu_descr():
-            self.trigger.emit(self.el.createHwInfoText, item)
-        self.trigger.emit(self.el.createHwInfoTitle, "網絡介面卡 NIC")
+            self._trigger.emit(self.el.createHwInfoText, item)
+        self._trigger.emit(self.el.createHwInfoTitle, "網絡介面卡 NIC")
         for item in self.hwi.get_nic_descr():
-            self.trigger.emit(self.el.createHwInfoText, item)
-        self.trigger.emit(self.el.createHwInfoTitle, "儲存裝置 STORAGE")
+            self._trigger.emit(self.el.createHwInfoText, item)
+        self._trigger.emit(self.el.createHwInfoTitle, "儲存裝置 STORAGE")
         for item in self.hwi.get_disk_descr():
-            self.trigger.emit(self.el.createHwInfoText, item)
+            self._trigger.emit(self.el.createHwInfoText, item)
 
         # ret = []
         # ret.append(self.el.createHwInfoTitle("底版 MOTHERBOARD"))

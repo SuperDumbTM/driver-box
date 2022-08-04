@@ -5,23 +5,23 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from main_drawer import *
+from worker import *
 from ui_main import Ui_mainWindow
-from element_factory import ElementFactory
 from configuration import Config     
 from install_manager import InstallManager
+from element_factory import ElementFactory
 
 class MyMainWindow(QMainWindow, Ui_mainWindow):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setupUi(self)
         self.el = ElementFactory()
-        self.mgt = InstallManager.get_instance()
+        self.mgt = InstallManager()
         
         # hardware info
-        self.hwinfo = HwInfoDrawer(parent=self)
+        self.hwinfo = HwInfoWorker(parent=self)
         self.refresh_hwinfo()
-        self.hwinfo.trigger.connect(lambda create, text: self.hwInfoVBox.addWidget(create(text)))
+        self.hwinfo._trigger.connect(lambda create, text: self.hwInfoVBox.addWidget(create(text)))
         
         # driver options
         self.lanConf = Config(Config.lan)
@@ -31,7 +31,6 @@ class MyMainWindow(QMainWindow, Ui_mainWindow):
             self.lanDriverDd.addItem(vals['title'], id)
         for id, vals in self.dpConf.get_conf().items():
             self.displayDriverDd.addItem(vals['title'], id)
-            
         self.otherCb = {}
         for id, vals in self.othConf.get_conf().items():
             self.otherCb.update({id: self.el.createCheckBox(id, vals['title'])})
@@ -51,7 +50,8 @@ class MyMainWindow(QMainWindow, Ui_mainWindow):
         self.hwinfo.start()
     
     def install(self):
-        pass
+        if not self.lanDriverDd.currentData() == "":
+            self.mgt.add_task()
     
         
 

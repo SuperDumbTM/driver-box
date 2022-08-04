@@ -1,10 +1,8 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from element_factory import ElementFactory
 import wmi
 
 class HwDetail:
     """
-    get system hardware information using wmi module, Windows only
+    get raw system hardware information using wmi module
     """
     
     def __init__(self) -> None:
@@ -116,28 +114,7 @@ class HwInfo:
         except Exception as e:
             return ["[ERROR]"]
 
-    def draw_info(self, widget: QtWidgets.QVBoxLayout):
-        
-        el = ElementFactory()
-        
-        widget.addWidget(el.createHwInfoTitle("底版 MOTHERBOARD"))
-        for item in self.get_mb_descr():
-            widget.addWidget(el.createHwInfoText(item))
-        widget.addWidget(el.createHwInfoTitle("中央處理器 CPU"))
-        for item in self.get_cpu_descr():
-            widget.addWidget(el.createHwInfoText(item))
-        widget.addWidget(el.createHwInfoTitle("記憶體 RAM"))
-        for item in self.get_ram_descr():
-            widget.addWidget(el.createHwInfoText(item))
-        widget.addWidget(el.createHwInfoTitle("顯示卡 GPU"))
-        for item in self.get_gpu_descr():
-            widget.addWidget(el.createHwInfoText(item))
-        widget.addWidget(el.createHwInfoTitle("網絡介面卡 NIC"))
-        for item in self.get_nic_descr():
-            widget.addWidget(el.createHwInfoText(item))
-        widget.addWidget(el.createHwInfoTitle("儲存裝置 STORAGE"))
-        for item in self.get_disk_descr():
-            widget.addWidget(el.createHwInfoText(item))
+    
     
 if __name__ == "__main__":
     s = HwInfo()
