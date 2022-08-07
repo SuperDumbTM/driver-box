@@ -29,3 +29,6 @@ class ElementFactory:
         cb.setObjectName(f"{id}Cb")
         cb.setText(text)
         return cb
+    
+    def createTableItem(self, text: str):
+        return QTableWidgetItem(text)

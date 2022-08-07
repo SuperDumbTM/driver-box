@@ -3,33 +3,33 @@ import time
 from subprocess import Popen, PIPE
 from typing import Union
 from timeit import default_timer as timer
+from PyQt5.QtCore import pyqtSignal
 
 class Task(threading.Thread):
     
-    def __init__(self, cmd: Union[str, list], kwargs) -> None:
+    def __init__(self, iden, qslot: pyqtSignal, cmd: Union[str, list], kwargs) -> None:
         super().__init__()
+        self.iden = iden
         self._cmd = cmd
+        self._slot = qslot
         if kwargs == None: kwargs = {}
         self._kwargs = kwargs
         self.rtcode = None
-        self.err_msg = ""
         
     def execute(self):
         """execute without creating a new thread"""
+        print(self._cmd)
         Popen(self._cmd, **self._kwargs)
     
     def run(self):
         try:
             start = timer()
             
-            p = Popen(self._cmd, stdout=PIPE, bufsize=1, **self._kwargs)
-            with p.stdout:
-                for line in iter(p.stdout.readline, b''): 
-                    print(line)
-            self.rtcode = p.wait()
+            with Popen(self._cmd, stdout=PIPE, stderr=PIPE, **self._kwargs) as proc:
+                for line in proc.stdout:
+                    self._slot.emit((line.decode('utf-8')).strip())
+                self.rtcode = proc.wait()
             
-            end = timer()
-            self.time = end-start
+            self.time = timer() - start
         except Exception as e:
-            self.err_msg = str(e)
-            self.rtcode = -999
+            raise

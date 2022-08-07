@@ -1,5 +1,5 @@
 import sys
-import string
+import os
 import threading
 
 from PyQt5.QtCore import *
@@ -13,33 +13,32 @@ from configuration import Config
 from install_manager import InstallManager
 from element_factory import ElementFactory
 
+if getattr(sys, 'frozen', False):
+    ROOTDIR = os.path.dirname(sys.executable)
+elif __file__:
+    ROOTDIR = os.path.dirname(os.path.dirname(__file__))
+
 class MyMainWindow(Ui_mainWindow, QMainWindow):
+    
+    progs_ui: Progress
     
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setupUi(self)
+        
+        self.lan_conf = Config(Config.lan)
+        self.dp_conf = Config(Config.display)
+        self.oth_conf = Config(Config.other)
         self.el = ElementFactory()
         self.mgt = InstallManager()
-        self.progs = Progress()
         self.hwinfo = HwInfoWorker(parent=self)
         
-        # ----- hardware info -----
-        self.refresh_hwinfo()        
-        # ----- driver options -----
-        self.lanConf = Config(Config.lan)
-        for id, vals in self.lanConf.get_conf().items():
-            self.lanDriverDd.addItem(vals['title'], id)
-            
-        self.dpConf = Config(Config.display)
-        for id, vals in self.dpConf.get_conf().items():
-            self.displayDriverDd.addItem(vals['title'], id)
-            
-        self.othConf = Config(Config.other)
         self.otherCbs = {}
-        for id, vals in self.othConf.get_conf().items():
-            self.otherCbs.update({id: self.el.createCheckBox(id, vals['title'])})
-            self.otherDriVBox.addWidget(self.otherCbs[id])
         
+        # ----- hardware info -----
+        self.refresh_hwinfo()  
+        # ----- driver options -----
+        self.__setup_driver_option()
         # ----- event listener -----
         self.hwInfoRefreshBtn.clicked.connect(self.refresh_hwinfo)
         self.diskMgtBtn.clicked.connect(lambda x: self.mgt.execute(["start", "diskmgmt.msc"], shell=True))
@@ -47,22 +46,55 @@ class MyMainWindow(Ui_mainWindow, QMainWindow):
         # ----- signal handler -----
         self.mgt._print.connect(self.stdout)
         self.mgt._success.connect(self.post_install)
-        self.mgt._progress.connect(self.install_progress)
+        self.mgt._progress.connect(lambda iden, txt, lv: self.progs_ui.update_progress(iden, txt, lv))
         self.hwinfo._add.connect(lambda create, text: self.hwInfoVBox.addWidget(create(text)))
         self.hwinfo._print.connect(self.stdout)
     
     def stdout(self, text: str): 
-        num_nl = 22       
+        num_nl = 22
         if len(text) > num_nl and text.find('\n') <= 0:
             for idx in range(num_nl, len(text), num_nl):
                 text = text[:idx] + "\n" + text[idx:]
-            
         self.stdoutArea.addItem(f">> {text}")
-        self.stdoutArea.verticalScrollBar().setValue(self.stdoutArea.verticalScrollBar().maximum())
+        self.stdoutArea.verticalScrollBar().setValue(self.stdoutArea.verticalScrollBar().maximum()) 
+    
+    def refresh_hwinfo(self):
+        for i in reversed(range(self.hwInfoVBox.count())): 
+            self.hwInfoVBox.itemAt(i).widget().setParent(None)
+        self.hwinfo.start()
+    
+    def install(self):
+        self.progs_ui = Progress()
+        # lan driver
+        if self.lanDriverDd.currentData() is not None:
+            key = self.lanDriverDd.currentData()
+            conf = self.lan_conf.conf[key]
+            self.progs_ui.add_progress(conf['title'], "等待安裝中")
+            self.mgt.add_task(key, [os.path.join(ROOTDIR, conf['path']), *(conf['flag'].split(','))])
+        # display driver
+        if self.displayDriverDd.currentData() is not None:
+            key = self.lanDriverDd.currentData()
+            conf = self.dp_conf.conf[key]
+            self.progs_ui.add_progress(conf['title'], "等待安裝中")
+            self.mgt.add_task(key, [os.path.join(ROOTDIR, conf['path']), *(conf['flag'].split(','))])
+        # other driver
+        for id, cb in self.otherCbs.items():
+            if cb.isChecked():
+                conf = self.oth_conf.conf[id]
+                self.progs_ui.add_progress(id, conf['title'], "等待安裝中")
+                self.mgt.add_task(id, [os.path.join(ROOTDIR, conf['path']), *(conf['flag'].split(','))])
         
-    def install_progress(self, text: str):
-        self.stdoutArea.takeItem(self.stdoutArea.count() - 1)
-        self.stdoutArea.addItem(f">> {text}")
+        # debug
+        # self.mgt.add_task('test', ['C:\\Users\\user\\Desktop\\OneClick-Drivers-Installer\\src\\print.exe'])
+        # self.progs_ui.add_progress('test', 'test', "等待安裝中")
+        # start install
+        if self.atInstallCb.isChecked():
+            self.stdout('在安裝完成前，取消勺擇自動關機將會取消\n自動關機，反之亦然。')
+            t = threading.Thread(target=self.mgt.auto_install)
+            t.start()
+            self.progs_ui.show()
+        else:
+            self.mgt.manual_install()
     
     def post_install(self):
         if self.atShutdownCb.isChecked():
@@ -84,37 +116,18 @@ class MyMainWindow(Ui_mainWindow, QMainWindow):
             if box.clickedButton() == btnclose:
                 exit(0)
     
-    def refresh_hwinfo(self):
-        for i in reversed(range(self.hwInfoVBox.count())): 
-            self.hwInfoVBox.itemAt(i).widget().setParent(None)
-        self.hwinfo.start()
-    
-    def install(self):
-        if self.lanDriverDd.currentData() is not None:
-            print(self.lanDriverDd.currentData())
-            print(self.lanConf.conf[self.lanDriverDd.currentData()])
-        if self.displayDriverDd.currentData() is not None:
-            print(self.displayDriverDd.currentData())
-            print(self.dpConf.conf[self.displayDriverDd.currentData()])
-        for id, cb in self.otherCbs.items():
-            if cb.isChecked():
-                print(id)
-                print(self.othConf.conf[id])
-                
-        # debug
-        self.mgt.add_task(['C:\\Users\\user\\Desktop\\OneClick-Drivers-Installer\\src\\print.exe'])
-        self.mgt.add_task(['C:\\Users\\user\\Desktop\\OneClick-Drivers-Installer\\src\\print.exe'])
-        # start install
-        if self.atInstallCb.isChecked():
-            self.stdout('在安裝完成前，取消勺擇自動關機將會取消\n自動關機，反之亦然。')
-            self.stdout('') # temp print for install_progress takeItem remove last list item
-            t = threading.Thread(target=self.mgt.auto_install)
-            t.start()
-        else:
-            self.mgt.manual_install()
-    
+    def __setup_driver_option(self):
+        for id, vals in self.lan_conf.get_conf().items():
+            self.lanDriverDd.addItem(vals['title'], id)
         
-
+        for id, vals in self.dp_conf.get_conf().items():
+            self.displayDriverDd.addItem(vals['title'], id)
+            
+        for id, vals in self.oth_conf.get_conf().items():
+            self.otherCbs.update({id: self.el.createCheckBox(id, vals['title'])})
+            self.otherDriVBox.addWidget(self.otherCbs[id])
+        
+        
 def main():
     app = QApplication(sys.argv)
     window = MyMainWindow()
