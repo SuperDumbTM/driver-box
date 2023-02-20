@@ -51,7 +51,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         for col in range(self.dri_cfg_table.columnCount()):
             _item = self.dri_cfg_table.item(row, col)
             _item.setData(QtCore.Qt.ItemDataRole.UserRole, driver)
-            if not driver.flag:
+            if not driver.autoable:
                 _item.setBackground(QtGui.QColor(230, 207, 0, 255))
                 # self.dri_cfg_table.item(row, col).setToolTip("沒有設置安裝參數，不能自動安裝")
         self.dri_cfg_table.resizeRowToContents(row)
