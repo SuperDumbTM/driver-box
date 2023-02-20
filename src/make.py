@@ -3,26 +3,16 @@ import sys
 import subprocess
 import shutil
 
-if getattr(sys, 'frozen', False):
-    ROOTDIR = os.path.dirname(sys.executable)
-elif __file__:
-    ROOTDIR = os.path.dirname(__file__)
+from definitions import DIR_ROOT, DIR_PIC
 
-# file = input("to be compile file: ")
-file = os.path.join(ROOTDIR, "print.py")
-flag = ["-F", "-w", file]
-# flag = ["-F", "-w", "--uac-admin", file, "--icon=pic/icon.ico"]
 
-subprocess.run(["pyinstaller"] + flag)
+subprocess.run(
+    ["pyinstaller", "-F", "-w", "--uac-admin",
+     os.path.join(DIR_ROOT, "src", "main.py"),
+     "--icon=" + os.path.join(DIR_PIC, "icon.ico")]
+)
 
-exe = (file.split("\\")[-1]).split(".")[0] + ".exe"
-spec = (file.split("\\")[-1]).split(".")[0] + ".spec"
-
-dist = os.path.join(ROOTDIR, "dist")
-build = os.path.join(ROOTDIR, "build")
-exe = os.path.join(dist, exe)
-
-shutil.move(exe, ROOTDIR)
-os.remove(spec)
-shutil.rmtree(dist)
-shutil.rmtree(build)
+shutil.move(os.path.join(DIR_ROOT, "dist", "main.exe"), DIR_ROOT)
+os.remove(os.path.join(DIR_ROOT, "main.spec"))
+shutil.rmtree(os.path.join(DIR_ROOT, "build"))
+shutil.rmtree(os.path.join(DIR_ROOT, "dist"))
