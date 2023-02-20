@@ -98,7 +98,7 @@ class Ui_DriverConfigViewer(object):
 
     def retranslateUi(self, DriverConfigViewer):
         _translate = QtCore.QCoreApplication.translate
-        DriverConfigViewer.setWindowTitle(_translate("DriverConfigViewer", "Form"))
+        DriverConfigViewer.setWindowTitle(_translate("DriverConfigViewer", "軀動程式設定"))
         self.lan_dri_btn.setText(_translate("DriverConfigViewer", "有線網絡介卡"))
         self.display_dri_btn.setText(_translate("DriverConfigViewer", "顯示卡"))
         self.misc_dri_btn.setText(_translate("DriverConfigViewer", "其他"))
