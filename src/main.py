@@ -14,7 +14,8 @@ def main():
     main_wd = MainWindow(
         configuration.DriverConfig(
             os.path.join(definitions.DIR_CONF, "driver.json"),
-            definitions.DIR_DRI
+            definitions.DIR_DRI,
+            True
         )
     )
     main_wd.show()

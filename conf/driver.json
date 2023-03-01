@@ -1,1 +1,131 @@
-{"display": [{"id": "VYKUJ6", "type": "display", "name": "Nvidia RTX", "description": "", "path": "driver\\display\\nvidia\\rtx\\setup.exe", "autoable": true, "flag": ["-s", "-noreboot", "Display.Driver"]}, {"id": "TUVIQO", "type": "display", "name": "Nvidia RTX3090Ti", "description": "", "path": "driver\\display\\nvidia\\rtx3090ti\\setup.exe", "autoable": true, "flag": ["-s", "-noreboot", "Display.Driver"]}, {"id": "LCXBE7", "type": "display", "name": "Intel iGPU", "description": "", "path": "driver\\display\\intel\\Installer.exe", "autoable": true, "flag": ["-s"]}, {"id": "D0NB16", "type": "display", "name": "AMD", "description": "", "path": "driver\\display\\amd\\Setup.exe", "autoable": true, "flag": ["-install"]}], "network": [{"id": "FFQ5LF", "type": "network", "name": "Intel", "description": "", "path": "driver\\lan\\intel\\APPS\\SETUP\\SETUPBD\\Winx64\\SetupBD.exe", "autoable": true, "flag": ["/s"]}, {"id": "APP3OU", "type": "network", "name": "Realtek", "description": "", "path": "driver\\lan\\realtek\\Install_PCIE_Win11_11.11.1206.2022_01162023.exe", "autoable": true, "flag": ["-s"]}, {"id": "NOWB7Y", "type": "network", "name": "Marvell", "description": "", "path": "driver\\lan\\arvell\\AsusSetup.exe", "autoable": false, "flag": []}], "miscellaneous": [{"id": "2JXFWW", "type": "miscellaneous", "name": "Intel WiFi", "description": "", "path": "driver\\other\\WiFi-22.130.0-Driver64-Win10-Win11.exe", "autoable": false, "flag": ["-q"]}, {"id": "3EXCBE", "type": "miscellaneous", "name": "Intel Bluetooth", "description": "", "path": "driver\\other\\BT-22.130.0-32-64UWD-Win10-Win11.exe", "autoable": false, "flag": ["/passive"]}, {"id": "I5ZEYB", "type": "miscellaneous", "name": "Intel 600 Chipset", "description": "", "path": "driver\\other\\DRV_MEI_Intel_Con_ADL_SZ_TSD_W11_64_V22042620_20220414R\\SetupME.exe", "autoable": false, "flag": ["-s"]}, {"id": "U1B6OB", "type": "miscellaneous", "name": "AMD Ryzen Chipset", "description": "", "path": "driver\\other\\amd_chipset_software_4.03.03.431.exe", "autoable": false, "flag": ["/S"]}]}
+{
+    "display": [
+        {
+            "id": "VYKUJ6",
+            "type": "display",
+            "name": "Nvidia RTX",
+            "description": "",
+            "path": "driver\\display\\nvidia\\rtx\\setup.exe",
+            "autoable": true,
+            "flag": [
+                "-s",
+                "-noreboot",
+                "Display.Driver"
+            ]
+        },
+        {
+            "id": "TUVIQO",
+            "type": "display",
+            "name": "Nvidia RTX3090Ti",
+            "description": "",
+            "path": "driver\\display\\nvidia\\rtx3090ti\\setup.exe",
+            "autoable": true,
+            "flag": [
+                "-s",
+                "-noreboot",
+                "Display.Driver"
+            ]
+        },
+        {
+            "id": "LCXBE7",
+            "type": "display",
+            "name": "Intel iGPU",
+            "description": "",
+            "path": "driver\\display\\intel\\Installer.exe",
+            "autoable": true,
+            "flag": [
+                "-s"
+            ]
+        },
+        {
+            "id": "D0NB16",
+            "type": "display",
+            "name": "AMD",
+            "description": "",
+            "path": "driver\\display\\amd\\Setup.exe",
+            "autoable": true,
+            "flag": [
+                "-install"
+            ]
+        }
+    ],
+    "network": [
+        {
+            "id": "FFQ5LF",
+            "type": "network",
+            "name": "Intel",
+            "description": "",
+            "path": "driver\\lan\\intel\\APPS\\SETUP\\SETUPBD\\Winx64\\SetupBD.exe",
+            "autoable": true,
+            "flag": [
+                "/s"
+            ]
+        },
+        {
+            "id": "APP3OU",
+            "type": "network",
+            "name": "Realtek",
+            "description": "",
+            "path": "driver\\lan\\realtek\\Install_PCIE_Win11_11.11.1206.2022_01162023.exe",
+            "autoable": true,
+            "flag": [
+                "-s"
+            ]
+        },
+        {
+            "id": "NOWB7Y",
+            "type": "network",
+            "name": "Marvell",
+            "description": "",
+            "path": "driver\\lan\\arvell\\AsusSetup.exe",
+            "autoable": false,
+            "flag": []
+        }
+    ],
+    "miscellaneous": [
+        {
+            "id": "2JXFWW",
+            "type": "miscellaneous",
+            "name": "Intel WiFi",
+            "description": "",
+            "path": "driver\\other\\WiFi-22.130.0-Driver64-Win10-Win11.exe",
+            "autoable": true,
+            "flag": [
+                "-q"
+            ]
+        },
+        {
+            "id": "3EXCBE",
+            "type": "miscellaneous",
+            "name": "Intel Bluetooth",
+            "description": "",
+            "path": "driver\\other\\BT-22.130.0-32-64UWD-Win10-Win11.exe",
+            "autoable": true,
+            "flag": [
+                "/passive"
+            ]
+        },
+        {
+            "id": "I5ZEYB",
+            "type": "miscellaneous",
+            "name": "Intel 600 Chipset",
+            "description": "",
+            "path": "driver\\other\\DRV_MEI_Intel_Con_ADL_SZ_TSD_W11_64_V22042620_20220414R\\SetupME.exe",
+            "autoable": true,
+            "flag": [
+                "-s"
+            ]
+        },
+        {
+            "id": "U1B6OB",
+            "type": "miscellaneous",
+            "name": "AMD Ryzen Chipset",
+            "description": "",
+            "path": "driver\\other\\amd_chipset_software_4.03.03.431.exe",
+            "autoable": true,
+            "flag": [
+                "/S"
+            ]
+        }
+    ]
+}

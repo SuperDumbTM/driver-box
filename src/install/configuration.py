@@ -64,14 +64,20 @@ class DriverConfig:
     _dir = "driver"
     """directory name for driver executables"""
     
-    @property
-    def driver_directory_abs(self) -> os.PathLike:
-        return self.dridir
-    
-    def __init__(self, confpath: os.PathLike, dridir: os.PathLike) -> None:
+    def __init__(self,
+                 confpath: Union[str, os.PathLike],
+                 dridir: Union[str, os.PathLike],
+                 not_found_ok: bool
+                 ) -> None:
         if not os.path.exists(confpath):
-            raise FileExistsError(f"\"{confpath}\" does not exists")
-        
+            if not_found_ok:
+                os.makedirs(os.path.dirname(confpath), exist_ok=True)
+                with open(os.path.join(confpath), 'w') as f:
+                    json.dump(
+                        {'network': [], 'display': [], 'miscellaneous': []}, f)
+            else:
+                raise FileExistsError(f"\"{confpath}\" does not exists")
+
         self.confdir = confpath
         self.dridir = dridir
         self._data = self._read()
