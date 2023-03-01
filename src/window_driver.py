@@ -3,7 +3,6 @@ from typing import Literal
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from ui.dri_cfg_viewer import Ui_DriverConfigViewer
-from ui.element_factory import ElementFactory
 from install.configuration import Driver, DriverType, DriverConfig
 from window_conf_editor import DriverConfigEditorWindow
 

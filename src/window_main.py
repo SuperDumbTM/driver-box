@@ -12,7 +12,6 @@ from window_driver import DriverConfigViewerWindow
 from install.configuration import DriverType, DriverConfig
 from install.install_manager import InstallManager
 from install.task import Task
-from ui.element_factory import ElementFactory
 
 
 if getattr(sys, 'frozen', False):
@@ -31,7 +30,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.setupUi(self)
 
         self.driconfg = driconfig
-        self.el = ElementFactory()
         self.progr_window = ProgressWindow()
         self.dri_conf_window = DriverConfigViewerWindow(driconfig)
         self.hwinfo_worker = HwInfoWorker(self.qsig_msg,
