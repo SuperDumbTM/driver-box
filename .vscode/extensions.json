@@ -7,6 +7,7 @@
         "mhutchie.git-graph",
         "adam-bender.commit-message-editor",
         "njpwerner.autodocstring",
-        "kevinrose.vsc-python-indent"
+        "kevinrose.vsc-python-indent",
+        "ms-python.autopep8"
     ]
 }

@@ -9,4 +9,39 @@
           "color": "#ff000050"
         },
     ],
+    "todo-tree.general.tags": ["TODO","DEBUG","BUG","NOTE"],
+    "todo-tree.regex.regex": "(//|#|<!--|;|/?\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
+    "todo-tree.highlights.defaultHighlight": {
+        "type": "text",
+        "foreground": "#ffffff",
+        "gutterIcon": true
+    },
+    "todo-tree.highlights.customHighlight": {
+        "TODO": {
+            "icon": "check",
+            "iconColour": "#FFBF00",
+            "foreground": "#000000",
+            "background": "#FFBF00",
+            "backgroundColor": "transparent",
+        },
+        "DEBUG": {
+            "icon": "alert",
+            "iconColour": "#3d6000",
+            "background": "#3d6000",
+        },
+        "BUG": {
+            "type": "text-and-comment",
+            "icon": "bug",
+            "iconColour": "#ff1818",
+            "foreground": "#ff1818"
+        },
+        "NOTE": {
+            "type": "text-and-comment",
+            "icon": "info",
+            "iconColour": "#a5a5a5",
+            "foreground": "#a5a5a5"
+        }
+    },
+    "python.languageServer": "Pylance",
+    "python.analysis.typeCheckingMode": "off"
 }
