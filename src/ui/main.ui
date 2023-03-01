@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
+    <width>511</width>
     <height>762</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>高大師</string>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 10pt &quot;Microsoft JhengHei&quot;;</string>
@@ -56,6 +56,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="statusTip">
+          <string>重新載入本機硬件配置</string>
+         </property>
          <property name="text">
           <string>重新載入</string>
          </property>
@@ -71,7 +74,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>472</width>
+            <width>471</width>
             <height>280</height>
            </rect>
           </property>
@@ -88,6 +91,9 @@
     </item>
     <item>
      <widget class="QWidget" name="horizontalWidget" native="true">
+      <property name="statusTip">
+       <string>選擇需要安裝的軀動程式</string>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
@@ -181,9 +187,15 @@
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QWidget" name="widget" native="true">
+          <property name="statusTip">
+           <string>安裝設定</string>
+          </property>
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="1" column="0">
             <widget class="QCheckBox" name="async_install_cb">
+             <property name="statusTip">
+              <string>同步安裝所有軀動，有機會導致安裝失敗</string>
+             </property>
              <property name="text">
               <string>同步安裝</string>
              </property>
@@ -191,6 +203,9 @@
            </item>
            <item row="0" column="0">
             <widget class="QCheckBox" name="at_install_cb">
+             <property name="statusTip">
+              <string>自動安裝所有軀動</string>
+             </property>
              <property name="text">
               <string>自動安裝</string>
              </property>
@@ -201,6 +216,9 @@
            </item>
            <item row="1" column="1">
             <widget class="QRadioButton" name="at_halt_rb">
+             <property name="statusTip">
+              <string>成功安裝所有軀動後自動關機</string>
+             </property>
              <property name="text">
               <string>自動關機</string>
              </property>
@@ -214,6 +232,12 @@
            </item>
            <item row="0" column="1">
             <widget class="QRadioButton" name="at_nothing_rb">
+             <property name="statusTip">
+              <string>成功安裝所有軀動後沒有任何動作</string>
+             </property>
+             <property name="whatsThis">
+              <string/>
+             </property>
              <property name="text">
               <string>毋須關機</string>
              </property>
@@ -221,6 +245,9 @@
            </item>
            <item row="2" column="1">
             <widget class="QRadioButton" name="at_reboot_rb">
+             <property name="statusTip">
+              <string>成功安裝所有軀動後自動重新開機</string>
+             </property>
              <property name="text">
               <string>自動重啟</string>
              </property>
@@ -259,12 +286,37 @@
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox_4">
+        <property name="statusTip">
+         <string/>
+        </property>
         <property name="title">
          <string>Message</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_13">
          <item>
-          <widget class="QListWidget" name="prog_msg_box"/>
+          <widget class="QListWidget" name="prog_msg_box">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustToContents</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::NoSelection</enum>
+           </property>
+           <property name="isWrapping" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -278,7 +330,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>512</width>
+     <width>511</width>
      <height>23</height>
     </rect>
    </property>

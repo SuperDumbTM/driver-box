@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DriverConfigEditor(object):
     def setupUi(self, DriverConfigEditor):
         DriverConfigEditor.setObjectName("DriverConfigEditor")
-        DriverConfigEditor.resize(313, 322)
+        DriverConfigEditor.resize(323, 322)
         DriverConfigEditor.setWhatsThis("")
         DriverConfigEditor.setAutoFillBackground(False)
         DriverConfigEditor.setStyleSheet("font: 10pt \"Microsoft JhengHei\";\n"
@@ -53,6 +53,7 @@ class Ui_DriverConfigEditor(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.dri_flag_preset_dropdown = QtWidgets.QComboBox(self.dri_flag_area)
         self.dri_flag_preset_dropdown.setObjectName("dri_flag_preset_dropdown")
+        self.dri_flag_preset_dropdown.addItem("")
         self.horizontalLayout.addWidget(self.dri_flag_preset_dropdown)
         self.dri_flag_input = QtWidgets.QLineEdit(self.dri_flag_area)
         self.dri_flag_input.setObjectName("dri_flag_input")
@@ -105,6 +106,7 @@ class Ui_DriverConfigEditor(object):
         self.dri_name_label.setText(_translate("DriverConfigEditor", "軀動名稱"))
         self.dri_type_label.setText(_translate("DriverConfigEditor", "軀動分類"))
         self.dri_flag_label.setText(_translate("DriverConfigEditor", "安裝參數"))
+        self.dri_flag_preset_dropdown.setItemText(0, _translate("DriverConfigEditor", "- 請選擇 -"))
         self.dri_exe_label.setText(_translate("DriverConfigEditor", "軀動路徑"))
         self.dri_exe_path_btn.setText(_translate("DriverConfigEditor", "..."))
         self.dri_autoable_label.setText(_translate("DriverConfigEditor", "可自動安裝"))

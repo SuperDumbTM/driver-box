@@ -14,12 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_InstallProgress(object):
     def setupUi(self, InstallProgress):
         InstallProgress.setObjectName("InstallProgress")
-        InstallProgress.resize(310, 219)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(InstallProgress.sizePolicy().hasHeightForWidth())
-        InstallProgress.setSizePolicy(sizePolicy)
+        InstallProgress.resize(349, 238)
         self.gridLayout = QtWidgets.QGridLayout(InstallProgress)
         self.gridLayout.setObjectName("gridLayout")
         self.progr_table = QtWidgets.QTableWidget(InstallProgress)
