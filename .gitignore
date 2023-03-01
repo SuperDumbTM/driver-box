@@ -1,6 +1,7 @@
 # driver folder
 OneClick-DriverInstaller.exe
 /driver/*
+*.exe
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
