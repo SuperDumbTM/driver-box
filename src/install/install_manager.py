@@ -19,7 +19,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     qsig_msg: QtCore.pyqtSignal
     qsig_progr: QtCore.pyqtSignal
     
-    tasks: queue.Queue[Task]
+    todos: queue.Queue[Task]
     live_tasks: dict[str, Task]
     fails: list[Task]
     
@@ -33,37 +33,42 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         self.qsig_msg = qsig_msg
         self.qsig_progr = qsig_progr
         
-        self.tasks = queue.Queue()
+        self.tasks: list[Task] = []
+        self.todos = queue.Queue()
         self.live_tasks = {}
-        self.fails = []
+        self.fails: list[Task] = []
             
     def add_task(self, task: Task) -> None:
         """insert new install task to install queue"""
-        self.tasks.put_nowait(task)
+        self.tasks.append(task)
+        self.todos.put_nowait(task)
         
     def is_finished(self) -> bool:
-        return self.tasks.qsize() == 0 and len(self.live_tasks) == 0
+        return self.todos.qsize() == 0 and len(self.live_tasks) == 0
     
     def auto_install(self, paralle: bool):     
         # ---------- start tasks ----------
-        while self.tasks.qsize() != 0:
+        while self.todos.qsize() != 0:
             if paralle:
                 threading.Thread(
-                    target=self.__at_helper, args=[self.tasks.get()], daemon=True).start()
+                    target=self.__at_helper, args=[self.todos.get()], daemon=True).start()
             else:
-                self.__at_helper(self.tasks.get())
+                self.__at_helper(self.todos.get())
         
         while paralle and any([t.is_alive() for t in self.live_tasks.values()]):
             time.sleep(1)
         
         # ---------- finish all task ----------
+        for t in self.tasks:
+            print(t.is_aborted)
+
         self.qsig_successful.emit(
-            not any([t.is_aborted for t in self.live_tasks.values()])
-            and len(self.fails) <= 0  # BUG: threading
+            not any([t.is_aborted for t in self.tasks])
+            and len(self.fails) <= 0
         )
         
-        while len(self.fails):  # BUG: threading
-            self.tasks.put(self.fails.pop(0))
+        while len(self.fails) > 0:
+            self.todos.put(self.fails.pop(0))
         self.manual_install()
     
     def __at_helper(self, task: Task):
@@ -112,8 +117,8 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             pass
             
     def manual_install(self):
-        while self.tasks.qsize() > 0:
-            task = self.tasks.get()
+        while self.todos.qsize() > 0:
+            task = self.todos.get()
             try:
                 task.execute_pure()
                 self.qsig_msg.emit(f"已開啟 {task.driver.name}")
@@ -122,9 +127,9 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 
     def abort(self):
         self.fails = []
-        with self.tasks.mutex:
-            self.tasks.queue.clear()
+        with self.todos.mutex:
+            self.todos.queue.clear()
         
-        for task in self.live_tasks.values():
+        for task in self.tasks:
             self.qsig_msg.emit(f"終止執行 {task.driver.name}")
             task.abort()

@@ -57,5 +57,6 @@ class Task:
     def abort(self):
         """Terminate the execution"""
         # os.system(f"taskkill /im " + self.executable.split("\\")[-1] + " /f")
-        self.process.kill()
+        if self.process is not None:
+            self.process.kill()
         self._aborted = True
