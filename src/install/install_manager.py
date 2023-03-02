@@ -1,8 +1,10 @@
 import time
 import queue
+import threading
+import itertools
+import multiprocessing
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5 import QtCore
 
 try:
     from task import Task
@@ -11,83 +13,118 @@ except ImportError:
     from .task import Task
     from window_progress import ProgressWindow
 
-class InstallManager(QThread):
+
+class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     
-    qsig_msg: pyqtSignal
-    qsig_progr: pyqtSignal
+    qsig_msg: QtCore.pyqtSignal
+    qsig_progr: QtCore.pyqtSignal
+    
     tasks: queue.Queue[Task]
+    live_tasks: dict[str, Task]
+    fails: list[Task]
     
-    qsig_success = pyqtSignal(bool)
+    qsig_successful = QtCore.pyqtSignal(bool)
     
     def __init__(self,
-                 qsig_msg: pyqtSignal,
-                 qsig_progr: pyqtSignal,
+                 qsig_msg: QtCore.pyqtSignal,
+                 qsig_progr: QtCore.pyqtSignal,
                  parent = None) -> None:
         super().__init__(parent)
         self.qsig_msg = qsig_msg
         self.qsig_progr = qsig_progr
+        
         self.tasks = queue.Queue()
+        self.live_tasks = {}
+        self.fails = []
             
     def add_task(self, task: Task) -> None:
         """insert new install task to install queue"""
         self.tasks.put_nowait(task)
         
     def is_finished(self) -> bool:
-        return self.tasks.qsize() == 0
+        return self.tasks.qsize() == 0 and len(self.live_tasks) == 0
     
-    def auto_install(self):
-        fails = []
-        pbar = ("-","\\","|","/")
-        
+    def auto_install(self, paralle: bool):     
         # ---------- start tasks ----------
         while self.tasks.qsize() != 0:
-            task = self.tasks.get()
-
-            try:
-                self.qsig_msg.emit(f"[{task.driver.name}] 開始執行")
-                # ---------- start thread ----------
-                i = 0
-                task.start()
-                while not task.finished:
-                    time.sleep(0.1)
-                    self.qsig_progr.emit(task.driver, pbar[i % len(pbar)], ProgressWindow.INFO)
-                    i += 1
-                
-                """    
-                Intel igfx
-                13: a system restart is needed before setup can continue
-                14: setup has completed successfully but a system restart is required
-                15: setup has completed successfully and a system restart has been initiated
-                Custom return code
-                -999: exception occurs during installing
-                """
-                if task.rtcode not in (0, 13, 14, 15) or task.time <= 5:
-                    fails.append(task)
-                    if task.time <= 5:
-                        self.qsig_progr.emit(task.driver, "執行時間小於5秒，錯誤", ProgressWindow.WARN)
-                    else:
-                        self.qsig_progr.emit(task.driver, f"失敗，錯誤代碼：[{task.rtcode}]", ProgressWindow.FAIL)                
-                else:
-                    self.qsig_progr.emit(task.driver, "完成", ProgressWindow.PASS)
-                # ---------- end thread ----------
-                self.qsig_msg.emit(f"[{task.driver.name}] 完成執行")
-            except Exception as e:
-                fails.append(task)
-                self.qsig_msg.emit(f"{task.driver.name} {e}")
-                # self.qsig_progr.emit(task.driver, f"程式出錯\n{e}", ProgressWindow.FAIL)
+            if paralle:
+                threading.Thread(
+                    target=self.__at_helper, args=[self.tasks.get()], daemon=True).start()
+            else:
+                self.__at_helper(self.tasks.get())
+        
+        while paralle and any([t.is_alive() for t in self.live_tasks.values()]):
+            time.sleep(1)
+        
         # ---------- finish all task ----------
+        self.qsig_successful.emit(
+            not any([t.is_aborted for t in self.live_tasks.values()])
+            and len(self.fails) <= 0  # BUG: threading
+        )
         
-        self.qsig_success.emit(len(fails) <= 0)
-        if len(fails) > 0:
-            while len(fails):
-                self.tasks.put(fails.pop(0))
-            self.manual_install()
-        
+        while len(self.fails):  # BUG: threading
+            self.tasks.put(self.fails.pop(0))
+        self.manual_install()
+    
+    def __at_helper(self, task: Task):
+        pbar = ("-", "\\", "|", "/")
+        self.live_tasks[task.__hash__()] = task
+        try:
+            self.qsig_msg.emit(f"開始安裝 {task.driver.name}")
+            # ---------- start thread ----------
+            task.execute()
+            exe_time = time.time()
+            for i in itertools.count():
+                if not task.is_alive():
+                    break
+                time.sleep(0.1)
+                self.qsig_progr.emit(task.driver, pbar[i % len(pbar)], ProgressWindow.INFO)
+            exe_time = time.time() - exe_time
+            
+            # emit message from the executable
+            for message in task.messages:
+                self.qsig_msg.emit(f"{task.driver.name}\uff1a{message}")
+            
+            """    
+            Intel igfx
+            13: a system restart is needed before setup can continue
+            14: setup has completed successfully but a system restart is required
+            15: setup has completed successfully and a system restart has been initiated
+            """
+            if task.is_aborted:
+                self.qsig_progr.emit(task.driver, "已取消", ProgressWindow.WARN)
+            elif task.rtcode not in (0, 13, 14, 15) or exe_time <= 5:
+                self.fails.append(task)
+                if exe_time <= 5 and task.rtcode is None:
+                    self.qsig_progr.emit(task.driver, "執行時間小於5秒，錯誤", ProgressWindow.WARN)
+                else:
+                    self.qsig_progr.emit(task.driver, f"失敗，錯誤代碼：[{task.rtcode}]", ProgressWindow.FAIL)
+            else:
+                self.qsig_progr.emit(task.driver, "完成", ProgressWindow.PASS)
+            # ---------- end thread ----------
+        except Exception as e:
+            self.fails.append(task)
+            self.qsig_progr.emit(task.driver, "失敗", ProgressWindow.FAIL)
+            self.qsig_msg.emit(f"{e} ({task.driver.name})")
+        finally:
+            # self.qsig_msg.emit(f"[{task.driver.name}] 完成安裝")
+            self.live_tasks.pop(task.__hash__())
+            pass
+            
     def manual_install(self):
         while self.tasks.qsize() > 0:
+            task = self.tasks.get()
             try:
-                task = self.tasks.get()
-                task.execute()
-                self.qsig_msg.emit(f"[{task.driver.name}] 已開啟安裝程式")
+                task.execute_pure()
+                self.qsig_msg.emit(f"已開啟 {task.driver.name}")
             except Exception as e:
-                self.qsig_msg.emit(f"[{task.driver.name}] {e}")
+                self.qsig_msg.emit(f"{e} ({task.driver.name})")
+                
+    def abort(self):
+        self.fails = []
+        with self.tasks.mutex:
+            self.tasks.queue.clear()
+        
+        for task in self.live_tasks.values():
+            self.qsig_msg.emit(f"終止執行 {task.driver.name}")
+            task.abort()
