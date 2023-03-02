@@ -35,18 +35,18 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.hwinfo_worker = HwInfoWorker(self.qsig_msg,
                                           self.qsig_hwinfo,
                                           parent=self)
-        # ----- hardware info -----
         self.refresh_hwinfo()
         # ----- driver options -----
-        for option in self.driconfg.get("network"):
+        for option in self.driconfg.get_type("network"):
             self.lan_driver_dropdown.addItem(option.name, option.id)
         
-        for option in self.driconfg.get("display"):
+        for option in self.driconfg.get_type("display"):
             self.display_dri_dropdown.addItem(option.name, option.id)
         
-        for option in self.driconfg.get("miscellaneous"):
+        for option in self.driconfg.get_type("miscellaneous"):
             cb = QtWidgets.QCheckBox(option.name)
-            setattr(cb, "dri_id", option.id) # TODO: comment
+            # NOTE: QCheckBox cannot be assigned a value to the UI element like QComboBox 
+            setattr(cb, "dri_id", option.id)  # use setattr() to achive the same functionality
             self.misc_dri_vbox.addWidget(cb)
         # ---------- events ----------
         self.hwInfo_refresh_btn.clicked.connect(self.refresh_hwinfo)
@@ -59,7 +59,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             lambda create, text: self.hwinfo_vbox.addWidget(create(text)))
     
     def send_msg(self, text: str): 
-        self.prog_msg_box.addItem(f">> {text}")
+        self.prog_msg_box.addItem(f"> {text}")
         self.prog_msg_box.verticalScrollBar().setValue(
             self.prog_msg_box.verticalScrollBar().maximum())  # scroll to bottom
     
@@ -70,56 +70,70 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     
     def install(self):
         manager = InstallManager(self.qsig_msg, self.progr_window.qsig_progress)
-        manager.qsig_success.connect(self.post_install)
+        manager.qsig_successful.connect(self.post_install)
+        
+        # terminate the remaining tasks when progress window is closed
+        def prog_close():
+            nonlocal self, manager
+            if not manager.is_finished():
+                manager.abort()
+                self.send_msg("已終止安裝")
+        self.progr_window.qsig_close.connect(prog_close)
         
         self.progr_window.clear_progress()
         # lan driver
         if self.lan_driver_dropdown.currentData() is not None:
-            _conf = self.driconfg.find(self.lan_driver_dropdown.currentData())
+            _conf = self.driconfg.get(self.lan_driver_dropdown.currentData())
             
             self.progr_window.append_progress(_conf, "等待安裝中")
-            manager.add_task(Task(_conf, self.qsig_msg))
+            manager.add_task(Task(_conf))
         # display driver
         if self.display_dri_dropdown.currentData() is not None:
-            _conf = self.driconfg.find(self.display_dri_dropdown.currentData())
+            _conf = self.driconfg.get(self.display_dri_dropdown.currentData())
             
             self.progr_window.append_progress(_conf, "等待安裝中")
-            manager.add_task(Task(_conf, self.qsig_msg))
+            manager.add_task(Task(_conf))
         # other driver
         for i in range(self.misc_dri_vbox.count()):
             cb = self.misc_dri_vbox.itemAt(i).widget()
             if not cb.isChecked():
                 continue
-            _conf = self.driconfg.find(cb.dri_id)
+            _conf = self.driconfg.get(cb.dri_id)
             self.progr_window.append_progress(_conf, "等待安裝中")
-            manager.add_task(Task(_conf, self.qsig_msg))
+            manager.add_task(Task(_conf))
         
         # debug
-        # from install.configuration import Driver
-        # __dri1 = Driver("ididid", "test_driver", "",
-        #                os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
-        #                False, [])
-        # __dri2 = Driver("ididid2", "test_drivertest_drivertest_drivertest_driver", "",
-        #                os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
-        #                False, [])
-        # manager.add_task(Task(__dri1, self.qsig_msg))
-        # manager.add_task(Task(__dri2, self.qsig_msg))
-        # self.progr_window.append_progress(__dri1, "等待安裝中")
-        # self.progr_window.append_progress(__dri2, "等待安裝中")
+        from install.configuration import Driver, DriverType
+        __dri1 = Driver("ididid", DriverType.DISPLAY, "test1", "",
+                       os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
+                       False, [])
+        __dri2 = Driver("ididid2", DriverType.DISPLAY, "test2", "",
+                       os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
+                       False, [])
+        __dri3 = Driver("ididid3", DriverType.DISPLAY, "test3", "",
+                       os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
+                       False, [])
+
+        manager.add_task(Task(__dri1))
+        manager.add_task(Task(__dri2))
+        manager.add_task(Task(__dri3))
+        self.progr_window.append_progress(__dri1, "等待安裝中")
+        self.progr_window.append_progress(__dri2, "等待安裝中")
+        self.progr_window.append_progress(__dri3, "等待安裝中")
         
         # start install
         if self.at_install_cb.isChecked():
-            self.send_msg('在安裝完成前，取消勺擇自動關機將會取消\n自動關機，反之亦然。')
-            t = threading.Thread(target=manager.auto_install)
+            t = threading.Thread(
+                target=manager.auto_install, args=[self.async_install_cb.isChecked()], daemon=True)
             t.start()
-            self.progr_window.show()
+            self.progr_window.exec_()
         else:
             manager.manual_install()
     
     def post_install(self, success: bool):
         if not success:
             pass
-        elif self.at_halt_cb.isChecked():
+        elif self.at_halt_rb.isChecked():
             t = threading.Timer(5, lambda: Popen(["shutdown", "/s", "/t", "1"]))
             t.start()
             QtWidgets.QMessageBox.information(self, '完成', '安裝成功，即將自動關機')

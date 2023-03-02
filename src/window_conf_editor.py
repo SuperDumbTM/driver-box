@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
 from ui.dri_cfg_editor import Ui_DriverConfigEditor
-from install.configuration import Driver, DriverType, DriverConfig
+from install.configuration import Driver, DriverType, DriverConfig, FLAG_PRESET
 
 
 class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
@@ -15,14 +15,21 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
     def __init__(self, dri_id: str = None, parent: QtWidgets.QWidget = None) -> None:
         super().__init__(parent=parent)
         self.setupUi(self)
-        
+
         self.dri_id = dri_id
         for dri_type in DriverType.members():
             self.dri_type_dropdown.addItem(dri_type.value, dri_type)
+        
+        for name, flags in FLAG_PRESET.items():
+            self.dri_flag_preset_dropdown.addItem(name, flags)
         # ---------- events ----------
         self.action_btns.accepted.connect(self.save)
         self.del_dri_btn.clicked.connect(self.delete)
         self.dri_exe_path_btn.clicked.connect(self.select_dri_path)
+        self.dri_flag_preset_dropdown.currentIndexChanged.connect(
+            lambda idx: self.dri_flag_input.setText(
+                ','.join(self.dri_flag_preset_dropdown.itemData(idx))
+            ))
         
     def fill_data(self, driver: Driver):
         self.dri_name_input.setText(driver.name)

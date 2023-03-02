@@ -30,7 +30,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         
     def show_config(self, type: DriverType):
         self.clear_driver()
-        drivers = self.dri_conf.get(type)
+        drivers = self.dri_conf.get_type(type)
         for driver in drivers:
             self.append_driver(driver)
         self.crrt_type = type
@@ -83,14 +83,14 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         self.show_config(self.crrt_type)
         
     def save_new_driver(self, driver: Driver) -> None:
-        self.dri_conf.create(driver.type, driver)
+        self.dri_conf.create(driver)
         self.dri_conf.write()
         self.show_config(self.crrt_type)
     
     def delete_driver(self, driver: Driver) -> None:
         if driver.id is None:
             return
-        self.dri_conf.remove(driver.type, driver.id)
+        self.dri_conf.delete(driver.id)
         self.dri_conf.write()
         self.show_config(self.crrt_type)
 
