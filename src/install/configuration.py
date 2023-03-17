@@ -13,7 +13,7 @@ FLAG_PRESET: Final[dict] = {
     'AMD Chipset': ["/S"],
     'AMD Display': ["-install"],
     'Intel Bluetooth': ["/quiet", "/norestart"],
-    'Intel Chipset': ["-s"],
+    'Intel Chipset': ["-s", "-norestart"],
     'Intel Display': ["-s"],
     'Intel iGPU': ["-s"],
     'Intel LAN': ["/s"],
