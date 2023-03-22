@@ -102,25 +102,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             self.progr_window.append_progress(_conf, "等待安裝中")
             manager.add_task(Task(_conf))
         
-        # debug
-        from install.configuration import Driver, DriverType
-        __dri1 = Driver("ididid", DriverType.DISPLAY, "test1", "",
-                       os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
-                       False, [])
-        __dri2 = Driver("ididid2", DriverType.DISPLAY, "test2", "",
-                       os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
-                       False, [])
-        __dri3 = Driver("ididid3", DriverType.DISPLAY, "test3", "",
-                       os.path.dirname(os.path.dirname(__file__)) + '\\driver\\print.exe',
-                       False, [])
-
-        manager.add_task(Task(__dri1))
-        manager.add_task(Task(__dri2))
-        manager.add_task(Task(__dri3))
-        self.progr_window.append_progress(__dri1, "等待安裝中")
-        self.progr_window.append_progress(__dri2, "等待安裝中")
-        self.progr_window.append_progress(__dri3, "等待安裝中")
-        
         # start install
         if self.at_install_cb.isChecked():
             t = threading.Thread(
