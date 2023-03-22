@@ -82,13 +82,14 @@ class DriverConfig:
                  not_found_ok: bool
                  ) -> None:
         if not os.path.exists(confpath):
-            if not_found_ok:
-                os.makedirs(os.path.dirname(confpath), exist_ok=True)
-                with open(os.path.join(confpath), 'w') as f:
-                    json.dump(
-                        {'network': [], 'display': [], 'miscellaneous': []}, f)
-            else:
+            if not not_found_ok:
                 raise FileExistsError(f"\"{confpath}\" does not exists")
+            os.makedirs(os.path.dirname(confpath), exist_ok=True)
+            with open(os.path.join(confpath), 'w') as f:
+                json.dump({DriverType.NET.value: [],
+                           DriverType.DISPLAY.value: [],
+                           DriverType.MISC.value: []},
+                          f)
 
         self.confdir = confpath
         self.dridir = dridir
