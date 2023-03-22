@@ -53,6 +53,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.disk_mgt_btn.clicked.connect(lambda: Popen(["start", "diskmgmt.msc"], shell=True))
         self.install_btn.clicked.connect(self.install)
         self.edit_driver_action.triggered.connect(self.dri_conf_window.show)
+        self.at_install_cb.clicked.connect(lambda val:self._at_install_onclick(val))
         # ---------- signals ----------
         self.qsig_msg.connect(self.send_msg)
         self.qsig_hwinfo.connect(
@@ -67,6 +68,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         for i in reversed(range(self.hwinfo_vbox.count())):
             self.hwinfo_vbox.itemAt(i).widget().setParent(None)
         self.hwinfo_worker.start()
+        
+    def alert(self, message: str):
+        pass
     
     def install(self):
         manager = InstallManager(self.qsig_msg, self.progr_window.qsig_progress)
@@ -103,9 +107,22 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             manager.add_task(Task(_conf))
         
         # start install
-        if self.at_install_cb.isChecked():
+        if len(manager) == 0:
+            box = QtWidgets.QMessageBox()
+            box.setIcon(QtWidgets.QMessageBox.Warning)
+            box.setWindowTitle("失敗")
+            box.setText("未有選擇任何軀動")
+            box.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            btnok = box.button(QtWidgets.QMessageBox.Ok)
+            btnok.setText("好")
+            box.exec_()
+        elif self.at_install_cb.isChecked():
             t = threading.Thread(
-                target=manager.auto_install, args=[self.async_install_cb.isChecked()], daemon=True)
+                target=manager.auto_install,
+                args=[(self.at_retry_cb.isCheckable() or self.at_retry_cb.isEnabled())
+                      and self.at_retry_cb.isChecked()
+                      ,self.async_install_cb.isChecked()],
+                daemon=True)
             t.start()
             self.progr_window.exec_()
         else:
@@ -114,7 +131,8 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     def post_install(self, success: bool):
         if not success:
             pass
-        elif self.at_halt_rb.isChecked():
+        elif ((self.at_halt_rb.isCheckable() or self.at_halt_rb.isEnabled())
+              and self.at_halt_rb.isChecked()):
             t = threading.Timer(5, lambda: Popen(["shutdown", "/s", "/t", "1"]))
             t.start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
@@ -138,4 +156,10 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         QtWidgets.QApplication.closeAllWindows()  # force close all windows
         super().closeEvent(event)
     
+    def _at_install_onclick(self, is_checked: bool):
+        self.at_retry_cb.setEnabled(is_checked)
+        self.async_install_cb.setEnabled(is_checked)
+        self.at_halt_rb.setEnabled(is_checked)
+        self.at_reboot_rb.setEnabled(is_checked)
+        self.at_nothing_rb.setEnabled(is_checked)    
     

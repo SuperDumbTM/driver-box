@@ -37,6 +37,9 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         self.todos = queue.Queue()
         self.live_tasks = {}
         self.fails: list[Task] = []
+        
+    def __len__(self) -> int:
+        return self.todos.qsize()
             
     def add_task(self, task: Task) -> None:
         """insert new install task to install queue"""
@@ -46,7 +49,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     def is_finished(self) -> bool:
         return self.todos.qsize() == 0 and len(self.live_tasks) == 0
     
-    def auto_install(self, paralle: bool):
+    def auto_install(self, man_fallback: bool, paralle: bool):
         # ---------- start tasks ----------
         while self.todos.qsize() != 0:
             if paralle:
@@ -63,7 +66,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             and len(self.fails) <= 0
         )
         
-        if len(self.fails) > 0:
+        if man_fallback and len(self.fails) > 0:
             self.qsig_msg.emit("有軀動程式安裝失敗，將以手動安裝模式重試")
             while self.fails:
                 self.todos.put(self.fails.pop(0))
