@@ -45,7 +45,7 @@
 
     在新增軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式 `driver/<分類>/` 資料夾內，以便管理及轉移（例如複製程式、設定至 USB）<br>
 3. 安裝參數<br>
-    用作指示軀動程式以「unattended」、「silent」模式安裝（用於自動安裝模式）。
+    用作指示軀動程式以「unattended」、「silent」模式安裝（用於自動安裝模式），及任何安裝設定。
     
     ![flag_preset](https://user-images.githubusercontent.com/71750702/226869519-0a1b2680-791b-473a-928f-726925fc0df1.png)
     
