@@ -2,11 +2,9 @@ import os
 import sys
 from typing import Final
 
-if getattr(sys, 'frozen', False):
-    DIR_ROOT: Final[os.PathLike] = os.path.dirname(sys.executable)
-else:
-    DIR_ROOT = os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__)))
+DIR_ROOT: Final[os.PathLike] = os.path.dirname(sys.executable) \
+    if getattr(sys, 'frozen', False) \
+    else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DIR_CONF: Final[os.PathLike] = os.path.join(DIR_ROOT, "conf")
 DIR_PIC: Final[os.PathLike] = os.path.join(DIR_ROOT, "pic")
