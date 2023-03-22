@@ -1,6 +1,4 @@
-# OnClick-Drivers-Installer
-
-Easy to use driver installer<br>
+# OneClick-Drivers-Installer
 一鍵安裝電腦所需的基本軀動程式
 
 ![main_window](https://user-images.githubusercontent.com/71750702/226848983-19594222-11b6-4e89-8b8b-2a10ca2cbda6.png)
@@ -17,8 +15,8 @@ Easy to use driver installer<br>
     當有軀動程式在自動安裝模式下安裝失敗，以手動模式重試
 3. 同步安裝<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226852351-3e44838b-ad04-48fb-b786-5bff2736daa0.png)<br>
-    自動安裝模式預設是一個接一個的方式執行安裝程序（blocking）。
-    此選項更改安裝方式成一次過執行所有安裝程序（asynchronous）
+    自動安裝模式預設是以*一個接一個*的方式執行安裝程序（blocking）。
+    此選項更改安裝方式成*同時執行*所有安裝程序（asynchronous）
 4. 自動關機<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226853670-8ce5c33e-b84c-4284-a466-d0ea7ddc718a.png)<br>
     在**自動安裝模式**下及**成功安裝所有**軀動程式時，執行選項的相應動作
@@ -28,7 +26,7 @@ Easy to use driver installer<br>
 
 ![dri_conf_window](https://user-images.githubusercontent.com/71750702/226865796-6f39f684-18fb-4302-a7f3-c44fb9ac0c46.png)
 
-黃色條目代表該軀動程式不能以自動模式安裝[（用戶自訂）](#autoable-descr)
+黃色背景代表該軀動程式不能以自動模式安裝[（用戶自訂）](#autoable-descr)
 - 雙擊目標行（row）以編輯軀動程式
 - 按 `新增` 以新增軀動程式
 
@@ -38,7 +36,7 @@ Easy to use driver installer<br>
 
 1. 軀動分類<br>
     只有 `miscellaneous` 分類為「多選」<br>
-    `display`, `network` 為單選，每次安裝只能從分類中選擇其中一個安裝。
+    `display`, `network` 為單選，每次安裝只能從分類中選擇其中一個軀動來安裝。
 2. 軀動路徑<br>
     選取軀動程式的安裝程序執行檔（例如 `setup.exe`, `xxxx.exe`）
     > driver\display\nvidia 531.29 WHQL\setup.exe
@@ -51,13 +49,15 @@ Easy to use driver installer<br>
     
     ![flag_preset](https://user-images.githubusercontent.com/71750702/226869519-0a1b2680-791b-473a-928f-726925fc0df1.png)
     
-    程式已提供常見軀動的安裝參數。如自行輸入，須以 `<1>,<2>,...` 格式輸入（以逗號分隔）。
+    程式已提供常見軀動的安裝參數。<br>
+    如自行輸入，須以 `<1>,<2>,...` 格式輸入（以逗號分隔）。
     > -s,-norestart
     
     不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋
     > realtek autio silent install
+    或利用 [Silent Install Builder](https://www.silentinstall.org/) 自行製作
 4. <a name="autoable-descr">可自動安裝</a><br>
-    勾選如軀動能被自動安裝。
+    勾選如軀動支援 [slient install](https://www.makeuseof.com/windows-silent-installation-explained/)。
     
-    如錯誤選擇會導致不能被自動安裝的軀動以手動模式的方式被執行（需要用戶按「下一步」等等），即使有軀動該未安裝完成亦會被視作成功安裝，繼而自動關機（如適用）
+    如錯誤選擇會導致 *不能被自動安裝的軀動* 以手動模式的方式被執行（需要用戶在安裝介面操作），即使該軀動該未被安裝完成，亦會被視作成功安裝，繼而自動關機（如適用）
     
