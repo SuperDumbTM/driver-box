@@ -1,6 +1,7 @@
 # driver folder
 OneClick-DriverInstaller.exe
-/driver/*
+driver/
+conf/
 *.exe
 
 # Byte-compiled / optimized / DLL files
