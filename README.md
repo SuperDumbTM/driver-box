@@ -7,7 +7,7 @@
 ![preview_progress](https://user-images.githubusercontent.com/71750702/226849659-71b77b32-eefb-4649-9865-74050818e249.png)
 
 
-## 功能／Functionality
+## 選項／Options
 1. 自動安裝<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226850047-1d67eebd-2a97-414f-a44a-e7aa05f6980c.png)<br>
     軀動程式會在背景自動安裝，用戶毋須與軀動程式安裝程序互動
