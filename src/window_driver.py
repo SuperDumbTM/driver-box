@@ -1,7 +1,9 @@
+import os
 from typing import Literal
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import definitions
 from ui.dri_cfg_viewer import Ui_DriverConfigViewer
 from install.configuration import Driver, DriverType, DriverConfig
 from window_conf_editor import DriverConfigEditorWindow
@@ -12,6 +14,9 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
     def __init__(self, dri_conf: DriverConfig, parent: QtWidgets = None) -> None:
         super().__init__(parent=parent)
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon(
+            os.path.join(definitions.DIR_PIC, "list.ico")))
+        
         # set table auto resize porpotion to window
         self.dri_cfg_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         

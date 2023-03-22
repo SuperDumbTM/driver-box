@@ -5,6 +5,7 @@ from subprocess import Popen
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import definitions
 from hw_info_worker import HwInfoWorker
 from ui.main import Ui_MainWindow
 from window_progress import ProgressWindow
@@ -12,12 +13,6 @@ from window_driver import DriverConfigViewerWindow
 from install.configuration import DriverType, DriverConfig
 from install.install_manager import InstallManager
 from install.task import Task
-
-
-if getattr(sys, 'frozen', False):
-    ROOTDIR = os.path.dirname(sys.executable)
-elif __file__:
-    ROOTDIR = os.path.dirname(os.path.dirname(__file__))
 
 
 class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
@@ -28,7 +23,8 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     def __init__(self, driconfig: DriverConfig):
         super().__init__()
         self.setupUi(self)
-
+        self.setWindowIcon(QtGui.QIcon(os.path.join(definitions.DIR_PIC, "icon.ico")))
+        
         self.driconfg = driconfig
         self.progr_window = ProgressWindow()
         self.dri_conf_window = DriverConfigViewerWindow(driconfig)
@@ -109,8 +105,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         # start install
         if len(manager) == 0:
             box = QtWidgets.QMessageBox()
-            box.setIcon(QtWidgets.QMessageBox.Warning)
             box.setWindowTitle("失敗")
+            box.setWindowIcon(self.windowIcon())
+            box.setIcon(QtWidgets.QMessageBox.Warning)
             box.setText("未有選擇任何軀動")
             box.setStandardButtons(QtWidgets.QMessageBox.Ok)
             btnok = box.button(QtWidgets.QMessageBox.Ok)
@@ -138,8 +135,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
         else:
             box = QtWidgets.QMessageBox()
-            box.setIcon(QtWidgets.QMessageBox.Information)
             box.setWindowTitle("完成")
+            box.setWindowIcon(self.windowIcon())
+            box.setIcon(QtWidgets.QMessageBox.Information)
             box.setText("搞掂")
             box.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Close)
             btnok = box.button(QtWidgets.QMessageBox.Ok)

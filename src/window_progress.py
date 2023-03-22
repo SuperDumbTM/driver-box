@@ -1,5 +1,8 @@
+import os
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import definitions
 from ui.progress import Ui_InstallProgress
 from install.configuration import Driver
 
@@ -17,6 +20,8 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
     def __init__(self, parent: QtWidgets.QWidget = None) -> None:
         super().__init__(parent=parent)
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon(
+            os.path.join(definitions.DIR_PIC, "progress.ico")))
         # set table auto resize porpotion to window
         self.progr_table.horizontalHeader().setSectionResizeMode(
             QtWidgets.QHeaderView.Stretch)
