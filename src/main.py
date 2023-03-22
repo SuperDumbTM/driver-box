@@ -10,6 +10,11 @@ from window_main import MainWindow
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
+    
+    if not os.path.exists(definitions.DIR_DRI):
+        os.mkdir(definitions.DIR_DRI)
+    if not os.path.exists(definitions.DIR_CONF):
+        os.mkdir(definitions.DIR_CONF)
 
     main_wd = MainWindow(
         configuration.DriverConfig(
