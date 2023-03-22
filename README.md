@@ -36,5 +36,7 @@ Easy to use driver installer<br>
 1. 軀動分類<br>
     只有 `miscellaneous` 分類為「多選」<br>
     `display`, `network` 為單選，每次安裝只能從分類中選擇其中一個安裝。
-2. 軀動路徑<
+2. 軀動路徑<br>
+    選取軀動程式的安裝程式執行當（例如 `setup.exe`）
 
+    在新增軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式 `driver/<分類>/` 資料夾內，以便管理及轉移（例如 USB）<br>
