@@ -46,7 +46,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     def is_finished(self) -> bool:
         return self.todos.qsize() == 0 and len(self.live_tasks) == 0
     
-    def auto_install(self, paralle: bool):     
+    def auto_install(self, paralle: bool):
         # ---------- start tasks ----------
         while self.todos.qsize() != 0:
             if paralle:
@@ -57,25 +57,25 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         
         while paralle and any([t.is_alive() for t in self.live_tasks.values()]):
             time.sleep(1)
-        
         # ---------- finish all task ----------
-        for t in self.tasks:
-            print(t.is_aborted)
-
         self.qsig_successful.emit(
             not any([t.is_aborted for t in self.tasks])
             and len(self.fails) <= 0
         )
         
-        while len(self.fails) > 0:
-            self.todos.put(self.fails.pop(0))
-        self.manual_install()
+        if len(self.fails) > 0:
+            self.qsig_msg.emit("有軀動程式安裝失敗，將以手動安裝模式重試")
+            while self.fails:
+                self.todos.put(self.fails.pop(0))
+                self.manual_install()
+        else:
+            self.qsig_msg.emit("已完成安裝所有選擇的軀動程式")
     
     def __at_helper(self, task: Task):
         pbar = ("-", "\\", "|", "/")
         self.live_tasks[task.__hash__()] = task
         try:
-            self.qsig_msg.emit(f"開始安裝 {task.driver.name}")
+            self.qsig_msg.emit(f"開始安裝 {task.driver.name} (自動模式)")
             # ---------- start thread ----------
             task.execute()
             exe_time = time.time()
@@ -101,7 +101,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             elif task.rtcode not in (0, 13, 14, 15) or exe_time <= 5:
                 self.fails.append(task)
                 if exe_time <= 5 and task.rtcode is None:
-                    self.qsig_progr.emit(task.driver, "執行時間小於5秒，錯誤", ProgressWindow.WARN)
+                    self.qsig_progr.emit(task.driver, "執行時間小於5秒", ProgressWindow.WARN)
                 else:
                     self.qsig_progr.emit(task.driver, f"失敗，錯誤代碼：[{task.rtcode}]", ProgressWindow.FAIL)
             else:
@@ -110,7 +110,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         except Exception as e:
             self.fails.append(task)
             self.qsig_progr.emit(task.driver, "失敗", ProgressWindow.FAIL)
-            self.qsig_msg.emit(f"{e} ({task.driver.name})")
+            self.qsig_msg.emit(f"[{task.driver.name}] {e}")
         finally:
             # self.qsig_msg.emit(f"[{task.driver.name}] 完成安裝")
             self.live_tasks.pop(task.__hash__())
@@ -119,9 +119,9 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     def manual_install(self):
         while self.todos.qsize() > 0:
             task = self.todos.get()
+            self.qsig_msg.emit(f"開始安裝 {task.driver.name} (手動模式)")
             try:
                 task.execute_pure()
-                self.qsig_msg.emit(f"已開啟 {task.driver.name}")
             except Exception as e:
                 self.qsig_msg.emit(f"{e} ({task.driver.name})")
                 
@@ -131,5 +131,5 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             self.todos.queue.clear()
         
         for task in self.tasks:
-            self.qsig_msg.emit(f"終止執行 {task.driver.name}")
+            self.qsig_msg.emit(f"終止安裝 {task.driver.name}")
             task.abort()

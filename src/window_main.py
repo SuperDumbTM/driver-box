@@ -117,17 +117,17 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         elif self.at_halt_rb.isChecked():
             t = threading.Timer(5, lambda: Popen(["shutdown", "/s", "/t", "1"]))
             t.start()
-            QtWidgets.QMessageBox.information(self, '完成', '安裝成功，即將自動關機')
+            QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
         else:
             box = QtWidgets.QMessageBox()
             box.setIcon(QtWidgets.QMessageBox.Information)
-            box.setWindowTitle('完成')
-            box.setText('搞掂')
+            box.setWindowTitle("完成")
+            box.setText("搞掂")
             box.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Close)
             btnok = box.button(QtWidgets.QMessageBox.Ok)
-            btnok.setText('好')
+            btnok.setText("好")
             btnclose = box.button(QtWidgets.QMessageBox.Close)
-            btnclose.setText('關閉程式')
+            btnclose.setText("關閉程式")
             box.exec_()
             
             if box.clickedButton() == btnclose:

@@ -25,7 +25,7 @@ class HwInfoWorker(QtCore.QThread):
     def run(self):
         pythoncom.CoInitialize()
         self.hwi = HwInfo()
-        self.qsig_msg.emit('載入硬件資訊中..')
+        self.qsig_msg.emit("載入硬件資訊中...")
         
         self.qsig_hwinfo.emit(self._createHwInfoTitle, "底版 MOTHERBOARD")
         for item in self.hwi.get_mb_descr():
@@ -51,7 +51,7 @@ class HwInfoWorker(QtCore.QThread):
         for item in self.hwi.get_disk_descr():
             self.qsig_hwinfo.emit(self._createHwInfoText, item)
 
-        self.qsig_msg.emit('完成載入硬件資訊')
+        self.qsig_msg.emit("完成載入硬件資訊")
 
     def _createHwInfoTitle(self, text: str):
         font = QtGui.QFont()
