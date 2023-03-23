@@ -1,4 +1,9 @@
 # OneClick-Drivers-Installer
+
+![en](https://img.shields.io/badge/README-en-inactive.svg)
+[![zh-hk](https://img.shields.io/badge/README-zh--hk-green.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_hk.md)
+[![zh-tw](https://img.shields.io/badge/README-zh--tw-yellow.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_tw.md)
+
 一鍵安裝電腦所需的基本軀動程式
 
 - [OneClick-Drivers-Installer](#oneclick-drivers-installer)
