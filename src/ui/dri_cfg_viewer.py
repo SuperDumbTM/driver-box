@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\dri_cfg_viewer.ui'
+# Form implementation generated from reading ui file 'dri_cfg_viewer.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -55,41 +55,6 @@ class Ui_DriverConfigViewer(object):
         self.dri_info_sa_contents.setObjectName("dri_info_sa_contents")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.dri_info_sa_contents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.dri_cfg_table = QtWidgets.QTableWidget(self.dri_info_sa_contents)
-        self.dri_cfg_table.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.dri_cfg_table.setStyleSheet("QHeaderView::section {\n"
-"    color: black;\n"
-"    background-color:  rgb(255, 255, 255);\n"
-"    border-width: 0px 0px 2px 0px;\n"
-"    border-style: dotted;\n"
-"}")
-        self.dri_cfg_table.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
-        self.dri_cfg_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.dri_cfg_table.setDragEnabled(False)
-        self.dri_cfg_table.setDragDropOverwriteMode(False)
-        self.dri_cfg_table.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
-        self.dri_cfg_table.setDefaultDropAction(QtCore.Qt.IgnoreAction)
-        self.dri_cfg_table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.dri_cfg_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.dri_cfg_table.setShowGrid(True)
-        self.dri_cfg_table.setGridStyle(QtCore.Qt.SolidLine)
-        self.dri_cfg_table.setCornerButtonEnabled(True)
-        self.dri_cfg_table.setObjectName("dri_cfg_table")
-        self.dri_cfg_table.setColumnCount(3)
-        self.dri_cfg_table.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.dri_cfg_table.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.dri_cfg_table.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.dri_cfg_table.setHorizontalHeaderItem(2, item)
-        self.dri_cfg_table.horizontalHeader().setVisible(True)
-        self.dri_cfg_table.horizontalHeader().setCascadingSectionResizes(False)
-        self.dri_cfg_table.horizontalHeader().setDefaultSectionSize(80)
-        self.dri_cfg_table.horizontalHeader().setMinimumSectionSize(60)
-        self.dri_cfg_table.horizontalHeader().setStretchLastSection(False)
-        self.dri_cfg_table.verticalHeader().setVisible(False)
-        self.verticalLayout_2.addWidget(self.dri_cfg_table)
         self.dri_info_scrollarea.setWidget(self.dri_info_sa_contents)
         self.gridLayout.addWidget(self.dri_info_scrollarea, 0, 1, 1, 1)
 
@@ -103,10 +68,3 @@ class Ui_DriverConfigViewer(object):
         self.display_dri_btn.setText(_translate("DriverConfigViewer", "顯示卡"))
         self.misc_dri_btn.setText(_translate("DriverConfigViewer", "其他"))
         self.new_dri_btn.setText(_translate("DriverConfigViewer", "新增"))
-        self.dri_cfg_table.setSortingEnabled(False)
-        item = self.dri_cfg_table.horizontalHeaderItem(0)
-        item.setText(_translate("DriverConfigViewer", "軀動名稱"))
-        item = self.dri_cfg_table.horizontalHeaderItem(1)
-        item.setText(_translate("DriverConfigViewer", "路徑"))
-        item = self.dri_cfg_table.horizontalHeaderItem(2)
-        item.setText(_translate("DriverConfigViewer", "安裝參數"))
