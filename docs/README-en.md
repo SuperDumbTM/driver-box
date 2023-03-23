@@ -1,26 +1,26 @@
 # OneClick-Drivers-Installer
 
-[![en](https://img.shields.io/badge/README-en-green.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-en.md)
-[![zh-hk](https://img.shields.io/badge/README-zh--hk-yellow.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_hk.md)
-![zh-tw](https://img.shields.io/badge/README-zh--tw-inactive.svg)
+![en](https://img.shields.io/badge/README-en-inactive.svg)
+[![zh-hk](https://img.shields.io/badge/README-zh--hk-green.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_hk.md)
+[![zh-tw](https://img.shields.io/badge/README-zh--tw-yellow.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_tw.md)
 
-一鍵安裝電腦所需的基本軀動程式
+Easy-to-use driver installer
 
 - [OneClick-Drivers-Installer](#oneclick-drivers-installer)
-  - [下載](#下載)
-  - [常用軀動安裝參數參考](#常用軀動安裝參數參考)
-  - [安裝選項](#安裝選項)
-  - [修改及更新軀動](#修改及更新軀動)
+  - [Download](#download)
+  - [Install Option For Common Driver](#install-option-for-common-driver)
+  - [Install Setting](#install-setting)
+  - [Driver Management](#driver-management)
 
 ![main_window](https://user-images.githubusercontent.com/71750702/226848983-19594222-11b6-4e89-8b8b-2a10ca2cbda6.png)
 
 ![progress_window](https://user-images.githubusercontent.com/71750702/226849659-71b77b32-eefb-4649-9865-74050818e249.png)
 
-## 下載
-主程式<br>
+## Download
+The Program<br>
 [![version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/latest)
 
-軀動包<br>
+Driver Pack<br>
 [Google Drive](https://drive.google.com/drive/folders/1VqND0o75oBR80Ft2IK8WjTTbXaezmajw?usp=sharing)
 
 - Driver Source<br>
@@ -41,25 +41,25 @@
     [Intel Chipset Driver 600/700 (version 10.1.19199.8340)](https://tw.msi.com/Motherboard/MAG-B660-TOMAHAWK-WIFI-DDR4/support#driver)<br>
     [AMD Chipset Drivers (version 5.02.19.2221)](https://www.amd.com/en/support/chipsets/amd-socket-am4/b550)
 
-## 常用軀動安裝參數參考
+## Install Option For Common Driver
 [driver install flag](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/tree/main/docs/driver%20install%20flag)
 
-## 安裝選項
-1. 自動安裝<br>
+## Install Setting
+1. Auto<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226850047-1d67eebd-2a97-414f-a44a-e7aa05f6980c.png)<br>
-    軀動程式會在背景自動安裝，用戶毋須與軀動程式安裝程序互動
-2. 失敗重試<br>
+    All the selected drivers will be installed automatically in the background. No interaction required.
+2. Retry<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226852116-544d01ce-919d-4a37-b463-e33ceaa60a82.png)<br>
-    當有軀動程式在自動安裝模式下安裝失敗，以手動模式重試
-3. 同步安裝<br>
+    Fallback to manaul install if driver(s) installation failed in auto installation mode.
+3. Parallel<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226852351-3e44838b-ad04-48fb-b786-5bff2736daa0.png)<br>
-    自動安裝模式預設是以 *一個接一個（blocking）* 的方式執行安裝程序。
-    此選項更改安裝方式成 *同時執行（asynchronous）* 所有安裝程序
-4. 自動關機<br>
+    By default, auto installation mode is *blocking* (i.e. executing one after the other finished).<br>
+    This option make it to be *asynchronous* (i.e executing all at once), but this may cause installation failure.
+4. Auto Shutdown<br>
     ![圖片](https://user-images.githubusercontent.com/71750702/226853670-8ce5c33e-b84c-4284-a466-d0ea7ddc718a.png)<br>
-    在**自動安裝模式**下及**成功安裝所有**軀動程式時，執行選項的相應動作
+    After **ALL** drivers are installed successfully **using auto installation**, do the respected action.
     
-## 修改及更新軀動
+## Driver Management
 `管理 -> 編輯軀動程式`
 
 ![dri_conf_window](https://user-images.githubusercontent.com/71750702/226865796-6f39f684-18fb-4302-a7f3-c44fb9ac0c46.png)
@@ -73,10 +73,10 @@
 
 
 1. 軀動分類<br>
-    只有 `miscellaneous` 分類是「多選」<br>
-    `display`, `network` 是單選，每次安裝只能從分類中選擇其中一個軀動來安裝。
+    只有 `miscellaneous` 分類為「多選」<br>
+    `display`, `network` 為單選，每次安裝只能從分類中選擇其中一個軀動來安裝。
 2. 軀動路徑<br>
-    軀動程式的安裝程序執行檔（例如 `setup.exe`, `xxxx.exe`）
+    選取軀動程式的安裝程序執行檔（例如 `setup.exe`, `xxxx.exe`）
     > driver\display\nvidia 531.29 WHQL\setup.exe
     >
     > driver\network\intel 26.2.0.1\APPS\SETUP\SETUPBD\Winx64\SetupBD.exe
@@ -96,6 +96,7 @@
     
     或利用 [Silent Install Builder](https://www.silentinstall.org/) 自行製作
 4. <a name="autoable-descr">可自動安裝</a><br>
-    勾選如軀動支援 [silent install](https://www.makeuseof.com/windows-silent-installation-explained/)。
+    勾選如軀動支援 [slient install](https://www.makeuseof.com/windows-silent-installation-explained/)。
     
-    錯誤選擇會導致 *不能被自動安裝的軀動* 以手動模式的方式被執行（需要用戶在安裝介面操作），即使該軀動該未完成安裝，亦會被視作成功安裝，繼而自動關機（如適用）
+    如錯誤選擇會導致 *不能被自動安裝的軀動* 以手動模式的方式被執行（需要用戶在安裝介面操作），即使該軀動該未完成安裝，亦會被視作成功安裝，繼而自動關機（如適用）
+    

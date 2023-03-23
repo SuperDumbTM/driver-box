@@ -22,6 +22,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         for dri_type in DriverType.members():
             self.dri_type_dropdown.addItem(dri_type.value, dri_type)
 
+        self.dri_flag_preset_dropdown.setItemData(0, [])
         for name, flags in FLAG_PRESET.items():
             self.dri_flag_preset_dropdown.addItem(name, flags)
         # ---------- events ----------

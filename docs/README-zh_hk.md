@@ -1,8 +1,8 @@
-# OnClick-Drivers-Installer
+# OneClick-Drivers-Installer
 
-[![en](https://img.shields.io/badge/README-en-green.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer)
+[![en](https://img.shields.io/badge/README-en-green.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-en.md)
 ![zh-hk](https://img.shields.io/badge/README-zh--hk-inactive.svg)
-[![zh-tw](https://img.shields.io/badge/README-zh--tw-yellow.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_tw.md)
+[![zh-tw](https://img.shields.io/badge/README-zh--tw-yellow.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer)
 
 一鍵安裝電腦所需的基本軀動程式
 - 網路介面卡
