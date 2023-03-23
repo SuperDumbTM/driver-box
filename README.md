@@ -40,7 +40,7 @@
     [AMD Chipset Drivers (version 5.02.19.2221)](https://www.amd.com/en/support/chipsets/amd-socket-am4/b550)
 
 ## 常用軀動安裝參數參考
-[]()
+[driver install flag](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/tree/main/docs/driver%20install%20flag)
 
 ## 安裝選項
 1. 自動安裝<br>
