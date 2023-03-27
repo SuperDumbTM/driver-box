@@ -1,13 +1,11 @@
 {
     "recommendations": [
-        "donjayamanne.python-extension-pack",
-        "rangav.vscode-thunder-client",
-        "visualstudioexptteam.vscodeintellicode",
         "ms-python.isort",
         "mhutchie.git-graph",
         "adam-bender.commit-message-editor",
         "njpwerner.autodocstring",
         "kevinrose.vsc-python-indent",
-        "ms-python.autopep8"
+        "ms-python.autopep8",
+        "ms-python.python"
     ]
 }
