@@ -11,6 +11,8 @@ from window_conf_editor import DriverConfigEditorWindow
 
 
 class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
+    
+    _modified = False
 
     def __init__(self, dri_conf: DriverConfig, parent: QtWidgets = None) -> None:
         super().__init__(parent=parent)
@@ -35,8 +37,8 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         # ---------- signals ----------
 
     def closeEvent(self, event):
-        # print(QtWidgets.QApplication.topLevelWidgets())
-        QtWidgets.QApplication.closeAllWindows()  # force close all windows
+        if (self._modified):
+            QtWidgets.qApp.exit(-11354)
         super().closeEvent(event)
 
     def show_drivers(self, type: DriverType):
@@ -94,11 +96,15 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         self.dri_conf.update(driver.id, driver)
         self.dri_conf.write()
         self.show_drivers(self.crrt_type)
+        
+        self._modified = True
     
     def save_new_driver(self, driver: Driver) -> None:
         self.dri_conf.create(driver)
         self.dri_conf.write()
         self.show_drivers(self.crrt_type)
+        
+        self._modified = True
 
     def delete_driver(self, driver: Driver) -> None:
         if driver.id is None:
@@ -106,6 +112,8 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         self.dri_conf.delete(driver.id)
         self.dri_conf.write()
         self.show_drivers(self.crrt_type)
+        
+        self._modified = True
 
     def _setup_tableview(self):
         self.dri_cfg_table = TableWidgetDragable(self.dri_info_sa_contents)

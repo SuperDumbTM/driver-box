@@ -20,3 +20,5 @@ DIR_FLAG_PRESETS = {
     "Intel Chipset": ["-s", "-norestart"],
     "AMD Chipset": ["/S"]
 }
+
+UI_RESTART_CODE = -11354
