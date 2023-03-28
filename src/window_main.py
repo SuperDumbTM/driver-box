@@ -133,6 +133,11 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             t = threading.Timer(5, lambda: Popen(["shutdown", "/s", "/t", "1"]))
             t.start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
+        elif ((self.at_reboot_rb.isCheckable() or self.at_reboot_rb.isEnabled())
+              and self.at_reboot_rb.isChecked()):
+            t = threading.Timer(5, lambda: Popen(["shutdown", "/r", "/t", "1"]))
+            t.start()
+            QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
         else:
             box = QtWidgets.QMessageBox()
             box.setWindowTitle("完成")
