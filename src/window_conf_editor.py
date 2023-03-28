@@ -26,7 +26,10 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         for name, flags in FLAG_PRESET.items():
             self.dri_flag_preset_dropdown.addItem(name, flags)
         # ---------- events ----------
+        self.action_btns.disconnect() # disable close window behavior when action buttons are clicked
         self.action_btns.accepted.connect(self.save)
+        self.action_btns.rejected.connect(lambda: self.close())
+        
         self.del_dri_btn.clicked.connect(self.delete)
         self.dri_exe_path_btn.clicked.connect(self.select_dri_path)
         self.dri_flag_preset_dropdown.currentIndexChanged.connect(
@@ -54,13 +57,34 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         if not path == "":
             self.dri_exe_input.setText(
                 os.path.relpath(path, definitions.DIR_ROOT))
+    
+    def open_save_err_msgbox(self) -> None:
+        box = QtWidgets.QMessageBox()
+        box.setWindowTitle("錯誤")
+        box.setWindowIcon(self.windowIcon())
+        box.setIcon(QtWidgets.QMessageBox.Critical)
+        box.setText("未能儲存，請檢查是否已經填妥所有資料。")
+        box.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        btnok = box.button(QtWidgets.QMessageBox.Ok)
+        btnok.setText("好")
+        box.exec_()
 
     def save(self):
-        self.qsig_save.emit(self._get_driver())
+        dri = self._get_driver()
+        if dri.is_validate():
+            self.qsig_save.emit(dri)
+            self.close()
+        else:
+            self.open_save_err_msgbox()
+            
 
     def delete(self):
-        self.qsig_del.emit(self._get_driver())
-        self.close()
+        dri = self._get_driver()
+        if dri.is_validate():
+            self.qsig_del.emit(dri)
+            self.close()
+        else:
+            self.open_save_err_msgbox()
 
     def _get_driver(self) -> Driver:
         return Driver(self.dri_id,
