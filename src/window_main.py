@@ -6,11 +6,12 @@ from subprocess import Popen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from hw_info_worker import HwInfoWorker
 from ui.main import Ui_MainWindow
+from widgets.driver_checkbox import DriverOptionCheckBox
+from hw_info_worker import HwInfoWorker
 from window_progress import ProgressWindow
 from window_driver import DriverConfigViewerWindow
-from install.configuration import DriverType, DriverConfig
+from install.configuration import Driver, DriverType, DriverConfig
 from install.install_manager import InstallManager
 from install.task import Task
 
@@ -35,26 +36,26 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         # ----- driver options -----
         for option in self.driconfg.get_type("network"):
             self.lan_driver_dropdown.addItem(option.name, option.id)
-            self.lan_driver_dropdown.setItemData(
-                self.lan_driver_dropdown.count() - 1, option.name, QtCore.Qt.ToolTipRole)
+        # check autoable
+        self.lan_driver_dropdown.currentIndexChanged.connect(self._dri_on_select)
         
         for option in self.driconfg.get_type("display"):
             self.display_dri_dropdown.addItem(option.name, option.id)
-            self.display_dri_dropdown.setItemData(
-                self.display_dri_dropdown.count() - 1, option.name, QtCore.Qt.ToolTipRole)
+        # check autoable
+        self.display_dri_dropdown.currentIndexChanged.connect(self._dri_on_select)
         
         for option in self.driconfg.get_type("miscellaneous"):
-            cb = QtWidgets.QCheckBox(option.name)
-            cb.setToolTip(option.name)
-            # NOTE: QCheckBox cannot be assigned a value to the UI element like QComboBox 
-            setattr(cb, "dri_id", option.id)  # use setattr() to achive the same functionality
+            cb = DriverOptionCheckBox(option.name)
+            cb.dri_id = option.id
             self.misc_dri_vbox.addWidget(cb)
+            # check autoable
+            cb.clicked.connect(self._dri_on_select)
         # ---------- events ----------
         self.hwInfo_refresh_btn.clicked.connect(self.refresh_hwinfo)
         self.disk_mgt_btn.clicked.connect(lambda: Popen(["start", "diskmgmt.msc"], shell=True))
         self.install_btn.clicked.connect(self.install)
         self.edit_driver_action.triggered.connect(self.dri_conf_window.show)
-        self.at_install_cb.clicked.connect(lambda val:self._at_install_onclick(val))
+        self.at_install_cb.clicked.connect(lambda val:self.set_at_options(val))
         # ---------- signals ----------
         self.qsig_msg.connect(self.send_msg)
         self.qsig_hwinfo.connect(
@@ -86,27 +87,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.progr_window.qsig_close.connect(prog_close)
         
         self.progr_window.clear_progress()
-        # lan driver
-        if self.lan_driver_dropdown.currentData() is not None:
-            _conf = self.driconfg.get(self.lan_driver_dropdown.currentData())
-            
-            self.progr_window.append_progress(_conf, "等待安裝中")
-            manager.add_task(Task(_conf))
-        # display driver
-        if self.display_dri_dropdown.currentData() is not None:
-            _conf = self.driconfg.get(self.display_dri_dropdown.currentData())
-            
-            self.progr_window.append_progress(_conf, "等待安裝中")
-            manager.add_task(Task(_conf))
-        # other driver
-        for i in range(self.misc_dri_vbox.count()):
-            cb = self.misc_dri_vbox.itemAt(i).widget()
-            if not cb.isChecked():
-                continue
-            _conf = self.driconfg.get(cb.dri_id)
-            self.progr_window.append_progress(_conf, "等待安裝中")
-            manager.add_task(Task(_conf))
-        
+        for dri_conf in self.get_selected_dri():
+            self.progr_window.append_progress(dri_conf, "等待安裝中")
+            manager.add_task(Task(dri_conf))
         # start install
         if len(manager) == 0:
             box = QtWidgets.QMessageBox()
@@ -129,7 +112,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             self.progr_window.exec_()
         else:
             manager.manual_install()
-    
+
     def post_install(self, success: bool):
         if not success:
             pass
@@ -163,11 +146,34 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         # print(QtWidgets.QApplication.topLevelWidgets())
         QtWidgets.QApplication.closeAllWindows()  # force close all windows
         super().closeEvent(event)
+
+    def set_at_options(self, enable: bool):
+        for widget in self.widget.children():
+            if (widget.objectName() != self.at_install_cb.objectName()
+                and isinstance(widget, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
+                widget.setEnabled(enable)
+
+    def get_selected_dri(self) -> list[Driver]:
+        ids = []
+        # network driver
+        if self.lan_driver_dropdown.currentData() is not None:
+            ids.append(self.driconfg.get(self.lan_driver_dropdown.currentData()))
+        # display driver
+        if self.display_dri_dropdown.currentData() is not None:
+            ids.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
+        # miscellaneous driver
+        for i in range(self.misc_dri_vbox.count()):
+            cb: DriverOptionCheckBox = self.misc_dri_vbox.itemAt(i).widget()
+            if not cb.isChecked():
+                continue
+            ids.append(self.driconfg.get(cb.dri_id))
+        return ids
     
-    def _at_install_onclick(self, is_checked: bool):
-        self.at_retry_cb.setEnabled(is_checked)
-        self.async_install_cb.setEnabled(is_checked)
-        self.at_halt_rb.setEnabled(is_checked)
-        self.at_reboot_rb.setEnabled(is_checked)
-        self.at_nothing_rb.setEnabled(is_checked)    
-    
+    def _dri_on_select(self):
+        autoable = all([dri.autoable for dri in self.get_selected_dri()])
+        
+        self.at_halt_rb.setEnabled(autoable)
+        self.at_reboot_rb.setEnabled(autoable)
+        self.at_nothing_rb.setEnabled(autoable)
+        if not autoable:
+            self.at_nothing_rb.setChecked(True)

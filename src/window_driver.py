@@ -6,7 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from ui.dri_cfg_viewer import Ui_DriverConfigViewer
 from install.configuration import Driver, DriverType, DriverConfig
-from widget.tablewidget_dragable import TableWidgetDragable
+from widgets.tablewidget_dragable import TableWidgetDragable
 from window_conf_editor import DriverConfigEditorWindow
 
 
