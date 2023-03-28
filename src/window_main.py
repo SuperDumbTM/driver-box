@@ -35,12 +35,17 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         # ----- driver options -----
         for option in self.driconfg.get_type("network"):
             self.lan_driver_dropdown.addItem(option.name, option.id)
+            self.lan_driver_dropdown.setItemData(
+                self.lan_driver_dropdown.count() - 1, option.name, QtCore.Qt.ToolTipRole)
         
         for option in self.driconfg.get_type("display"):
             self.display_dri_dropdown.addItem(option.name, option.id)
+            self.display_dri_dropdown.setItemData(
+                self.display_dri_dropdown.count() - 1, option.name, QtCore.Qt.ToolTipRole)
         
         for option in self.driconfg.get_type("miscellaneous"):
             cb = QtWidgets.QCheckBox(option.name)
+            cb.setToolTip(option.name)
             # NOTE: QCheckBox cannot be assigned a value to the UI element like QComboBox 
             setattr(cb, "dri_id", option.id)  # use setattr() to achive the same functionality
             self.misc_dri_vbox.addWidget(cb)
