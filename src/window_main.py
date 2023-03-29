@@ -61,12 +61,23 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.qsig_hwinfo.connect(
             lambda create, text: self.hwinfo_vbox.addWidget(create(text)))
     
-    def send_msg(self, text: str): 
+    # override
+    def closeEvent(self, event):
+        QtWidgets.QApplication.closeAllWindows()  # force close all windows
+        super().closeEvent(event)
+    
+    def send_msg(self, text: str):
+        """display a message to the UI (message box)
+
+        Args:
+            text (str): message to be displayed
+        """
         self.prog_msg_box.addItem(f"> {text}")
         self.prog_msg_box.verticalScrollBar().setValue(
             self.prog_msg_box.verticalScrollBar().maximum())  # scroll to bottom
     
     def refresh_hwinfo(self):
+        """rescan and display the hardware information of the computer"""
         for i in reversed(range(self.hwinfo_vbox.count())):
             self.hwinfo_vbox.itemAt(i).widget().setParent(None)
         self.hwinfo_worker.start()
@@ -75,8 +86,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         pass
     
     def install(self):
+        """start the install process"""
         manager = InstallManager(self.qsig_msg, self.progr_window.qsig_progress)
-        manager.qsig_successful.connect(self.post_install)
+        manager.qsig_successful.connect(self._post_install)
         
         # terminate the remaining tasks when progress window is closed
         def prog_close():
@@ -113,7 +125,33 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         else:
             manager.manual_install()
 
-    def post_install(self, success: bool):
+    def set_at_options(self, enable: bool):
+        for option in self.exec_options.children():
+            if (option.objectName() != self.at_install_cb.objectName()
+                    and isinstance(option, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
+                option.setEnabled(enable)
+
+    def get_selected_dri(self) -> list[Driver]:
+        dri = []
+        # network driver
+        if self.lan_driver_dropdown.currentData() is not None:
+            dri.append(self.driconfg.get(self.lan_driver_dropdown.currentData()))
+        # display driver
+        if self.display_dri_dropdown.currentData() is not None:
+            dri.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
+        # miscellaneous driver
+        for child in self.misc_dri_vbox.children():
+            if not isinstance(child, DriverOptionCheckBox) or not child.isChecked():
+                continue
+            dri.append(self.driconfg.get(child.dri_id))
+        return dri
+    
+    def _post_install(self, success: bool):
+        """follow-up routine for the installation process
+
+        Args:
+            success (bool): whether the all drivers were installed successfully
+        """
         if not success:
             pass
         elif ((self.at_halt_rb.isCheckable() or self.at_halt_rb.isEnabled())
@@ -141,34 +179,14 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             
             if box.clickedButton() == btnclose:
                 exit(0)
-
-    def closeEvent(self, event):
-        # print(QtWidgets.QApplication.topLevelWidgets())
-        QtWidgets.QApplication.closeAllWindows()  # force close all windows
-        super().closeEvent(event)
-
-    def set_at_options(self, enable: bool):
-        for option in self.exec_options.children():
-            if (option.objectName() != self.at_install_cb.objectName()
-                    and isinstance(option, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
-                option.setEnabled(enable)
-
-    def get_selected_dri(self) -> list[Driver]:
-        dri = []
-        # network driver
-        if self.lan_driver_dropdown.currentData() is not None:
-            dri.append(self.driconfg.get(self.lan_driver_dropdown.currentData()))
-        # display driver
-        if self.display_dri_dropdown.currentData() is not None:
-            dri.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
-        # miscellaneous driver
-        for child in self.misc_dri_vbox.children():
-            if not isinstance(child, DriverOptionCheckBox) or not child.isChecked():
-                continue
-            dri.append(self.driconfg.get(child.dri_id))
-        return dri
     
     def _dri_on_select(self):
+        """analyse and update execution options for auto installation mode
+        based on user selection on to be installed drivers
+        
+        if selected drivers contains non-autoable drivers,\
+            disable execution options for auto installation mode
+        """
         autoable = all([dri.autoable for dri in self.get_selected_dri()])
         
         self.at_halt_rb.setEnabled(autoable)
