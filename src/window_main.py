@@ -140,10 +140,11 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         if self.display_dri_dropdown.currentData() is not None:
             dri.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
         # miscellaneous driver
-        for child in self.misc_dri_vbox.children():
-            if not isinstance(child, DriverOptionCheckBox) or not child.isChecked():
+        for i in range(self.misc_dri_vbox.count()):
+            widget = self.misc_dri_vbox.itemAt(i).widget()
+            if not isinstance(widget, DriverOptionCheckBox) or not widget.isChecked():
                 continue
-            dri.append(self.driconfg.get(child.dri_id))
+            dri.append(self.driconfg.get(widget.dri_id))
         return dri
     
     def _post_install(self, success: bool):
