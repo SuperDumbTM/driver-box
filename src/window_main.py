@@ -148,10 +148,10 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         super().closeEvent(event)
 
     def set_at_options(self, enable: bool):
-        for widget in self.widget.children():
-            if (widget.objectName() != self.at_install_cb.objectName()
-                and isinstance(widget, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
-                widget.setEnabled(enable)
+        for option in self.exec_options.children():
+            if (option.objectName() != self.at_install_cb.objectName()
+                    and isinstance(option, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
+                option.setEnabled(enable)
 
     def get_selected_dri(self) -> list[Driver]:
         ids = []
