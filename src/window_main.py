@@ -178,7 +178,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             box.exec_()
             
             if box.clickedButton() == btnclose:
-                exit(0)
+                QtWidgets.qApp.exit(0)
     
     def _dri_on_select(self):
         """analyse and update execution options for auto installation mode
