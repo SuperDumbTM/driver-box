@@ -154,20 +154,19 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 option.setEnabled(enable)
 
     def get_selected_dri(self) -> list[Driver]:
-        ids = []
+        dri = []
         # network driver
         if self.lan_driver_dropdown.currentData() is not None:
-            ids.append(self.driconfg.get(self.lan_driver_dropdown.currentData()))
+            dri.append(self.driconfg.get(self.lan_driver_dropdown.currentData()))
         # display driver
         if self.display_dri_dropdown.currentData() is not None:
-            ids.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
+            dri.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
         # miscellaneous driver
-        for i in range(self.misc_dri_vbox.count()):
-            cb: DriverOptionCheckBox = self.misc_dri_vbox.itemAt(i).widget()
-            if not cb.isChecked():
+        for child in self.misc_dri_vbox.children():
+            if not isinstance(child, DriverOptionCheckBox) or not child.isChecked():
                 continue
-            ids.append(self.driconfg.get(cb.dri_id))
-        return ids
+            dri.append(self.driconfg.get(child.dri_id))
+        return dri
     
     def _dri_on_select(self):
         autoable = all([dri.autoable for dri in self.get_selected_dri()])
