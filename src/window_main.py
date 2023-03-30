@@ -1,4 +1,3 @@
-import sys
 import os
 import threading
 from subprocess import Popen
@@ -11,7 +10,7 @@ from widgets.driver_checkbox import DriverOptionCheckBox
 from hw_info_worker import HwInfoWorker
 from window_progress import ProgressWindow
 from window_driver import DriverConfigViewerWindow
-from install.configuration import Driver, DriverType, DriverConfig
+from install.configuration import Driver, DriverConfig
 from install.install_manager import InstallManager
 from install.task import Task
 

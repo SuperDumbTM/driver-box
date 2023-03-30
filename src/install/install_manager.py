@@ -2,7 +2,6 @@ import time
 import queue
 import threading
 import itertools
-import multiprocessing
 
 from PyQt5 import QtCore
 

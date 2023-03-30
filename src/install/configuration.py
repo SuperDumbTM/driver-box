@@ -2,9 +2,8 @@ import os
 import json
 import random
 import string
-import pathlib
 from enum import Enum
-from typing import Any, Final, Literal, Optional, Union
+from typing import Any, Final, Optional, Union
 from dataclasses import asdict, dataclass
 
 
@@ -103,10 +102,10 @@ class DriverConfig:
         """
         _type, _id = self._locate(dri_id)
         return self._data[_type][_id]
-    
+
     def get_type(self, dri_type: DriverType) -> list[Driver]:
         """Retrive driver configurations by driver type
-        
+
         Args:
             dri_type (DriverType): Type of drivers
 

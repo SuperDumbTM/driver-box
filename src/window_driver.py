@@ -1,5 +1,4 @@
 import os
-from typing import Literal
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
