@@ -1,6 +1,7 @@
 import os
 import threading
 from subprocess import Popen
+from typing import Iterator
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -55,6 +56,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.install_btn.clicked.connect(self.install)
         self.edit_driver_action.triggered.connect(self.dri_conf_window.show)
         self.at_install_cb.clicked.connect(lambda val:self.set_at_options(val))
+        self.dri_opt_reset_btn.clicked.connect(self._dri_opt_reset)
         # ---------- signals ----------
         self.qsig_msg.connect(self.send_msg)
         self.qsig_hwinfo.connect(
@@ -139,8 +141,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         if self.display_dri_dropdown.currentData() is not None:
             dri.append(self.driconfg.get(self.display_dri_dropdown.currentData()))
         # miscellaneous driver
-        for i in range(self.misc_dri_vbox.count()):
-            widget = self.misc_dri_vbox.itemAt(i).widget()
+        for widget in self._misc_options():
             if not isinstance(widget, DriverOptionCheckBox) or not widget.isChecked():
                 continue
             dri.append(self.driconfg.get(widget.dri_id))
@@ -194,3 +195,15 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.at_nothing_rb.setEnabled(autoable)
         if not autoable:
             self.at_nothing_rb.setChecked(True)
+
+    def _dri_opt_reset(self):
+        self.lan_driver_dropdown.setCurrentIndex(0)
+        self.display_dri_dropdown.setCurrentIndex(0)
+        for widget in self._misc_options():
+            widget.setChecked(False)
+
+    def _misc_options(self) -> list[QtWidgets.QCheckBox]:
+        """Returns all "miscellaneous" driver options
+        """
+        return [self.misc_dri_vbox.itemAt(i).widget()
+                for i in range(self.misc_dri_vbox.count())]
