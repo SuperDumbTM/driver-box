@@ -71,7 +71,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
 
     def save(self):
         dri = self._get_driver()
-        if dri.is_validate():
+        if dri.is_validate(self.dri_id is None):
             self.qsig_save.emit(dri)
             self.close()
         else:
@@ -80,7 +80,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
 
     def delete(self):
         dri = self._get_driver()
-        if dri.is_validate():
+        if dri.is_validate(self.dri_id is None):
             self.qsig_del.emit(dri)
             self.close()
         else:
