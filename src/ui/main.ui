@@ -324,7 +324,7 @@
                   <string>自動關機</string>
                  </property>
                  <property name="checked">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -338,6 +338,9 @@
                  </property>
                  <property name="text">
                   <string>自動重啟</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -377,6 +380,9 @@
                  </property>
                  <property name="text">
                   <string>同步安裝</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
