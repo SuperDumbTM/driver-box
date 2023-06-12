@@ -17,7 +17,7 @@ def main():
     if not os.path.exists(definitions.DIR_CONF):
         os.mkdir(definitions.DIR_CONF)
 
-    while exit_code is None or exit_code == definitions.UI_RESTART_CODE:
+    while exit_code is None or exit_code == definitions.UI_RERENDER_CODE:
         main_window = MainWindow(
             configuration.DriverConfig(
                 os.path.join(definitions.DIR_CONF, "driver.json"),

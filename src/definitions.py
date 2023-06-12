@@ -21,4 +21,4 @@ DIR_FLAG_PRESETS = {
     "AMD Chipset": ["/S"]
 }
 
-UI_RESTART_CODE = -11354
+UI_RERENDER_CODE = -11354
