@@ -170,13 +170,11 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             pass
         elif ((self.at_halt_rb.isCheckable() or self.at_halt_rb.isEnabled())
               and self.at_halt_rb.isChecked()):
-            t = threading.Timer(5, lambda: commands.shutdown())
-            t.start()
+            threading.Timer(5, lambda: commands.shutdown()).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
         elif ((self.at_reboot_rb.isCheckable() or self.at_reboot_rb.isEnabled())
               and self.at_reboot_rb.isChecked()):
-            t = threading.Timer(5, lambda: commands.reboot())
-            t.start()
+            threading.Timer(5, lambda: commands.reboot()).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
         else:
             box = QtWidgets.QMessageBox()
