@@ -8,11 +8,17 @@ _WMI = wmi.WMI()
 
 
 def shutdown(timeout: Union[int, float] = 1):
-    return Popen(["shutdown", "/s", "/t", timeout], stdout=sys.stdout)
+    return Popen(["shutdown", "/s", "/t", str(timeout)], shell=True, stdout=sys.stdout)
 
 
 def reboot(timeout: Union[int, float] = 1):
-    return Popen(["shutdown", "/r", "/t", timeout], stdout=sys.stdout)
+    return Popen(["shutdown", "/r", "/t", str(timeout)], shell=True, stdout=sys.stdout)
+
+
+def cancel_halt():
+    """Cancel scheduled shutdown/reboot
+    """
+    return Popen(["shutdown", "/a"], shell=True, stdout=sys.stdout)
 
 
 def set_password(username: str, password: Optional[str]):

@@ -94,6 +94,14 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         manager = InstallManager(self.qsig_msg, self.progr_window.qsig_progress)
         manager.qsig_successful.connect(self._post_install)
         
+        # set password
+        if self.set_passwd_cb.isChecked():
+            commands.set_password(
+                commands.get_current_usrname(),
+                self.set_passwd_txt.toPlainText())
+            self.send_msg(
+                f"{commands.get_current_usrname()} 的密碼已更改為 '{self.set_passwd_txt.toPlainText()}'")
+        
         # terminate the remaining tasks when progress window is closed
         def prog_close():
             nonlocal self, manager
@@ -106,12 +114,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         for dri_conf in self.get_selected_dri():
             self.progr_window.append_progress(dri_conf, "等待安裝中")
             manager.add_task(Task(dri_conf))
-        
-        # set password
-        if self.set_passwd_cb.isChecked():
-            commands.set_password(
-                commands.get_current_usrname,
-                self.set_passwd_txt.toPlainText())
 
         # start install
         if len(manager) == 0:
