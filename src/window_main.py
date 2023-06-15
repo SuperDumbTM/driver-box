@@ -5,6 +5,7 @@ from subprocess import Popen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
+from enums.install_status import InstallStatus
 from ui.main import Ui_MainWindow
 from utils import commands
 from widgets.driver_checkbox import DriverOptionCheckBox
@@ -92,7 +93,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     def install(self):
         """Start the install process"""
         manager = InstallManager(self.qsig_msg, self.progr_window.qsig_progress)
-        manager.qsig_successful.connect(self._post_install)
+        manager.qsig_install_status.connect(self._post_install)
         
         # set password
         if self.set_passwd_cb.isChecked():
@@ -159,13 +160,13 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             dri.append(self.driconfg.get(widget.dri_id))
         return dri
     
-    def _post_install(self, success: bool):
+    def _post_install(self, status: InstallStatus):
         """Follow-up routine for the installation process
 
         Args:
             success (bool): whether the all drivers were installed successfully
-        """
-        if not success and not self.at_retry_cb.isChecked():
+        """            
+        if status != InstallStatus.SUCCESS:
             pass
         elif ((self.at_halt_rb.isCheckable() or self.at_halt_rb.isEnabled())
               and self.at_halt_rb.isChecked()):

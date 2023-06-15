@@ -5,6 +5,8 @@ import itertools
 
 from PyQt5 import QtCore
 
+from enums.install_status import InstallStatus
+
 try:
     from task import Task
     from window_progress import ProgressWindow
@@ -22,7 +24,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     live_tasks: dict[str, Task]
     fails: list[Task]
     
-    qsig_successful = QtCore.pyqtSignal(bool)
+    qsig_install_status = QtCore.pyqtSignal(InstallStatus)
     
     def __init__(self,
                  qsig_msg: QtCore.pyqtSignal,
@@ -60,16 +62,18 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         while paralle and any([t.is_alive() for t in self.live_tasks.values()]):
             time.sleep(1)
         # ---------- finish all task ----------
-        self.qsig_successful.emit(
-            not any([t.is_aborted for t in self.tasks])
-            and len(self.fails) <= 0
-        )
+        if (any([t.is_aborted for t in self.tasks])):
+            self.qsig_install_status.emit(InstallStatus.ABORTED)
+        elif (len(self.fails) > 0):
+            self.qsig_install_status.emit(InstallStatus.FAILED)
+        else:
+            self.qsig_install_status.emit(InstallStatus.SUCCESS)
         
         if man_fallback and len(self.fails) > 0:
             self.qsig_msg.emit("有軀動程式安裝失敗，將以手動安裝模式重試")
             while self.fails:
                 self.todos.put(self.fails.pop(0))
-                self.manual_install()
+            self.manual_install()
         else:
             self.qsig_msg.emit("已完成安裝所有選擇的軀動程式")
     
@@ -128,7 +132,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 self.qsig_msg.emit(f"{e} ({task.driver.name})")
                 
     def abort(self):
-        self.fails = []
+        self.fails.clear()
         with self.todos.mutex:
             self.todos.queue.clear()
         
