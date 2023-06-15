@@ -108,10 +108,10 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             manager.add_task(Task(dri_conf))
         
         # set password
-        # if self.set_passwd_cb.isChecked():
-        #     commands.set_password(
-        #         commands.get_current_usrname,
-        #         self.set_passwd_txt.toPlainText())
+        if self.set_passwd_cb.isChecked():
+            commands.set_password(
+                commands.get_current_usrname,
+                self.set_passwd_txt.toPlainText())
 
         # start install
         if len(manager) == 0:
