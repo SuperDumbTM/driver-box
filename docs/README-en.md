@@ -12,13 +12,13 @@ Easy-to-use driver installer
   - [Install Setting](#install-setting)
   - [Driver Management](#driver-management)
 
-![main_window](https://user-images.githubusercontent.com/71750702/228422633-749c6b4b-f925-41ef-b9fa-65bcd111bccf.png)
+![main_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/89393ded-61d2-4d6b-b8b8-515fa17ae990)
 
 ![progress_window](https://user-images.githubusercontent.com/71750702/226849659-71b77b32-eefb-4649-9865-74050818e249.png)
 
 ## Download
 The Program<br>
-[![version](https://img.shields.io/badge/version-0.4.2-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/latest)
+[![version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/latest)
 
 Driver Pack<br>
 [Google Drive](https://drive.google.com/drive/folders/1VqND0o75oBR80Ft2IK8WjTTbXaezmajw?usp=sharing)
