@@ -22,12 +22,10 @@ def cancel_halt():
 
 
 def set_password(username: str, password: Optional[str]):
-    if password is not str or password is not None:
-        raise TypeError("Password only accepts string or None")
-    elif len(password) > 0:
+    if len(password) > 0:
         return Popen(
             ["powershell.exe", "Set-LocalUser", "-Name", username, "-Password",
-                f"(ConverTo-SecureString {password} -AsPlainText -Force)"],
+                f"(ConverTo-SecureString {str(password)} -AsPlainText -Force)"],
             stdout=sys.stdout)
     else:
         return Popen(
