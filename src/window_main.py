@@ -101,7 +101,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 commands.get_current_usrname(),
                 self.set_passwd_txt.toPlainText())
             self.send_msg(
-                f"{commands.get_current_usrname()} 的密碼已更改為 '{self.set_passwd_txt.toPlainText()}'")
+                f"{commands.get_current_usrname()} 的密碼已更改為 \"'{self.set_passwd_txt.toPlainText()}\"")
         
         # terminate the remaining tasks when progress window is closed
         def prog_close():
