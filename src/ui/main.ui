@@ -360,7 +360,7 @@
                <item row="5" column="1" rowspan="2">
                 <widget class="QPlainTextEdit" name="set_passwd_txt">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -416,7 +416,7 @@
                   <string>設定密碼</string>
                  </property>
                  <property name="checked">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
