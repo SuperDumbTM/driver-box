@@ -42,7 +42,7 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         self._progresses.update({driver.id: row})
         return row
 
-    def update_progress(self, driver: Driver, message: str, level: InstallProgress):
+    def update_progress(self, driver: Driver, message: str, progress: InstallProgress):
         """Update the status of an "driver install progress\"
 
         Args:
@@ -51,16 +51,17 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
             level (str): message type of progress
         """
         item = QtWidgets.QTableWidgetItem(message)
-        item.setBackground(self._status_color(level))
-        self.progr_table.setItem(self._progresses[driver.id], 1, item)
+        item.setBackground(self._status_color(progress))
 
+        self.progr_table.setItem(self._progresses[driver.id], 1, item)
         self.progr_table.resizeRowsToContents()
 
-    def clear_progress(self) -> None:
-        """Remove all existing "driver install progress" from the UI"""
+    def clear_progresses(self) -> None:
+        """Remove all "driver install progress" from the UI"""
         for i in range(self.progr_table.rowCount(), -1, -1):
             self.progr_table.removeRow(i)
 
+    # override
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         self.qsig_close.emit()
         return super().closeEvent(a0)

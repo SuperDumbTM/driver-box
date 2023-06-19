@@ -111,7 +111,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 self.send_msg("已終止安裝")
         self.progr_window.qsig_close.connect(prog_close)
         
-        self.progr_window.clear_progress()
+        self.progr_window.clear_progresses()
         for dri_conf in self.get_selected_dri():
             self.progr_window.append_progress(dri_conf, "等待安裝中")
             manager.add_task(Task(dri_conf))
