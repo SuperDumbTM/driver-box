@@ -179,9 +179,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         Args:
             success (bool): whether the all drivers were installed successfully
         """
-        print(status)
-        if (status != InstallStatus.SUCCESS):
-            pass
+        if (status != InstallStatus.SUCCESS
+            and not (status != InstallStatus.ABORTED and not self.at_retry_cb.isChecked())):
+            pass            
         elif (is_widget_enabled(self.at_halt_rb)
               and self.at_halt_rb.isChecked()):
             threading.Timer(5, lambda: commands.shutdown()).start()
