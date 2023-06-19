@@ -93,7 +93,7 @@
                 </sizepolicy>
                </property>
                <property name="statusTip">
-                <string>重新載入本機硬件配置</string>
+                <string>重新載入電腦硬件配置。</string>
                </property>
                <property name="text">
                 <string>重新載入</string>
@@ -279,7 +279,7 @@
              <item>
               <widget class="QGroupBox" name="misc_dri_group_box">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -290,12 +290,50 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>160</height>
+                </size>
+               </property>
                <property name="title">
                 <string>其他</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
-                 <layout class="QVBoxLayout" name="misc_dri_vbox"/>
+                 <widget class="QScrollArea" name="misc_dri_scroll_area">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="verticalScrollBarPolicy">
+                   <enum>Qt::ScrollBarAsNeeded</enum>
+                  </property>
+                  <property name="widgetResizable">
+                   <bool>true</bool>
+                  </property>
+                  <widget class="QWidget" name="misc_dri_scroll_area_content">
+                   <property name="geometry">
+                    <rect>
+                     <x>0</x>
+                     <y>0</y>
+                     <width>165</width>
+                     <height>101</height>
+                    </rect>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_3">
+                    <item>
+                     <layout class="QVBoxLayout" name="misc_dri_vbox">
+                      <property name="sizeConstraint">
+                       <enum>QLayout::SetFixedSize</enum>
+                      </property>
+                     </layout>
+                    </item>
+                   </layout>
+                  </widget>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -335,7 +373,7 @@
                  <item>
                   <widget class="QCheckBox" name="at_install_cb">
                    <property name="statusTip">
-                    <string>自動安裝所有軀動</string>
+                    <string>自動安裝所有軀動。</string>
                    </property>
                    <property name="text">
                     <string>自動安裝</string>
@@ -346,9 +384,22 @@
                   </widget>
                  </item>
                  <item>
+                  <widget class="QCheckBox" name="async_install_cb">
+                   <property name="statusTip">
+                    <string>同時安裝所有軀動，有機會導致安裝失敗。</string>
+                   </property>
+                   <property name="text">
+                    <string>同步安裝</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QCheckBox" name="at_retry_cb">
                    <property name="statusTip">
-                    <string>如有軀動程式以自動模式安裝失敗，將以手動模式重試</string>
+                    <string>如有任何軀動程式以自動模式安裝失敗，將以手動模式重試。</string>
                    </property>
                    <property name="text">
                     <string>失敗重試</string>
@@ -367,19 +418,6 @@
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QCheckBox" name="async_install_cb">
-                   <property name="statusTip">
-                    <string>同步安裝所有軀動，有機會導致安裝失敗</string>
-                   </property>
-                   <property name="text">
-                    <string>同步安裝</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
               </item>
@@ -389,7 +427,7 @@
                  <item>
                   <widget class="QRadioButton" name="at_nothing_rb">
                    <property name="statusTip">
-                    <string>成功安裝所有軀動後不執行任何動作</string>
+                    <string>成功安裝所有軀動後不執行任何動作。</string>
                    </property>
                    <property name="whatsThis">
                     <string/>
@@ -402,7 +440,7 @@
                  <item>
                   <widget class="QRadioButton" name="at_halt_rb">
                    <property name="statusTip">
-                    <string>成功安裝所有軀動後自動關機</string>
+                    <string>成功安裝所有軀動後自動關機。</string>
                    </property>
                    <property name="text">
                     <string>自動關機</string>
@@ -418,7 +456,7 @@
                  <item>
                   <widget class="QRadioButton" name="at_reboot_rb">
                    <property name="statusTip">
-                    <string>成功安裝所有軀動後自動重新開機</string>
+                    <string>成功安裝所有軀動後自動重新開機。</string>
                    </property>
                    <property name="text">
                     <string>自動重啟</string>
