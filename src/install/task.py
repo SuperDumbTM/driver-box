@@ -1,4 +1,7 @@
 import os
+import time
+import struct
+import subprocess
 from dataclasses import dataclass, field
 import subprocess
 
@@ -24,7 +27,10 @@ class Task:
     @property
     def rtcode(self):
         """Return code of the execution. `None` if the execution is not yet started or finished"""
-        return None if self.process is None else self.process.returncode
+        try:
+            return None if self.process is None else struct.unpack('i', struct.pack('I', self.process.returncode))[0]
+        except IndexError:
+            return self.process.returncode
 
     @property
     def messages(self) -> list[str]:
