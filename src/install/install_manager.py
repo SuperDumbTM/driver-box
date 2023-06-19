@@ -4,16 +4,13 @@ import threading
 import itertools
 
 from PyQt5 import QtCore
-from enums.install_progress import InstallProgress
 
 from enums.install_status import InstallStatus
 
 try:
     from task import Task
-    from window_progress import ProgressWindow
 except ImportError:
     from .task import Task
-    from window_progress import ProgressWindow
 
 
 class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
@@ -25,7 +22,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     live_tasks: dict[str, Task]
     fails: list[Task]
     
-    qsig_install_status = QtCore.pyqtSignal(InstallStatus)
+    qsig_install_result = QtCore.pyqtSignal(InstallStatus)
     
     def __init__(self,
                  qsig_msg: QtCore.pyqtSignal,
@@ -64,11 +61,11 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             time.sleep(1)
         # ---------- finish all task ----------
         if (any([t.is_aborted for t in self.tasks])):
-            self.qsig_install_status.emit(InstallStatus.ABORTED)
+            self.qsig_install_result.emit(InstallStatus.ABORTED)
         elif (len(self.fails) > 0):
-            self.qsig_install_status.emit(InstallStatus.FAILED)
+            self.qsig_install_result.emit(InstallStatus.FAILED)
         else:
-            self.qsig_install_status.emit(InstallStatus.SUCCESS)
+            self.qsig_install_result.emit(InstallStatus.SUCCESS)
         
         if man_fallback and len(self.fails) > 0:
             self.qsig_msg.emit("有軀動程式安裝失敗，將以手動安裝模式重試")
@@ -90,7 +87,8 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 if not task.is_alive():
                     break
                 time.sleep(0.1)
-                self.qsig_progr.emit(task.driver, pbar[i % len(pbar)], InstallProgress.INFO)
+                self.qsig_progr.emit(
+                    task.driver, InstallStatus.INPROGRESS, pbar[i % len(pbar)])
             exe_time = time.time() - exe_time
             
             # emit message from the executable
@@ -104,19 +102,19 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             15: setup has completed successfully and a system restart has been initiated
             """
             if task.is_aborted:
-                self.qsig_progr.emit(task.driver, "已取消", InstallProgress.WARN)
+                self.qsig_progr.emit(task.driver, InstallStatus.ABORTED, "已取消")
             elif task.rtcode not in (0, 13, 14, 15) or exe_time <= 5:
                 self.fails.append(task)
                 if exe_time <= 5 and task.rtcode is None:
-                    self.qsig_progr.emit(task.driver, "執行時間小於5秒", InstallProgress.WARN)
+                    self.qsig_progr.emit(task.driver, InstallStatus.EXITED, "執行時間小於5秒")
                 else:
-                    self.qsig_progr.emit(task.driver, f"失敗，錯誤代碼：[{task.rtcode}]", InstallProgress.FAIL)
+                    self.qsig_progr.emit(task.driver, InstallStatus.FAILED, f"失敗，錯誤代碼：[{task.rtcode}]")
             else:
-                self.qsig_progr.emit(task.driver, "完成", InstallProgress.PASS)
+                self.qsig_progr.emit(task.driver, InstallStatus.SUCCESS, "完成")
             # ---------- end thread ----------
         except Exception as e:
             self.fails.append(task)
-            self.qsig_progr.emit(task.driver, "失敗", InstallProgress.FAIL)
+            self.qsig_progr.emit(task.driver, InstallStatus.FAILED, "失敗")
             self.qsig_msg.emit(f"[{task.driver.name}] {e}")
         finally:
             # self.qsig_msg.emit(f"[{task.driver.name}] 完成安裝")

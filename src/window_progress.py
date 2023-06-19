@@ -1,16 +1,17 @@
 import os
+from typing import Optional
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from enums.install_progress import InstallProgress
+from enums.install_status import InstallStatus
 from ui.progress import Ui_InstallProgress
 from install.configuration import Driver
 
 
 class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
 
-    qsig_progress = QtCore.pyqtSignal(Driver, str, InstallProgress)
+    qsig_progress = QtCore.pyqtSignal(Driver, InstallStatus, str)
     qsig_close = QtCore.pyqtSignal()
 
     def __init__(self, parent: QtWidgets.QWidget = None) -> None:
@@ -42,7 +43,7 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         self._progresses.update({driver.id: row})
         return row
 
-    def update_progress(self, driver: Driver, message: str, progress: InstallProgress):
+    def update_progress(self, driver: Driver, progress: InstallStatus, message: str):
         """Update the status of an "driver install progress\"
 
         Args:
@@ -66,17 +67,17 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         self.qsig_close.emit()
         return super().closeEvent(a0)
 
-    def _status_color(self, progress: InstallProgress) -> QtGui.QColor:
+    def _status_color(self, progress: InstallStatus) -> QtGui.QColor:
         """Gets the color to display for `status`
 
         Args:
             level (str): The status of the installation
         """
-        if progress == InstallProgress.WARN:
+        if progress == InstallStatus.EXITED:
             return QtGui.QColor(230, 207, 0, 255)
-        elif progress == InstallProgress.PASS:
+        elif progress == InstallStatus.SUCCESS:
             return QtGui.QColor(0, 179, 12, 200)
-        elif progress == InstallProgress.FAIL:
+        elif progress in (InstallStatus.FAILED, InstallStatus.ABORTED):
             return QtGui.QColor(171, 34, 34, 200)
         else:
             return QtGui.QColor(255, 255, 255, 1)

@@ -93,7 +93,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     def install(self):
         """Start the install process"""
         manager = InstallManager(self.qsig_msg, self.progr_window.qsig_progress)
-        manager.qsig_install_status.connect(self._post_install)
+        manager.qsig_install_result.connect(self._post_install)
         
         # set password
         if self.set_passwd_cb.isChecked():
