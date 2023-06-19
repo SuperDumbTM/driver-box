@@ -86,7 +86,7 @@ class Task:
 
     def is_alive(self) -> bool:
         """Return whether the executable is still executing"""
-        return self.process is not None and self.process.poll() is None
+        return self.process is None or self.process.poll() is None
 
     def abort(self):
         """Terminate the execution"""
