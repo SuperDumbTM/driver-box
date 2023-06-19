@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(768, 464)
+        MainWindow.resize(768, 467)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -65,7 +65,7 @@ class Ui_MainWindow(object):
         self.hwinfo_scroll_area.setWidgetResizable(True)
         self.hwinfo_scroll_area.setObjectName("hwinfo_scroll_area")
         self.hwinfo_scroll_area_content = QtWidgets.QWidget()
-        self.hwinfo_scroll_area_content.setGeometry(QtCore.QRect(0, 0, 313, 325))
+        self.hwinfo_scroll_area_content.setGeometry(QtCore.QRect(0, 0, 325, 326))
         self.hwinfo_scroll_area_content.setObjectName("hwinfo_scroll_area_content")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.hwinfo_scroll_area_content)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
@@ -163,7 +163,7 @@ class Ui_MainWindow(object):
         self.misc_dri_scroll_area.setWidgetResizable(True)
         self.misc_dri_scroll_area.setObjectName("misc_dri_scroll_area")
         self.misc_dri_scroll_area_content = QtWidgets.QWidget()
-        self.misc_dri_scroll_area_content.setGeometry(QtCore.QRect(0, 0, 165, 101))
+        self.misc_dri_scroll_area_content.setGeometry(QtCore.QRect(0, 0, 159, 101))
         self.misc_dri_scroll_area_content.setObjectName("misc_dri_scroll_area_content")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.misc_dri_scroll_area_content)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -311,7 +311,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_4, 0, 3, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 768, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 768, 24))
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
         self.menu.setObjectName("menu")
@@ -332,7 +332,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "OneClick Driver Installer"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "OneClick Drivers Installer"))
         self.hwinfo_group_box.setTitle(_translate("MainWindow", "電腦硬件配置"))
         self.hwInfo_refresh_btn.setStatusTip(_translate("MainWindow", "重新載入電腦硬件配置。"))
         self.hwInfo_refresh_btn.setText(_translate("MainWindow", "重新載入"))
