@@ -4,6 +4,7 @@ import threading
 import itertools
 
 from PyQt5 import QtCore
+from enums.install_progress import InstallProgress
 
 from enums.install_status import InstallStatus
 
@@ -89,7 +90,7 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 if not task.is_alive():
                     break
                 time.sleep(0.1)
-                self.qsig_progr.emit(task.driver, pbar[i % len(pbar)], ProgressWindow.INFO)
+                self.qsig_progr.emit(task.driver, pbar[i % len(pbar)], InstallProgress.INFO)
             exe_time = time.time() - exe_time
             
             # emit message from the executable
@@ -103,19 +104,19 @@ class InstallManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             15: setup has completed successfully and a system restart has been initiated
             """
             if task.is_aborted:
-                self.qsig_progr.emit(task.driver, "已取消", ProgressWindow.WARN)
+                self.qsig_progr.emit(task.driver, "已取消", InstallProgress.WARN)
             elif task.rtcode not in (0, 13, 14, 15) or exe_time <= 5:
                 self.fails.append(task)
                 if exe_time <= 5 and task.rtcode is None:
-                    self.qsig_progr.emit(task.driver, "執行時間小於5秒", ProgressWindow.WARN)
+                    self.qsig_progr.emit(task.driver, "執行時間小於5秒", InstallProgress.WARN)
                 else:
-                    self.qsig_progr.emit(task.driver, f"失敗，錯誤代碼：[{task.rtcode}]", ProgressWindow.FAIL)
+                    self.qsig_progr.emit(task.driver, f"失敗，錯誤代碼：[{task.rtcode}]", InstallProgress.FAIL)
             else:
-                self.qsig_progr.emit(task.driver, "完成", ProgressWindow.PASS)
+                self.qsig_progr.emit(task.driver, "完成", InstallProgress.PASS)
             # ---------- end thread ----------
         except Exception as e:
             self.fails.append(task)
-            self.qsig_progr.emit(task.driver, "失敗", ProgressWindow.FAIL)
+            self.qsig_progr.emit(task.driver, "失敗", InstallProgress.FAIL)
             self.qsig_msg.emit(f"[{task.driver.name}] {e}")
         finally:
             # self.qsig_msg.emit(f"[{task.driver.name}] 完成安裝")
