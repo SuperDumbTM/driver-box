@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>476</height>
+    <width>768</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -120,7 +120,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>313</width>
-                <height>337</height>
+                <height>325</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -143,6 +143,12 @@
         </property>
         <item>
          <widget class="QWidget" name="ur_hbox" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="statusTip">
            <string>選擇需要安裝的軀動程式</string>
           </property>
@@ -161,7 +167,7 @@
              <item>
               <widget class="QGroupBox" name="lan_dri_group_box">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -215,7 +221,7 @@
              <item>
               <widget class="QGroupBox" name="display_dri_group_box">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -310,205 +316,229 @@
           <item>
            <layout class="QVBoxLayout" name="install_option_vboc">
             <item>
-             <widget class="QWidget" name="exec_options" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <layout class="QGridLayout" name="exec_options_gridbox">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetFixedSize</enum>
               </property>
-              <property name="statusTip">
-               <string/>
+              <property name="bottomMargin">
+               <number>0</number>
               </property>
-              <layout class="QGridLayout" name="gridLayout_2">
-               <item row="0" column="1">
-                <widget class="QRadioButton" name="at_nothing_rb">
-                 <property name="statusTip">
-                  <string>成功安裝所有軀動後不執行任何動作</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>毋須關機</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0" colspan="2">
-                <widget class="Line" name="line">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QRadioButton" name="at_halt_rb">
-                 <property name="statusTip">
-                  <string>成功安裝所有軀動後自動關機</string>
-                 </property>
-                 <property name="text">
-                  <string>自動關機</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1" rowspan="2">
-                <widget class="QPlainTextEdit" name="set_passwd_txt">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>100</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="sizeAdjustPolicy">
-                  <enum>QAbstractScrollArea::AdjustToContents</enum>
-                 </property>
-                 <property name="lineWrapMode">
-                  <enum>QPlainTextEdit::NoWrap</enum>
-                 </property>
-                 <property name="plainText">
-                  <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QCheckBox" name="at_init_disks_cb">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>初始化儲存裝置</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0" rowspan="2">
-                <widget class="QCheckBox" name="set_passwd_cb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="statusTip">
-                  <string>為現時登入的帳戶更改密碼</string>
-                 </property>
-                 <property name="text">
-                  <string>設定密碼</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QCheckBox" name="async_install_cb">
-                 <property name="statusTip">
-                  <string>同步安裝所有軀動，有機會導致安裝失敗</string>
-                 </property>
-                 <property name="text">
-                  <string>同步安裝</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QCheckBox" name="at_retry_cb">
-                 <property name="statusTip">
-                  <string>如有軀動程式以自動模式安裝失敗，將以手動模式重試</string>
-                 </property>
-                 <property name="text">
-                  <string>失敗重試</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <property name="autoRepeat">
-                  <bool>false</bool>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QRadioButton" name="at_reboot_rb">
-                 <property name="statusTip">
-                  <string>成功安裝所有軀動後自動重新開機</string>
-                 </property>
-                 <property name="text">
-                  <string>自動重啟</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QCheckBox" name="at_install_cb">
-                 <property name="statusTip">
-                  <string>自動安裝所有軀動</string>
-                 </property>
-                 <property name="text">
-                  <string>自動安裝</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <item row="0" column="0">
+               <widget class="QWidget" name="install_mode_options" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <widget class="QCheckBox" name="at_install_cb">
+                   <property name="statusTip">
+                    <string>自動安裝所有軀動</string>
+                   </property>
+                   <property name="text">
+                    <string>自動安裝</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="at_retry_cb">
+                   <property name="statusTip">
+                    <string>如有軀動程式以自動模式安裝失敗，將以手動模式重試</string>
+                   </property>
+                   <property name="text">
+                    <string>失敗重試</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                   <property name="autoRepeat">
+                    <bool>false</bool>
+                   </property>
+                   <property name="autoExclusive">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="async_install_cb">
+                   <property name="statusTip">
+                    <string>同步安裝所有軀動，有機會導致安裝失敗</string>
+                   </property>
+                   <property name="text">
+                    <string>同步安裝</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QWidget" name="halt_options" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout">
+                 <item>
+                  <widget class="QRadioButton" name="at_nothing_rb">
+                   <property name="statusTip">
+                    <string>成功安裝所有軀動後不執行任何動作</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string>毋須關機</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="at_halt_rb">
+                   <property name="statusTip">
+                    <string>成功安裝所有軀動後自動關機</string>
+                   </property>
+                   <property name="text">
+                    <string>自動關機</string>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
+                   </property>
+                   <property name="autoExclusive">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="at_reboot_rb">
+                   <property name="statusTip">
+                    <string>成功安裝所有軀動後自動重新開機</string>
+                   </property>
+                   <property name="text">
+                    <string>自動重啟</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                   <property name="autoExclusive">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="exec_actions" native="true">
-              <layout class="QVBoxLayout" name="verticalLayout_10">
-               <item>
-                <widget class="QPushButton" name="disk_mgt_btn">
-                 <property name="text">
-                  <string>開啟磁碟管理員</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="install_btn">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>執行</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+             <layout class="QGridLayout" name="additional_tasks">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetDefaultConstraint</enum>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item row="1" column="0">
+               <widget class="QCheckBox" name="set_passwd_cb">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="statusTip">
+                 <string>為現時登入的帳戶更改密碼</string>
+                </property>
+                <property name="text">
+                 <string>設定密碼</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QPlainTextEdit" name="set_passwd_txt">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="horizontalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QAbstractScrollArea::AdjustToContents</enum>
+                </property>
+                <property name="lineWrapMode">
+                 <enum>QPlainTextEdit::NoWrap</enum>
+                </property>
+                <property name="plainText">
+                 <string notr="true"/>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QCheckBox" name="at_init_disks_cb">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>初始化儲存裝置</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="exec_actions">
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="disk_mgt_btn">
+                <property name="text">
+                 <string>開啟磁碟管理員</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="install_btn">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>執行</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -580,7 +610,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>773</width>
+     <width>768</width>
      <height>23</height>
     </rect>
    </property>
