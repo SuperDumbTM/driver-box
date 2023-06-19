@@ -8,6 +8,7 @@ import definitions
 from enums.install_status import InstallStatus
 from ui.main import Ui_MainWindow
 from utils import commands
+from utils.qwidget import is_widget_enabled
 from widgets.driver_checkbox import DriverOptionCheckBox
 from hw_info_worker import HwInfoWorker
 from window_progress import ProgressWindow
@@ -74,7 +75,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         """
         self.prog_msg_box.addItem(f"> {text}")
         self.prog_msg_box.verticalScrollBar().setValue(
-            self.prog_msg_box.verticalScrollBar().maximum())  # scroll to bottom
+            self.prog_msg_box.verticalScrollBar().minimum())  # scroll to bottom
     
     def refresh_hwinfo(self):
         """Rescan and update the hardware information of the computer"""
@@ -163,7 +164,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         elif self.at_install_cb.isChecked():
             threading.Thread(
                 target=manager.auto_install,
-                args=[(self.at_retry_cb.isCheckable() or self.at_retry_cb.isEnabled())
+                args=[is_widget_enabled(self.at_retry_cb)
                         and self.at_retry_cb.isChecked(),
                       self.async_install_cb.isChecked(),
                       ],
@@ -177,23 +178,24 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
 
         Args:
             success (bool): whether the all drivers were installed successfully
-        """            
-        if status != InstallStatus.SUCCESS:
+        """
+        print(status)
+        if (status != InstallStatus.SUCCESS):
             pass
-        elif ((self.at_halt_rb.isCheckable() or self.at_halt_rb.isEnabled())
+        elif (is_widget_enabled(self.at_halt_rb)
               and self.at_halt_rb.isChecked()):
             threading.Timer(5, lambda: commands.shutdown()).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
-        elif ((self.at_reboot_rb.isCheckable() or self.at_reboot_rb.isEnabled())
+        elif (is_widget_enabled(self.at_reboot_rb)
               and self.at_reboot_rb.isChecked()):
             threading.Timer(5, lambda: commands.reboot()).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
         else:
             box = QtWidgets.QMessageBox()
-            box.setWindowTitle("完成")
+            # box.setWindowTitle("完成")
             box.setWindowIcon(self.windowIcon())
             box.setIcon(QtWidgets.QMessageBox.Information)
-            box.setText("搞掂")
+            box.setText("完成")
             box.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Close)
             btnok = box.button(QtWidgets.QMessageBox.Ok)
             btnok.setText("好")
