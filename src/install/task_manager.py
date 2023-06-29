@@ -51,9 +51,9 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         for task in (t for t in self.tasks if t.status in (InstallStatus.PENDING, InstallStatus.INPROGRESS)):
             task.abort()
             if task.status != InstallStatus.ABORTED: # fail to kill the process
-                self.qsig_msg.emit(f"未能終止 {task.driver.name}\uff01")
+                self.qsig_msg.emit(f"未能終止 {task.name}\uff01")
             else:
-                self.qsig_msg.emit(f"已終止安裝 {task.driver.name}")
+                self.qsig_msg.emit(f"已終止執行 {task.name}")
         
     def is_finished(self) -> bool:
         return all((task.status != InstallStatus.INPROGRESS for task in self.tasks))
@@ -85,7 +85,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     def __at_helper(self, task: Task):
         if task.is_aborted:
             return
-        self.qsig_msg.emit(f"開始安裝 {task.driver.name} (自動模式)")
+        self.qsig_msg.emit(f"開始安裝 {task.name} (自動模式)")
         
         t = threading.Thread(target=task.execute, daemon=True)
         t.start()
@@ -94,12 +94,12 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             if not task.is_alive():
                 break
             self.qsig_progr.emit(
-                task.driver, InstallStatus.INPROGRESS, _PBAR[i % len(_PBAR)])
+                task, InstallStatus.INPROGRESS, _PBAR[i % len(_PBAR)])
         t.join()
         
         # emit message from the executable
         for message in task.messages:
-            self.qsig_msg.emit(f"{task.driver.name}\uff1a{message}")
+            self.qsig_msg.emit(f"{task.name}\uff1a{message}")
         
         """    
         Intel igfx
@@ -109,27 +109,27 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         """
         if task.is_aborted:
             self.qsig_progr.emit(
-                task.driver, InstallStatus.ABORTED, "已取消")
+                task, InstallStatus.ABORTED, "已取消")
         elif task.status == InstallStatus.EXITED:
             self.qsig_progr.emit(
-                task.driver,
+                task,
                 task.status,
                 f"執行時間小於{task.abort_time}秒")
         elif task.exception is not None:
-            self.qsig_progr.emit(task.driver, task.status, "失敗")
-            self.qsig_msg.emit(f"[{task.driver.name}] {task.exception}")
+            self.qsig_progr.emit(task, task.status, "失敗")
+            self.qsig_msg.emit(f"[{task.name}] {task.exception}")
         elif task.rtcode not in (0, 13, 14, 15):
             self.qsig_progr.emit(
-                task.driver,
+                task,
                 InstallStatus.FAILED,
                 f"失敗，錯誤代碼：[{task.rtcode}]")
         else:
-            self.qsig_progr.emit(task.driver, InstallStatus.SUCCESS, "完成")
+            self.qsig_progr.emit(task, InstallStatus.SUCCESS, "完成")
             
     def manual_install(self):
         for task in (t for t in self.tasks if t.status == InstallStatus.PENDING):
-            self.qsig_msg.emit(f"開始安裝 {task.driver.name} (手動模式)")
+            self.qsig_msg.emit(f"開始安裝 {task.name} (手動模式)")
             try:
                 task.execute(no_options=True)
             except Exception as e:
-                self.qsig_msg.emit(f"{e} ({task.driver.name})")
+                self.qsig_msg.emit(f"{e} ({task.name})")

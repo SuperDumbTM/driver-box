@@ -5,13 +5,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
 from enums.install_status import InstallStatus
+from install.task import Task
 from ui.progress import Ui_InstallProgress
 from install.configuration import Driver
 
 
 class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
 
-    qsig_progress = QtCore.pyqtSignal(Driver, InstallStatus, str)
+    qsig_progress = QtCore.pyqtSignal(Task, InstallStatus, str)
     qsig_close = QtCore.pyqtSignal()
 
     def __init__(self, parent: QtWidgets.QWidget = None) -> None:
@@ -26,35 +27,34 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         self.qsig_progress.connect(self.update_progress)
         self._progresses: dict[str, int] = {}
 
-    def append_progress(self, driver: Driver, message: str) -> int:
+    def append_progress(self, task: Task, message: str) -> int:
         """Append and show a "driver install progress" to the UI
 
         Args:
-            driver (Driver): the driver of the installation which the progress is belongs to
-            message (str): installation progress of the driver
+            task (Task): the task of which the progress is belongs to
+            message (str): installation progress of the task
 
         Returns:
             int: row index of appened progress on the UI
         """
         self.progr_table.insertRow(row := self.progr_table.rowCount())
-        self.progr_table.setItem(
-            row, 0, QtWidgets.QTableWidgetItem(driver.name))
+        self.progr_table.setItem(row, 0, QtWidgets.QTableWidgetItem(task.name))
         self.progr_table.setItem(row, 1, QtWidgets.QTableWidgetItem(message))
-        self._progresses.update({driver.id: row})
+        self._progresses.update({task.__hash__(): row})
         return row
 
-    def update_progress(self, driver: Driver, progress: InstallStatus, message: str):
+    def update_progress(self, task: Task, progress: InstallStatus, message: str):
         """Update the status of an "driver install progress\"
 
         Args:
-            driver (Driver): the driver of the installation which the progress is belongs to
-            message (str): installation progress of the driver
+            task (Task): the task of which the progress is belongs to
+            message (str): installation progress of the task
             level (str): message type of progress
         """
         item = QtWidgets.QTableWidgetItem(message)
         item.setBackground(self._status_color(progress))
 
-        self.progr_table.setItem(self._progresses[driver.id], 1, item)
+        self.progr_table.setItem(self._progresses[task.__hash__()], 1, item)
         self.progr_table.resizeRowsToContents()
 
     def clear_progresses(self) -> None:

@@ -147,8 +147,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         
         self.progr_window.clear_progresses()
         for dri_conf in self.selected_drivers():
-            self.progr_window.append_progress(dri_conf, "等待安裝中")
-            manager.add_task(Task(dri_conf))
+            _task = Task(dri_conf.name, dri_conf.path, dri_conf.flag)
+            self.progr_window.append_progress(_task, "等待安裝中")
+            manager.add_task(_task)
 
         # start install
         if len(manager) == 0:
@@ -179,7 +180,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         Args:
             success (bool): whether the all drivers were installed successfully
         """
-        print(status)
         if (status != InstallStatus.SUCCESS):
             pass
         elif (is_widget_enabled(self.at_halt_rb)
