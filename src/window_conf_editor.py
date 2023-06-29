@@ -46,7 +46,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                 break
 
         self.dri_exe_input.setText(driver.path)
-        self.dri_flag_input.setText(",".join(driver.flag))
+        self.dri_flag_input.setText(",".join(driver.flags))
         self.dri_autoable_checkbox.setChecked(driver.autoable)
 
     def select_dri_path(self):

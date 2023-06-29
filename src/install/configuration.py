@@ -49,7 +49,7 @@ class Driver:
     description: str
     path: str
     autoable: bool
-    flag: list[str]
+    flags: list[str]
 
     def asdict(self) -> dict[str, Any]:
         _d = asdict(self)
@@ -64,7 +64,7 @@ class Driver:
             isinstance(self.description, str),
             isinstance(self.path, str) and os.path.exists(self.path),
             isinstance(self.autoable, bool),
-            isinstance(self.flag, list)
+            isinstance(self.flags, list)
         ))
 
 

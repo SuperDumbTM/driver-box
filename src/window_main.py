@@ -147,7 +147,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         
         self.progr_window.clear_progresses()
         for dri_conf in self.selected_drivers():
-            _task = Task(dri_conf.name, dri_conf.path, dri_conf.flag)
+            _task = Task(dri_conf.name, dri_conf.path, dri_conf.flags)
             self.progr_window.append_progress(_task, "等待安裝中")
             manager.add_task(_task)
 

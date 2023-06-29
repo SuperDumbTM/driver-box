@@ -77,7 +77,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         path_item.setToolTip(driver.path)
         self.dri_opt_table.setItem(row , 1, QtWidgets.QTableWidgetItem(path_item))
         # col 3: install options/flags
-        self.dri_opt_table.setItem(row , 2, QtWidgets.QTableWidgetItem(" ".join(driver.flag)))
+        self.dri_opt_table.setItem(row , 2, QtWidgets.QTableWidgetItem(" ".join(driver.flags)))
 
         for col in range(self.dri_opt_table.columnCount()):
             _item = self.dri_opt_table.item(row, col)
