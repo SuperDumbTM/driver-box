@@ -31,7 +31,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         self.action_btns.rejected.connect(lambda: self.close())
         
         self.del_dri_btn.clicked.connect(self.delete)
-        self.dri_exe_path_btn.clicked.connect(self.select_dri_path)
+        self.dri_path_btn.clicked.connect(self.select_dri_path)
         self.dri_flag_preset_dropdown.currentIndexChanged.connect(
             lambda idx: self.dri_flag_input.setText(
                 ','.join(self.dri_flag_preset_dropdown.itemData(idx))
@@ -45,9 +45,11 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                 self.dri_type_dropdown.setCurrentIndex(idx)
                 break
 
-        self.dri_exe_input.setText(driver.path)
+        self.dri_path_input.setText(driver.path)
         self.dri_flag_input.setText(",".join(driver.flags))
-        self.dri_autoable_checkbox.setChecked(driver.autoable)
+        self.dri_fail_time_input.setText(str(driver.fail_time))
+        self.dri_autoable_cb.setChecked(driver.autoable)
+        self.dri_retryable_cb.setChecked(driver.retryable)
 
     def select_dri_path(self):
         path = QtWidgets.QFileDialog.getOpenFileName(
@@ -55,7 +57,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
             directory=definitions.DIR_DRI,
             filter="Executable (*.exe *.msi)")[0]
         if not path == "":
-            self.dri_exe_input.setText(
+            self.dri_path_input.setText(
                 os.path.relpath(path, definitions.DIR_ROOT))
     
     def open_save_err_msgbox(self) -> None:
@@ -92,6 +94,9 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                           self.dri_type_dropdown.currentData()),
                       self.dri_name_input.text(),
                       "",
-                      self.dri_exe_input.text(),
-                      self.dri_autoable_checkbox.isChecked(),
-                      self.dri_flag_input.text().split(","))
+                      self.dri_path_input.text(),
+                      self.dri_flag_input.text().split(","),
+                      float(self.dri_fail_time_input.text()),
+                      self.dri_autoable_cb.isChecked(),
+                      self.dri_retryable_cb.isChecked(),
+                      )

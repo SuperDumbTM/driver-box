@@ -48,8 +48,10 @@ class Driver:
     name: str
     description: str
     path: str
-    autoable: bool
     flags: list[str]
+    fail_time: Union[int, float]
+    autoable: bool
+    retryable: bool
 
     def asdict(self) -> dict[str, Any]:
         _d = asdict(self)
@@ -63,8 +65,10 @@ class Driver:
             isinstance(self.name, str),
             isinstance(self.description, str),
             isinstance(self.path, str) and os.path.exists(self.path),
+            isinstance(self.flags, list),
+            isinstance(self.fail_time, (int, float)),
             isinstance(self.autoable, bool),
-            isinstance(self.flags, list)
+            isinstance(self.retryable, bool)
         ))
 
 
@@ -188,6 +192,9 @@ class DriverConfig:
                        dri['name'],
                        dri['description'],
                        dri['path'],
+                       dri['flags'],
+                       dri['fail_time'],
                        dri['autoable'],
-                       dri['flag'])
+                       dri['retryable'],
+                       )
                 for dri in dris] for dri_type, dris in buff.items()}
