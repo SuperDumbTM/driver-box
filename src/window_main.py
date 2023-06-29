@@ -15,7 +15,7 @@ from window_progress import ProgressWindow
 from window_driver import DriverConfigViewerWindow
 from install.configuration import Driver, DriverConfig
 from install.task_manager import TaskManager
-from install.task import Task
+from install.task import ShellTask
 
 
 class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
@@ -58,7 +58,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.install_btn.clicked.connect(self._install)
         self.edit_driver_action.triggered.connect(self.dri_conf_window.show)
         self.at_install_cb.clicked.connect(lambda val:self.set_at_options(val))
-        self.dri_opt_reset_btn.clicked.connect(self.reset_dri_selection)
+        self.dri_opt_reset_btn.clicked.connect(self.reset_selection)
         self.set_passwd_cb.clicked.connect(
             lambda: self.set_passwd_txt.setEnabled(self.set_passwd_cb.isChecked())
         )
@@ -102,11 +102,13 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.at_reboot_rb.setEnabled(enable)
         self.at_nothing_rb.setEnabled(enable)
     
-    def reset_dri_selection(self):
+    def reset_selection(self):
         self.lan_driver_dropdown.setCurrentIndex(0)
         self.display_dri_dropdown.setCurrentIndex(0)
         for widget in self._misc_dri_options():
             widget.setChecked(False)
+        
+        self.set_passwd_cb.setChecked(False)
     
     def selected_drivers(self) -> list[Driver]:
         drivers = []
@@ -132,11 +134,10 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         
         # set password
         if self.set_passwd_cb.isChecked():
-            commands.set_password(
-                commands.get_current_usrname(),
-                self.set_passwd_txt.toPlainText())
+            manager.add_task(
+                commands.set_password_task(commands.get_current_usrname(), self.set_passwd_txt.toPlainText()))
             self.send_msg(
-                f"{commands.get_current_usrname()} 的密碼已更改為 \"'{self.set_passwd_txt.toPlainText()}\"")
+                f"{commands.get_current_usrname()} 的密碼將會更改為 \"'{self.set_passwd_txt.toPlainText()}\"")
         
         def prog_close():
             """Terminate the remaining tasks when progress window is closed"""
@@ -147,7 +148,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         
         self.progr_window.clear_progresses()
         for dri_conf in self.selected_drivers():
-            _task = Task(dri_conf.name, dri_conf.path, dri_conf.flags)
+            _task = ShellTask(dri_conf.name, dri_conf.path, dri_conf.flags)
             self.progr_window.append_progress(_task, "等待安裝中")
             manager.add_task(_task)
 
@@ -184,11 +185,17 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             pass
         elif (is_widget_enabled(self.at_halt_rb)
               and self.at_halt_rb.isChecked()):
-            threading.Timer(5, lambda: commands.shutdown()).start()
+            threading.Timer(
+                5,
+                lambda: Popen(commands.shutdown_cmd(), shell=True)
+            ).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
         elif (is_widget_enabled(self.at_reboot_rb)
               and self.at_reboot_rb.isChecked()):
-            threading.Timer(5, lambda: commands.reboot()).start()
+            threading.Timer(
+                5,
+                lambda: Popen(commands.reboot_task(), shell=True)
+            ).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
         else:
             box = QtWidgets.QMessageBox()

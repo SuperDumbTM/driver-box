@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -7,7 +6,6 @@ import definitions
 from enums.install_status import InstallStatus
 from install.task import Task
 from ui.progress import Ui_InstallProgress
-from install.configuration import Driver
 
 
 class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):

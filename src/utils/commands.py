@@ -1,37 +1,39 @@
-import sys
-from subprocess import Popen, check_output
+from subprocess import check_output
 from typing import Optional, Union
 import wmi
+
+from install.task import Task, ShellTask
 
 
 _WMI = wmi.WMI()
 
 
-def shutdown(timeout: Union[int, float] = 1):
-    return Popen(["shutdown", "/s", "/t", str(timeout)], shell=True, stdout=sys.stdout)
+def shutdown_task(timeout: Union[int, float] = 1):
+    return ShellTask("Shutdown", "shutdown", options=("/s", "/t", str(timeout)))
 
 
-def reboot(timeout: Union[int, float] = 1):
-    return Popen(["shutdown", "/r", "/t", str(timeout)], shell=True, stdout=sys.stdout)
+def reboot_task(timeout: Union[int, float] = 1) -> tuple[str]:
+    return ShellTask("Reboot", "shutdown", options=("/r", "/t", str(timeout)))
 
 
-def cancel_halt():
-    """Cancel scheduled shutdown/reboot
-    """
-    return Popen(["shutdown", "/a"], shell=True, stdout=sys.stdout)
+def cancel_halt_task() -> tuple[str]:
+    """Cancel scheduled shutdown/reboot"""
+    return ShellTask("Cancel Halt", "shutdown", options=("/a",))
 
 
-def set_password(username: str, password: Optional[str]):
+def set_password_task(username: str, password: Optional[str]):
     if len(password) > 0:
-        return Popen(
-            ["powershell.exe", "Set-LocalUser", "-Name", username, "-Password",
-                f"(ConverTo-SecureString {str(password)} -AsPlainText -Force)"],
-            stdout=sys.stdout)
+        return ShellTask(
+            "Set Password",
+            "powershell.exe",
+            options=("Set-LocalUser", "-Name", username, "-Password",
+                     f"(ConverTo-SecureString {str(password)} -AsPlainText -Force"))
     else:
-        return Popen(
-            ["powershell.exe", "Set-LocalUser", "-Name", username,
-                "-Password", "(new-object System.Security.SecureString)"],
-            stdout=sys.stdout)
+        return ShellTask(
+            "Set Password",
+            "powershell.exe",
+            options=("Set-LocalUser", "-Name", username,
+                     "-Password", "(new-object System.Security.SecureString)"))
 
 
 def get_current_usrname() -> str:

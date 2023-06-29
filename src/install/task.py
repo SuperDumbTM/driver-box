@@ -1,19 +1,67 @@
+from abc import ABC, abstractmethod
 import os
 import time
 import struct
 import subprocess
 from dataclasses import dataclass, field
-from typing import Optional, Union
+from typing import Callable, Iterable, Optional, Union
 
 from enums.install_status import InstallStatus
 
 
+class Task(ABC):
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def rtcode(self) -> Optional[int]:
+        """Return code of the execution. `None` if the execution is not yet started or finished"""
+        pass
+
+    @property
+    @abstractmethod
+    def messages(self) -> list[str]:
+        """Message outputs during the execution"""
+        pass
+
+    @property
+    @abstractmethod
+    def is_aborted(self):
+        """Whether the execution is manually terminated"""
+        pass
+
+    @property
+    @abstractmethod
+    def exception(self) -> Optional[BaseException]:
+        pass
+
+    @abstractmethod
+    def execute(self, no_options: bool = False):
+        """Run the executable"""
+        pass
+
+    @abstractmethod
+    def is_alive(self) -> bool:
+        """Return whether the executable is still executing"""
+        pass
+
+    @abstractmethod
+    def abort(self):
+        """Terminate the execution"""
+        pass
+
+
 @dataclass(order=False, eq=False)
-class Task:
+class ShellTask(Task):
 
     name: str
     command: Union[str, os.PathLike]
-    options: Optional[list[str]]
+
+    options: Optional[Iterable[str]] = field(default_factory=tuple)
     abort_time: Optional[float] = None
 
     status: InstallStatus = field(init=False, default=InstallStatus.PENDING)
@@ -99,3 +147,45 @@ class Task:
             self.process.kill()
             if self.process.poll() is not None:
                 self.status = InstallStatus.ABORTED
+
+
+# @dataclass(order=False, eq=False)
+# class FunctionalTask(Task):
+
+#     name: str
+#     function: Callable
+#     args: Optional[list]
+#     kwargs: Optional[dict]
+#     abort_time: Optional[float] = None
+
+#     status: InstallStatus = field(init=False, default=InstallStatus.PENDING)
+#     process: subprocess.Popen = field(init=False, default=None)
+#     """Popen instance of the execution.  `None` if the execution is not yet started"""
+#     _exception: BaseException = field(init=False, default=None)
+
+#     _aborted: bool = field(init=False, default=False)
+
+#     @property
+#     def rtcode(self) -> Optional[int]:
+#         pass
+
+#     @property
+#     def messages(self) -> list[str]:
+#         pass
+
+#     @property
+#     def is_aborted(self):
+#         pass
+
+#     @property
+#     def exception(self) -> Optional[BaseException]:
+#         return self._exception
+
+#     def execute(self, no_options: bool = False):
+#         pass
+
+#     def is_alive(self) -> bool:
+#         pass
+
+#     def abort(self):
+#         pass
