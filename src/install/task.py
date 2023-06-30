@@ -8,18 +8,21 @@ from typing import Callable, Iterable, Optional, Union
 
 from enums.install_status import InstallStatus
 
+try:
+    from enums.install_status import InstallStatus
+except ImportError:
+    from ..enums.install_status import InstallStatus
+
 
 class Task(ABC):
 
     @property
     @abstractmethod
-    def name(self) -> str:
+    def task_name(self) -> str:
         pass
 
     @property
-    @abstractmethod
-    def rtcode(self) -> Optional[int]:
-        """Return code of the execution. `None` if the execution is not yet started or finished"""
+    def status(self) -> InstallStatus:
         pass
 
     @property
@@ -41,22 +44,22 @@ class Task(ABC):
 
     @abstractmethod
     def execute(self, no_options: bool = False):
-        """Run the executable"""
+        """Starts the task"""
         pass
 
     @abstractmethod
     def is_alive(self) -> bool:
-        """Return whether the executable is still executing"""
+        """Return whether the task is still executing"""
         pass
 
     @abstractmethod
     def abort(self):
-        """Terminate the execution"""
+        """Terminate the task execution"""
         pass
 
 
 @dataclass(order=False, eq=False)
-class ShellTask(Task):
+class ExecutableTask(Task):
 
     name: str
     command: Union[str, os.PathLike]
@@ -64,36 +67,28 @@ class ShellTask(Task):
     options: Optional[Iterable[str]] = field(default_factory=tuple)
     abort_time: Optional[float] = None
 
-    status: InstallStatus = field(init=False, default=InstallStatus.PENDING)
-    process: subprocess.Popen = field(init=False, default=None)
+    _status: InstallStatus = field(init=False, default=InstallStatus.PENDING)
+    _process: subprocess.Popen = field(init=False, default=None)
     """Popen instance of the execution.  `None` if the execution is not yet started"""
     _exception: BaseException = field(init=False, default=None)
 
     _aborted: bool = field(init=False, default=False)
 
     @property
-    def full_command(self) -> str:
-        return "{0} {1}".format(self.command, ' '.join(self.options))
+    def task_name(self) -> str:
+        return self.name
 
     @property
-    def rtcode(self) -> Optional[int]:
-        """Return code of the execution. `None` if the execution is not yet started or finished"""
-        try:
-            if self.process is None:
-                return None
-            else:
-                return struct.unpack(
-                    'i', struct.pack('I', self.process.returncode))[0]
-        except IndexError:
-            return self.process.returncode
+    def status(self) -> InstallStatus:
+        return self._status
 
     @property
     def messages(self) -> list[str]:
         """Message outputs during the execution"""
-        if self.process is None:
+        if self._process is None:
             return []
         else:
-            return [line.decode('utf-8').strip() for line in self.process.stdout]
+            return [line.decode('utf-8').strip() for line in self._process.stdout]
 
     @property
     def is_aborted(self):
@@ -104,17 +99,33 @@ class ShellTask(Task):
     def exception(self) -> Optional[BaseException]:
         return self._exception
 
+    @property
+    def full_command(self) -> str:
+        return "{0} {1}".format(self.command, ' '.join(self.options))
+
+    @property
+    def rtcode(self) -> Optional[int]:
+        """Return code of the execution. `None` if the execution is not yet started or finished"""
+        try:
+            if self._process is None:
+                return None
+            else:
+                return struct.unpack(
+                    'i', struct.pack('I', self._process.returncode))[0]
+        except IndexError:
+            return self._process.returncode
+
     def execute(self, no_options: bool = False):
         """Run the executable"""
-        self.status = InstallStatus.INPROGRESS
+        self._status = InstallStatus.INPROGRESS
 
         try:
             exe_time = time.time()
             if no_options:
-                self.process = subprocess.Popen(
+                self._process = subprocess.Popen(
                     self.full_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else:
-                self.process = subprocess.Popen(
+                self._process = subprocess.Popen(
                     self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             while self.is_alive():
@@ -126,27 +137,27 @@ class ShellTask(Task):
             pass
             # self.status = InstallStatus.ABORTED
         elif self.rtcode == 0:
-            self.status = InstallStatus.SUCCESS
+            self._status = InstallStatus.SUCCESS
         elif self.abort_time and time.time() - exe_time < self.abort_time:
-            self.status = InstallStatus.EXITED
+            self._status = InstallStatus.EXITED
         else:
-            self.status = InstallStatus.FAILED
+            self._status = InstallStatus.FAILED
 
     def is_alive(self) -> bool:
         """Return whether the executable is still executing"""
-        return self.process is None or self.process.poll() is None
+        return self._process is None or self._process.poll() is None
 
     def abort(self):
         """Terminate the execution"""
         # os.system(f"taskkill /im " + self.executable.split("\\")[-1] + " /f")
         self._aborted = True
 
-        if self.process is None:
-            self.status = InstallStatus.ABORTED
+        if self._process is None:
+            self._status = InstallStatus.ABORTED
         else:
-            self.process.kill()
-            if self.process.poll() is not None:
-                self.status = InstallStatus.ABORTED
+            self._process.kill()
+            if self._process.poll() is not None:
+                self._status = InstallStatus.ABORTED
 
 
 # @dataclass(order=False, eq=False)

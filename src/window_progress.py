@@ -36,7 +36,8 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
             int: row index of appened progress on the UI
         """
         self.progr_table.insertRow(row := self.progr_table.rowCount())
-        self.progr_table.setItem(row, 0, QtWidgets.QTableWidgetItem(task.name))
+        self.progr_table.setItem(
+            row, 0, QtWidgets.QTableWidgetItem(task.task_name))
         self.progr_table.setItem(row, 1, QtWidgets.QTableWidgetItem(message))
         self._progresses.update({task.__hash__(): row})
         return row

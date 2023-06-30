@@ -2,34 +2,37 @@ from subprocess import check_output
 from typing import Optional, Union
 import wmi
 
-from install.task import Task, ShellTask
+try:
+    from install.task import Task, ExecutableTask
+except ImportError:
+    from ..install.task import Task, ExecutableTask
 
 
 _WMI = wmi.WMI()
 
 
 def shutdown_task(timeout: Union[int, float] = 1):
-    return ShellTask("Shutdown", "shutdown", options=("/s", "/t", str(timeout)))
+    return ExecutableTask("Shutdown", "shutdown", ("/s", "/t", str(timeout)))
 
 
-def reboot_task(timeout: Union[int, float] = 1) -> tuple[str]:
-    return ShellTask("Reboot", "shutdown", options=("/r", "/t", str(timeout)))
+def reboot_task(timeout: Union[int, float] = 1):
+    return ExecutableTask("Reboot", "shutdown", ("/r", "/t", str(timeout)))
 
 
-def cancel_halt_task() -> tuple[str]:
+def cancel_halt_task():
     """Cancel scheduled shutdown/reboot"""
-    return ShellTask("Cancel Halt", "shutdown", options=("/a",))
+    return ExecutableTask("Cancel Halt", "shutdown", ("/a",))
 
 
 def set_password_task(username: str, password: Optional[str]):
     if len(password) > 0:
-        return ShellTask(
+        return ExecutableTask(
             "Set Password",
             "powershell.exe",
             options=("Set-LocalUser", "-Name", username, "-Password",
                      f"(ConverTo-SecureString {str(password)} -AsPlainText -Force"))
     else:
-        return ShellTask(
+        return ExecutableTask(
             "Set Password",
             "powershell.exe",
             options=("Set-LocalUser", "-Name", username,

@@ -15,7 +15,7 @@ from window_progress import ProgressWindow
 from window_driver import DriverConfigViewerWindow
 from install.configuration import Driver, DriverConfig
 from install.task_manager import TaskManager
-from install.task import ShellTask
+from install.task import ExecutableTask
 
 
 class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
@@ -148,7 +148,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         
         self.progr_window.clear_progresses()
         for dri_conf in self.selected_drivers():
-            _task = ShellTask(dri_conf.name, dri_conf.path, dri_conf.flags)
+            _task = ExecutableTask(dri_conf.name, dri_conf.path, dri_conf.flags)
             self.progr_window.append_progress(_task, "等待安裝中")
             manager.add_task(_task)
 
