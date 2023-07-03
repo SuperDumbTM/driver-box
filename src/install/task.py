@@ -3,32 +3,25 @@ import os
 import time
 import struct
 import subprocess
-from dataclasses import dataclass, field
 from typing import Callable, Iterable, Optional, Union
 
-from enums.install_status import InstallStatus
 
 try:
-    from enums.install_status import InstallStatus
+    from execute_config import ExecuteConfig
+    from execute_status import ExecuteStatus
 except ImportError:
-    from ..enums.install_status import InstallStatus
+    from .execute_config import ExecuteConfig
+    from .execute_status import ExecuteStatus
 
 
 class Task(ABC):
 
-    @property
-    @abstractmethod
-    def task_name(self) -> str:
-        pass
+    def __init__(self, name: str, exe_conf: ExecuteConfig) -> None:
+        self.name = name
+        self.exe_conf = exe_conf
 
     @property
-    def status(self) -> InstallStatus:
-        pass
-
-    @property
-    @abstractmethod
-    def messages(self) -> list[str]:
-        """Message outputs during the execution"""
+    def status(self) -> ExecuteStatus:
         pass
 
     @property
@@ -58,29 +51,37 @@ class Task(ABC):
         pass
 
 
-@dataclass(order=False, eq=False)
 class ExecutableTask(Task):
 
-    name: str
     command: Union[str, os.PathLike]
+    options: Optional[Iterable[str]]
 
-    options: Optional[Iterable[str]] = field(default_factory=tuple)
-    abort_time: Optional[float] = None
-
-    _status: InstallStatus = field(init=False, default=InstallStatus.PENDING)
-    _process: subprocess.Popen = field(init=False, default=None)
+    _status: ExecuteStatus = ExecuteStatus.PENDING
+    _process: subprocess.Popen = None
     """Popen instance of the execution.  `None` if the execution is not yet started"""
-    _exception: BaseException = field(init=False, default=None)
 
-    _aborted: bool = field(init=False, default=False)
+    _exception: BaseException = None
+
+    def __init__(self,
+                 name: str,
+                 exe_conf: ExecuteConfig,
+                 command: Union[str, os.PathLike],
+                 options: Optional[Iterable[str]] = None) -> None:
+        super().__init__(name, exe_conf)
+        self.command = command
+        self.options = options
 
     @property
-    def task_name(self) -> str:
-        return self.name
-
-    @property
-    def status(self) -> InstallStatus:
+    def status(self) -> ExecuteStatus:
         return self._status
+
+    @property
+    def is_aborted(self):
+        return self._status == ExecuteStatus.ABORTED
+
+    @property
+    def exception(self) -> Optional[BaseException]:
+        return self._exception
 
     @property
     def messages(self) -> list[str]:
@@ -89,15 +90,6 @@ class ExecutableTask(Task):
             return []
         else:
             return [line.decode('utf-8').strip() for line in self._process.stdout]
-
-    @property
-    def is_aborted(self):
-        """Whether the execution is manually terminated"""
-        return self._aborted
-
-    @property
-    def exception(self) -> Optional[BaseException]:
-        return self._exception
 
     @property
     def full_command(self) -> str:
@@ -116,8 +108,7 @@ class ExecutableTask(Task):
             return self._process.returncode
 
     def execute(self, no_options: bool = False):
-        """Run the executable"""
-        self._status = InstallStatus.INPROGRESS
+        self._status = ExecuteStatus.INPROGRESS
 
         try:
             exe_time = time.time()
@@ -135,68 +126,23 @@ class ExecutableTask(Task):
 
         if self.is_aborted:
             pass
-            # self.status = InstallStatus.ABORTED
         elif self.rtcode == 0:
-            self._status = InstallStatus.SUCCESS
-        elif self.abort_time and time.time() - exe_time < self.abort_time:
-            self._status = InstallStatus.EXITED
+            self._status = ExecuteStatus.SUCCESS
+        elif time.time() - exe_time < self.exe_conf.fail_time:
+            self._status = ExecuteStatus.EXITED
         else:
-            self._status = InstallStatus.FAILED
+            self._status = ExecuteStatus.FAILED
 
     def is_alive(self) -> bool:
         """Return whether the executable is still executing"""
-        return self._process is None or self._process.poll() is None
+        return self._process is not None and self._process.poll() is None
 
     def abort(self):
         """Terminate the execution"""
         # os.system(f"taskkill /im " + self.executable.split("\\")[-1] + " /f")
-        self._aborted = True
-
         if self._process is None:
-            self._status = InstallStatus.ABORTED
+            self._status = ExecuteStatus.ABORTED
         else:
             self._process.kill()
             if self._process.poll() is not None:
-                self._status = InstallStatus.ABORTED
-
-
-# @dataclass(order=False, eq=False)
-# class FunctionalTask(Task):
-
-#     name: str
-#     function: Callable
-#     args: Optional[list]
-#     kwargs: Optional[dict]
-#     abort_time: Optional[float] = None
-
-#     status: InstallStatus = field(init=False, default=InstallStatus.PENDING)
-#     process: subprocess.Popen = field(init=False, default=None)
-#     """Popen instance of the execution.  `None` if the execution is not yet started"""
-#     _exception: BaseException = field(init=False, default=None)
-
-#     _aborted: bool = field(init=False, default=False)
-
-#     @property
-#     def rtcode(self) -> Optional[int]:
-#         pass
-
-#     @property
-#     def messages(self) -> list[str]:
-#         pass
-
-#     @property
-#     def is_aborted(self):
-#         pass
-
-#     @property
-#     def exception(self) -> Optional[BaseException]:
-#         return self._exception
-
-#     def execute(self, no_options: bool = False):
-#         pass
-
-#     def is_alive(self) -> bool:
-#         pass
-
-#     def abort(self):
-#         pass
+                self._status = ExecuteStatus.ABORTED

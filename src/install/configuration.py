@@ -6,9 +6,9 @@ from typing import Any, Final, Optional, Union
 from dataclasses import asdict, dataclass
 
 try:
-    from enums.driver_type import DriverType
+    from driver_type import DriverType
 except ImportError:
-    from ..enums.driver_type import DriverType
+    from .driver_type import DriverType
 
 
 ID_LEN: Final[int] = 6

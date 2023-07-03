@@ -5,15 +5,15 @@ from subprocess import Popen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from enums.install_status import InstallStatus
 from ui.main import Ui_MainWindow
 from utils import commands
 from utils.qwidget import is_widget_enabled
 from widgets.driver_checkbox import DriverOptionCheckBox
-from hw_info_worker import HwInfoWorker
+from utils.hw_info_worker import HwInfoWorker
 from window_progress import ProgressWindow
 from window_driver import DriverConfigViewerWindow
 from install.configuration import Driver, DriverConfig
+from install.execute_status import ExecuteStatus
 from install.task_manager import TaskManager
 from install.task import ExecutableTask
 
@@ -175,14 +175,14 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         else:
             manager.manual_install()        
     
-    def _post_install(self, status: InstallStatus):
+    def _post_install(self, status: ExecuteStatus):
         """Follow-up routine for the installation process
 
         Args:
             success (bool): whether the all drivers were installed successfully
         """
-        if (status != InstallStatus.SUCCESS
-            and not (status != InstallStatus.ABORTED and not self.at_retry_cb.isChecked())):
+        if (status != ExecuteStatus.SUCCESS
+            and not (status != ExecuteStatus.ABORTED and not self.at_retry_cb.isChecked())):
             pass            
         elif (is_widget_enabled(self.at_halt_rb)
               and self.at_halt_rb.isChecked()):
