@@ -135,7 +135,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         # set password
         if self.set_passwd_cb.isChecked():
             manager.add_task(
-                commands.set_password_task(commands.get_current_usrname(), self.set_passwd_txt.toPlainText()))
+                commands.set_password(commands.get_current_usrname(), self.set_passwd_txt.toPlainText()))
             self.send_msg(
                 f"{commands.get_current_usrname()} 的密碼將會更改為 \"'{self.set_passwd_txt.toPlainText()}\"")
         
@@ -195,7 +195,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
               and self.at_reboot_rb.isChecked()):
             threading.Timer(
                 5,
-                lambda: Popen(commands.reboot_task(), shell=True)
+                lambda: Popen(commands.reboot(), shell=True)
             ).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
         else:

@@ -11,20 +11,24 @@ except ImportError:
 _WMI = wmi.WMI()
 
 
-def shutdown_task(timeout: Union[int, float] = 1):
+def shutdown(timeout: Union[int, float] = 1):
     return ExecutableTask("Shutdown", "shutdown", ("/s", "/t", str(timeout)))
 
 
-def reboot_task(timeout: Union[int, float] = 1):
+def reboot(timeout: Union[int, float] = 1):
     return ExecutableTask("Reboot", "shutdown", ("/r", "/t", str(timeout)))
 
 
-def cancel_halt_task():
+def reboot_uefi(timeout: Union[int, float] = 1):
+    return ExecutableTask("Reboot to BIOS", "shutdown", ("/r", "/fw", "/t", str(timeout)))
+
+
+def cancel_halt():
     """Cancel scheduled shutdown/reboot"""
     return ExecutableTask("Cancel Halt", "shutdown", ("/a",))
 
 
-def set_password_task(username: str, password: Optional[str]):
+def set_password(username: str, password: Optional[str]):
     if len(password) > 0:
         return ExecutableTask(
             "Set Password",
