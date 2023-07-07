@@ -142,8 +142,8 @@ class DriverConfig:
         t, _ = self._locate(dri_id)
         self._data[t] = [dri for dri in self._data[t] if dri.id != dri_id]
 
-    def write(self) -> None:
-        """Presist the changes to file system
+    def presist(self) -> None:
+        """Write the changes to file system
         """
         _d = {dri_type: [driver.asdict() for driver in drivers]
               for dri_type, drivers in self._data.items()}

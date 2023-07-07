@@ -108,14 +108,14 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
 
     def save_edited_driver(self, driver: Driver) -> None:
         self.dri_conf.update(driver.id, driver)
-        self.dri_conf.write()
+        self.dri_conf.presist()
         self.refresh_table(self.crrt_type)
         
         self._modified = True
     
     def save_new_driver(self, driver: Driver) -> None:
         self.dri_conf.create(driver)
-        self.dri_conf.write()
+        self.dri_conf.presist()
         self.refresh_table(self.crrt_type)
         
         self._modified = True
@@ -124,7 +124,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         if driver.id is None:
             return
         self.dri_conf.delete(driver.id)
-        self.dri_conf.write()
+        self.dri_conf.presist()
         self.refresh_table(self.crrt_type)
         
         self._modified = True

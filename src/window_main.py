@@ -182,13 +182,14 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             success (bool): whether the all drivers were installed successfully
         """
         if (status != ExecuteStatus.SUCCESS
-            and not (status != ExecuteStatus.ABORTED and not self.at_retry_cb.isChecked())):
+            and not (status != ExecuteStatus.ABORTED
+                     and not self.at_retry_cb.isChecked())):
             pass            
         elif (is_widget_enabled(self.at_halt_rb)
               and self.at_halt_rb.isChecked()):
             threading.Timer(
                 5,
-                lambda: Popen(commands.shutdown_cmd(), shell=True)
+                lambda: Popen(commands.shutdown(), shell=True)
             ).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
         elif (is_widget_enabled(self.at_reboot_rb)
