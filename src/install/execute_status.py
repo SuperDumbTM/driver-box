@@ -6,5 +6,6 @@ class ExecuteStatus(Enum):
     INPROGRESS = 2
     EXITED = 3
     SUCCESS = 4
-    FAILED = 5
-    ABORTED = 6
+    ERROR = 5
+    FAILED = 6
+    ABORTED = 7

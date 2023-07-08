@@ -3,6 +3,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
+from install.execute_config import ExecuteConfig
 from ui.dri_cfg_editor import Ui_DriverConfigEditor
 from install.configuration import Driver, DriverType, FLAG_PRESET
 
@@ -26,10 +27,11 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         for name, flags in FLAG_PRESET.items():
             self.dri_flag_preset_dropdown.addItem(name, flags)
         # ---------- events ----------
-        self.action_btns.disconnect() # disable close window behavior when action buttons are clicked
+        # disable close window behavior when action buttons are clicked
+        self.action_btns.disconnect()
         self.action_btns.accepted.connect(self.save)
         self.action_btns.rejected.connect(lambda: self.close())
-        
+
         self.del_dri_btn.clicked.connect(self.delete)
         self.dri_path_btn.clicked.connect(self.select_dri_path)
         self.dri_flag_preset_dropdown.currentIndexChanged.connect(
@@ -47,9 +49,9 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
 
         self.dri_path_input.setText(driver.path)
         self.dri_flag_input.setText(",".join(driver.flags))
-        self.dri_fail_time_input.setText(str(driver.fail_time))
-        self.dri_autoable_cb.setChecked(driver.autoable)
-        self.dri_retryable_cb.setChecked(driver.retryable)
+        self.dri_fail_time_input.setText(str(driver.exec_config.fail_time))
+        self.dri_autoable_cb.setChecked(driver.exec_config.slientable)
+        self.dri_retryable_cb.setChecked(driver.exec_config.retryable)
 
     def select_dri_path(self):
         path = QtWidgets.QFileDialog.getOpenFileName(
@@ -59,7 +61,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         if not path == "":
             self.dri_path_input.setText(
                 os.path.relpath(path, definitions.DIR_ROOT))
-    
+
     def open_save_err_msgbox(self) -> None:
         box = QtWidgets.QMessageBox()
         box.setWindowTitle("錯誤")
@@ -73,16 +75,15 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
 
     def save(self):
         dri = self._get_driver()
-        if dri.is_validate(self.dri_id is None):
+        if dri.is_validate():
             self.qsig_save.emit(dri)
             self.close()
         else:
             self.open_save_err_msgbox()
-            
 
     def delete(self):
         dri = self._get_driver()
-        if dri.is_validate(self.dri_id is None):
+        if dri.is_validate():
             self.qsig_del.emit(dri)
             self.close()
         else:
@@ -96,7 +97,8 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                       "",
                       self.dri_path_input.text(),
                       self.dri_flag_input.text().split(","),
-                      float(self.dri_fail_time_input.text()),
-                      self.dri_autoable_cb.isChecked(),
-                      self.dri_retryable_cb.isChecked(),
+                      ExecuteConfig(
+                          self.dri_autoable_cb.isChecked(),
+                          self.dri_retryable_cb.isChecked(),
+                          fail_time=float(self.dri_fail_time_input.text()))
                       )

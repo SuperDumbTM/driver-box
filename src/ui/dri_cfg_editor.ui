@@ -207,14 +207,14 @@ QLineEdit {
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QCheckBox" name="dri_autoable_cb">
+      <widget class="QCheckBox" name="dri_retryable_cb">
        <property name="text">
         <string>可自動重試</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="dri_retryable_cb">
+      <widget class="QCheckBox" name="dri_autoable_cb">
        <property name="text">
         <string>可自動安裝</string>
        </property>

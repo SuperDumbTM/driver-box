@@ -122,7 +122,9 @@ class ExecutableTask(Task):
             while self.is_alive():
                 time.sleep(0.1)
         except Exception as e:
+            self._status = ExecuteStatus.ERROR
             self._exception = e
+            return
 
         if self.is_aborted:
             pass

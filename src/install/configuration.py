@@ -7,8 +7,10 @@ from dataclasses import asdict, dataclass
 
 try:
     from driver_type import DriverType
+    from execute_config import ExecuteConfig
 except ImportError:
     from .driver_type import DriverType
+    from .execute_config import ExecuteConfig
 
 
 ID_LEN: Final[int] = 6
@@ -35,26 +37,23 @@ class Driver:
     description: str
     path: str
     flags: list[str]
-    fail_time: Union[int, float]
-    autoable: bool
-    retryable: bool
+    exec_config: ExecuteConfig
 
     def asdict(self) -> dict[str, Any]:
-        _d = asdict(self)
-        _d['type'] = self.type.value
-        return _d
+        d = asdict(self)
+        d['type'] = self.type.value
+        d['exec_config'] = self.exec_config.asdict()
+        return d
 
-    def is_validate(self, is_new: bool = False) -> bool:
+    def is_validate(self) -> bool:
         return all((
-            is_new or (isinstance(self.id, str) and len(self.id) >= ID_LEN),
+            isinstance(self.id, (str, None)),
             isinstance(self.type, DriverType),
             isinstance(self.name, str),
             isinstance(self.description, str),
             isinstance(self.path, str) and os.path.exists(self.path),
             isinstance(self.flags, list),
-            isinstance(self.fail_time, (int, float)),
-            isinstance(self.autoable, bool),
-            isinstance(self.retryable, bool)
+            isinstance(self.exec_config, ExecuteConfig),
         ))
 
 
@@ -179,8 +178,7 @@ class DriverConfig:
                        dri['description'],
                        dri['path'],
                        dri['flags'],
-                       dri['fail_time'],
-                       dri['autoable'],
-                       dri['retryable'],
+                       exec_config=ExecuteConfig(
+                           **dri['exec_config'])
                        )
                 for dri in dris] for dri_type, dris in buff.items()}

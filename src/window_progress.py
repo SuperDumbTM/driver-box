@@ -37,7 +37,7 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         """
         self.progr_table.insertRow(row := self.progr_table.rowCount())
         self.progr_table.setItem(
-            row, 0, QtWidgets.QTableWidgetItem(task.task_name))
+            row, 0, QtWidgets.QTableWidgetItem(task.name))
         self.progr_table.setItem(row, 1, QtWidgets.QTableWidgetItem(message))
         self._progresses.update({task.__hash__(): row})
         return row
@@ -76,7 +76,7 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
             return QtGui.QColor(230, 207, 0, 255)
         elif progress == ExecuteStatus.SUCCESS:
             return QtGui.QColor(0, 179, 12, 200)
-        elif progress in (ExecuteStatus.FAILED, ExecuteStatus.ABORTED):
+        elif progress in (ExecuteStatus.FAILED, ExecuteStatus.ABORTED, ExecuteStatus.ERROR):
             return QtGui.QColor(171, 34, 34, 200)
         else:
             return QtGui.QColor(255, 255, 255, 1)
