@@ -119,8 +119,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>325</width>
-                <height>326</height>
+                <width>313</width>
+                <height>328</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -319,7 +319,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>159</width>
+                     <width>165</width>
                      <height>101</height>
                     </rect>
                    </property>
@@ -466,6 +466,16 @@
                    </property>
                    <property name="autoExclusive">
                     <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="at_bios_rb">
+                   <property name="statusTip">
+                    <string>成功安裝所有軀動後自動重新開機並進入BIOS。</string>
+                   </property>
+                   <property name="text">
+                    <string>重啟BIOS</string>
                    </property>
                   </widget>
                  </item>
@@ -649,7 +659,7 @@
      <x>0</x>
      <y>0</y>
      <width>768</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

@@ -5,13 +5,13 @@ from subprocess import Popen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
+from .window_progress import ProgressWindow
+from .window_driver import DriverConfigViewerWindow
 from ui.main import Ui_MainWindow
 from utils import commands
 from utils.qwidget import is_widget_enabled
-from widgets.driver_checkbox import DriverOptionCheckBox
 from utils.hw_info_worker import HwInfoWorker
-from window_progress import ProgressWindow
-from window_driver import DriverConfigViewerWindow
+from widgets.driver_checkbox import DriverOptionCheckBox
 from install.configuration import Driver, DriverConfig
 from install.execute_status import ExecuteStatus
 from install.task_manager import TaskManager
@@ -162,7 +162,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             manager.add_task(_task)
 
         # start install
-        if len(manager) == 0:
+        if len(manager.tasks) == 0:
             box = QtWidgets.QMessageBox()
             box.setWindowTitle("失敗")
             box.setWindowIcon(self.windowIcon())
@@ -205,9 +205,15 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
               and self.at_reboot_rb.isChecked()):
             threading.Timer(
                 5,
-                lambda: Popen(commands.reboot().execute())
+                lambda: commands.reboot().execute()
             ).start()
             QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
+        elif (is_widget_enabled(self.at_bios_rb) and self.at_bios_rb.isChecked()):
+            threading.Timer(
+                5,
+                lambda: commands.reboot_uefi().execute()
+            ).start()
+            QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重啟至 BIOS")
         else:
             box = QtWidgets.QMessageBox()
             # box.setWindowTitle("完成")

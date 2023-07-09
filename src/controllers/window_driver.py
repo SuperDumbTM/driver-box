@@ -1,12 +1,13 @@
 import os
+import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from ui.dri_cfg_viewer import Ui_DriverConfigViewer
-from install.configuration import Driver, DriverType, DriverConfig
+from .window_conf_editor import DriverConfigEditorWindow
 from widgets.tablewidget_dragable import TableWidgetDragable
-from window_conf_editor import DriverConfigEditorWindow
+from install.configuration import Driver, DriverType, DriverConfig
+from ui.dri_cfg_viewer import Ui_DriverConfigViewer
 
 
 class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):

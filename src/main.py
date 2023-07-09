@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 
 import definitions
 from install import configuration
-from window_main import MainWindow
+from controllers.window_main import MainWindow
 
 
 def main():

@@ -114,10 +114,11 @@ class ExecutableTask(Task):
             exe_time = time.time()
             if no_options:
                 self._process = subprocess.Popen(
-                    self.full_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            else:
-                self._process = subprocess.Popen(
                     self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            else:
+                print(self.full_command)
+                self._process = subprocess.Popen(
+                    self.full_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             while self.is_alive():
                 time.sleep(0.1)
