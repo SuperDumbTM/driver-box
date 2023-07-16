@@ -175,10 +175,11 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         elif self.at_install_cb.isChecked():
             threading.Thread(
                 target=manager.auto_install,
-                args=[is_widget_enabled(self.at_retry_cb)
-                      and self.at_retry_cb.isChecked(),
-                      self.async_install_cb.isChecked(),
-                      ],
+                args=[
+                    is_widget_enabled(
+                        self.at_retry_cb) and self.at_retry_cb.isChecked(),
+                    self.async_install_cb.isChecked(),
+                ],
                 daemon=True).start()
             self.progr_window.exec_()
         else:
@@ -200,20 +201,20 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 5,
                 lambda: commands.shutdown().execute()
             ).start()
-            QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動關機")
+            QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動關機")
         elif (is_widget_enabled(self.at_reboot_rb)
               and self.at_reboot_rb.isChecked()):
             threading.Timer(
                 5,
                 lambda: commands.reboot().execute()
             ).start()
-            QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重新開機")
+            QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動重新開機")
         elif (is_widget_enabled(self.at_bios_rb) and self.at_bios_rb.isChecked()):
             threading.Timer(
                 5,
                 lambda: commands.reboot_uefi().execute()
             ).start()
-            QtWidgets.QMessageBox.information(self, "完成", "安裝成功，即將自動重啟至 BIOS")
+            QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動重啟至 BIOS")
         else:
             box = QtWidgets.QMessageBox()
             # box.setWindowTitle("完成")

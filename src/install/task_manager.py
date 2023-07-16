@@ -54,7 +54,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         return all((task.status not in (ExecuteStatus.PENDING, ExecuteStatus.INPROGRESS)
                     for task in self.tasks))
 
-    def auto_install(self, man_fallback: bool, paralle: bool):
+    def auto_install(self, man_fallback: bool, paralle: bool) -> None:
         # ---------- start tasks ----------
         for task in self.tasks:
             if paralle:
@@ -73,20 +73,30 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         elif any((t.status != ExecuteStatus.SUCCESS for t in self.tasks)):
             if man_fallback:
                 self.qsig_msg.emit("有工作執行失敗，將以手動安裝模式重試")
-            self.manual_install()
+                self.manual_install(is_retry=True)
             return self.qsig_install_result.emit(ExecuteStatus.FAILED)
         else:
             self.qsig_msg.emit("已完成所有選擇的工作")
             return self.qsig_install_result.emit(ExecuteStatus.SUCCESS)
 
-    def manual_install(self):
-        for task in (t for t in self.tasks if t.status
-                     in (ExecuteStatus.PENDING, ExecuteStatus.FAILED)):
-            self.qsig_msg.emit(f"開始安裝 {task.name} (手動模式)")
-            try:
-                task.execute(no_options=True)
-            except Exception as e:
-                self.qsig_msg.emit(f"{e} ({task.name})")
+    def manual_install(self, is_retry: bool = False):
+        if not is_retry:
+            for task in (t for t in self.tasks if t.status == ExecuteStatus.PENDING):
+                self.qsig_msg.emit(f"開始安裝 {task.name} (手動模式)")
+                try:
+                    task.execute(no_options=True)
+                except Exception as e:
+                    self.qsig_msg.emit(f"{e} ({task.name})")
+        else:
+            for task in (
+                t for t in self.tasks if t.status not in (
+                    ExecuteStatus.SUCCESS, ExecuteStatus.INPROGRESS, ExecuteStatus.ABORTED)
+            ):
+                self.qsig_msg.emit(f"開始重試 {task.name} (手動模式)")
+                try:
+                    task.execute(no_options=True)
+                except Exception as e:
+                    self.qsig_msg.emit(f"{e} ({task.name})")
 
     def __at_helper(self, task: Task):
         if task.is_aborted:

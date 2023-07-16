@@ -16,7 +16,7 @@ except ImportError:
 ID_LEN: Final[int] = 6
 FLAG_PRESET: Final[dict] = {
     'AMD Chipset': ["/S"],
-    'AMD Display': ["-install"],
+    'AMD Display': ["-install", "-OUTPUT detail"],
     'Intel Bluetooth': ["/quiet", "/norestart"],
     'Intel Chipset': ["-s", "-norestart"],
     'Intel Display': ["-s"],
@@ -47,7 +47,7 @@ class Driver:
 
     def is_validate(self) -> bool:
         return all((
-            isinstance(self.id, (str, None)),
+            isinstance(self.id, (str, type(None))),
             isinstance(self.type, DriverType),
             isinstance(self.name, str),
             isinstance(self.description, str),
@@ -112,7 +112,7 @@ class DriverConfig:
         Raises:
             ValueError: The attribute(s) of the new driver is not valid
         """
-        if not driver.is_validate(is_new=True):
+        if not driver.is_validate():
             raise ValueError()
 
         while locals().get("new_id") is None or not self.is_id_unique(new_id):
