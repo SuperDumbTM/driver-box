@@ -81,12 +81,8 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
             self.open_save_err_msgbox()
 
     def delete(self):
-        dri = self._get_driver()
-        if dri.is_validate():
-            self.qsig_del.emit(dri)
-            self.close()
-        else:
-            self.open_save_err_msgbox()
+        self.qsig_del.emit(self._get_driver())
+        self.close()
 
     def _get_driver(self) -> Driver:
         return Driver(self.dri_id,
