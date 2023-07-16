@@ -244,7 +244,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             self.at_nothing_rb.setChecked(True)
 
     def _is_autoable(self) -> bool:
-        return all((dri.exec_config.slientable for dri in self.selected_drivers()))
+        return all((dri.exec_config.silentable for dri in self.selected_drivers()))
 
     def _misc_dri_options(self) -> list[QtWidgets.QCheckBox]:
         """Returns all the "miscellaneous" driver options"""

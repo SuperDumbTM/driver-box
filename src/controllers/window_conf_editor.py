@@ -49,7 +49,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         self.dri_path_input.setText(driver.path)
         self.dri_flag_input.setText(",".join(driver.flags))
         self.dri_fail_time_input.setText(str(driver.exec_config.fail_time))
-        self.dri_autoable_cb.setChecked(driver.exec_config.slientable)
+        self.dri_autoable_cb.setChecked(driver.exec_config.silentable)
         self.dri_retryable_cb.setChecked(driver.exec_config.retryable)
 
     def select_dri_path(self):
