@@ -100,20 +100,19 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
     def open_edit_dialog(self, item: QtWidgets.QTableWidgetItem):
         tgt_dri: Driver = item.data(QtCore.Qt.ItemDataRole.UserRole)
 
-        self.conf_editor_window = DriverConfigEditorWindow(tgt_dri.id)
-        self.conf_editor_window.qsig_save.connect(self.save_edited_driver)
-        self.conf_editor_window.qsig_del.connect(self.delete_driver)
+        window = DriverConfigEditorWindow(tgt_dri.id)
+        window.qsig_save.connect(self.save_edited_driver)
+        window.qsig_del.connect(self.delete_driver)
 
-        self.conf_editor_window.dri_type_dropdown.setEnabled(False)
-        self.conf_editor_window.fill_data(tgt_dri)
-        # instead of show(), exec_() will prohibit user to jump to other window
-        self.conf_editor_window.exec_()
+        window.dri_type_dropdown.setEnabled(False)
+        window.fill_data(tgt_dri)
+        window.exec_()
 
     def open_create_dialog(self) -> None:
-        self.conf_editor_window = DriverConfigEditorWindow()
-        self.conf_editor_window.qsig_save.connect(self.save_new_driver)
-        self.conf_editor_window.del_dri_btn.setEnabled(False)
-        self.conf_editor_window.exec_()
+        window = DriverConfigEditorWindow()
+        window.qsig_save.connect(self.save_new_driver)
+        window.del_dri_btn.setEnabled(False)
+        window.exec_()
 
     def save_edited_driver(self, driver: Driver) -> None:
         self.dri_conf.update(driver.id, driver)
