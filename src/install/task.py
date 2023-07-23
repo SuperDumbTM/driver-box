@@ -116,7 +116,6 @@ class ExecutableTask(Task):
                 self._process = subprocess.Popen(
                     self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else:
-                print(self.full_command)
                 self._process = subprocess.Popen(
                     self.full_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
