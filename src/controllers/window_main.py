@@ -53,7 +53,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             cb = DriverOptionCheckBox(option.name)
             cb.dri_id = option.id
             self.misc_dri_vbox.addWidget(cb)
-            # check autoable
             cb.clicked.connect(self._dri_on_select)
         # ---------- events ----------
         self.hwInfo_refresh_btn.clicked.connect(self.refresh_hwinfo)
@@ -63,7 +62,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.edit_driver_action.triggered.connect(self.dri_conf_window.show)
         self.at_install_cb.clicked.connect(
             lambda val: self.set_at_options(val))
-        self.dri_opt_reset_btn.clicked.connect(self.reset_selection)
+        self.dri_opt_reset_btn.clicked.connect(self.reset_fields)
         self.set_passwd_cb.clicked.connect(
             lambda: self.set_passwd_txt.setEnabled(
                 self.set_passwd_cb.isChecked())
@@ -74,7 +73,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             lambda create, text: self.hwinfo_vbox.addWidget(create(text)))
 
     def send_msg(self, text: str):
-        """Display a message to the UI (message box)
+        """Display a message to the message box
 
         Args:
             text (str): message to be displayed
@@ -84,23 +83,26 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             self.prog_msg_box.verticalScrollBar().maximum())  # scroll to bottom
 
     def refresh_hwinfo(self):
-        """Rescan and update the hardware information of the computer"""
+        """Rescan and update the hardware information of the computer
+        """
         for i in reversed(range(self.hwinfo_vbox.count())):
             self.hwinfo_vbox.itemAt(i).widget().setParent(None)
         self.hwinfo_worker.start()
 
     def set_at_options(self, enable: bool):
-        """Enable/disable the auto-installation option checkboxes"""
+        """Enable/disable the auto-installation option checkboxes
+        """
         for option in self.install_mode_options.children():
             if (option.objectName() != self.at_install_cb.objectName()
                     and isinstance(option, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
                 option.setEnabled(enable)
 
-        if self._is_autoable():
+        if self.is_selected_autoable():
             self.set_halt_options(enable)
 
     def set_halt_options(self, enable: bool):
-        """Enable/disable the halt option checkboxes"""
+        """Enable/disable the halt option checkboxes
+        """
         if not self.at_install_cb.isChecked():
             enable = False
 
@@ -108,7 +110,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.at_reboot_rb.setEnabled(enable)
         self.at_nothing_rb.setEnabled(enable)
 
-    def reset_selection(self):
+    def reset_fields(self):
+        """Reset all the input fields to default value.
+        """
         self.lan_driver_dropdown.setCurrentIndex(0)
         self.display_dri_dropdown.setCurrentIndex(0)
         for widget in self._misc_dri_options():
@@ -134,6 +138,12 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 continue
             drivers.append(self.driconfg.get(widget.dri_id))
         return drivers
+
+    def is_selected_autoable(self) -> bool:
+        """Returns whether all the selected drivers can be installed with \
+            slient /unattend mode.
+        """
+        return all((dri.exec_config.silentable for dri in self.selected_drivers()))
 
     def _install(self):
         """Start the install process"""
@@ -239,12 +249,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         E.g. If selected drivers contains non-autoable drivers,\
             disable execution options for auto installation mode
         """
-        self.set_halt_options(self._is_autoable())
-        if not self._is_autoable():
+        self.set_halt_options(self.is_selected_autoable())
+        if not self.is_selected_autoable():
             self.at_nothing_rb.setChecked(True)
-
-    def _is_autoable(self) -> bool:
-        return all((dri.exec_config.silentable for dri in self.selected_drivers()))
 
     def _misc_dri_options(self) -> list[QtWidgets.QCheckBox]:
         """Returns all the "miscellaneous" driver options"""
