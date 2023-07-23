@@ -35,7 +35,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.driconfg = driconfig
         self.installopt = installopt
 
-        self._progr_window = ProgressWindow()
         self._hwinfo_worker = HwInfoWorker(self.qsig_msg,
                                            self.qsig_hwinfo,
                                            parent=self)
@@ -164,8 +163,10 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         return all((dri.exec_config.silentable for dri in self.selected_drivers()))
 
     def _install(self):
-        """Start the install process"""
-        manager = TaskManager(self.qsig_msg, self._progr_window.qsig_progress)
+        """Start the install process
+        """
+        prog_window = ProgressWindow()
+        manager = TaskManager(self.qsig_msg, prog_window.qsig_progress)
         manager.qsig_install_result.connect(self._post_install)
 
         # set password
@@ -176,20 +177,20 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 f"{commands.get_current_usrname()} 的密碼將會更改為 \"'{self.set_passwd_txt.toPlainText()}\"")
 
         def prog_close():
-            """Terminate the remaining tasks when progress window is closed"""
+            """Terminate the remaining tasks when progress window is closed
+            """
             if not manager.is_finished():
                 manager.abort_tasks()
                 self.send_msg("已終止安裝")
-        self._progr_window.qsig_close.connect(prog_close)
+        prog_window.qsig_window_close.connect(prog_close)
 
-        self._progr_window.clear_progresses()
         for dri_conf in self.selected_drivers():
             _task = ExecutableTask(
                 dri_conf.name, dri_conf.exec_config, dri_conf.path, dri_conf.flags)
-            self._progr_window.append_progress(_task, "等待安裝中")
+            prog_window.append_progress(_task, "等待安裝中")
             manager.add_task(_task)
 
-        # start install
+        # ---------- start installation ----------
         if len(manager.tasks) == 0:
             box = QtWidgets.QMessageBox()
             box.setWindowTitle("失敗")
@@ -204,12 +205,12 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             threading.Thread(
                 target=manager.auto_install,
                 args=[
-                    is_widget_enabled(
-                        self.at_retry_cb) and self.at_retry_cb.isChecked(),
+                    (is_widget_enabled(self.at_retry_cb)
+                     and self.at_retry_cb.isChecked()),
                     self.async_install_cb.isChecked(),
                 ],
                 daemon=True).start()
-            self._progr_window.exec_()
+            prog_window.exec_()
         else:
             manager.manual_install()
 
@@ -224,29 +225,18 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                      and not self.at_retry_cb.isChecked())):
             pass
         elif (is_widget_enabled(self.halt_option_dropdown)):
-
             if self.halt_option_dropdown.currentData() == HaltOption.SHUTDOWN:
-                threading.Timer(
-                    5,
-                    lambda: commands.shutdown().execute()
-                ).start()
-                QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動關機")
+                commands.shutdown(5).execute()
+                QtWidgets.QMessageBox.information(self, "完成", "即將自動關機")
             elif self.halt_option_dropdown.currentData() == HaltOption.REBOOT:
-                threading.Timer(
-                    5,
-                    lambda: commands.reboot().execute()
-                ).start()
-                QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動重新開機")
+                commands.reboot(5).execute()
+                QtWidgets.QMessageBox.information(self, "完成", "即將重新開機")
             elif self.halt_option_dropdown.currentData() == HaltOption.BIOS:
-                threading.Timer(
-                    5,
-                    lambda: commands.reboot_uefi().execute()
-                ).start()
+                commands.reboot_uefi(5).execute()
                 QtWidgets.QMessageBox.information(
-                    self, "完成", "完成，即將自動重啟至 BIOS")
+                    self, "完成", "即將自動重啟至 BIOS")
         else:
             box = QtWidgets.QMessageBox()
-            # box.setWindowTitle("完成")
             box.setWindowIcon(self.windowIcon())
             box.setIcon(QtWidgets.QMessageBox.Information)
             box.setText("完成")

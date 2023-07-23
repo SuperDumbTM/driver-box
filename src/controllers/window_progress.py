@@ -11,7 +11,7 @@ from ui.progress import Ui_InstallProgress
 class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
 
     qsig_progress = QtCore.pyqtSignal(Task, ExecuteStatus, str)
-    qsig_close = QtCore.pyqtSignal()
+    qsig_window_close = QtCore.pyqtSignal()
 
     def __init__(self, parent: QtWidgets.QWidget = None) -> None:
         super().__init__(parent=parent)
@@ -63,7 +63,7 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
 
     # override
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        self.qsig_close.emit()
+        self.qsig_window_close.emit()
         return super().closeEvent(a0)
 
     def _status_color(self, progress: ExecuteStatus) -> QtGui.QColor:
