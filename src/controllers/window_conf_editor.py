@@ -38,19 +38,19 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                 ','.join(self.dri_flag_preset_dropdown.itemData(idx))
             ))
 
-    def fill_data(self, driver: Driver):
-        self.dri_name_input.setText(driver.name)
+    def fill_data(self, config: Driver):
+        self.dri_name_input.setText(config.name)
 
         for idx in range(self.dri_type_dropdown.count()):
-            if self.dri_type_dropdown.itemData(idx) is driver.type:
+            if self.dri_type_dropdown.itemData(idx) is config.type:
                 self.dri_type_dropdown.setCurrentIndex(idx)
                 break
 
-        self.dri_path_input.setText(driver.path)
-        self.dri_flag_input.setText(",".join(driver.flags))
-        self.dri_fail_time_input.setText(str(driver.exec_config.fail_time))
-        self.dri_autoable_cb.setChecked(driver.exec_config.silentable)
-        self.dri_retryable_cb.setChecked(driver.exec_config.retryable)
+        self.dri_path_input.setText(config.path)
+        self.dri_flag_input.setText(",".join(config.flags))
+        self.dri_fail_time_input.setText(str(config.exec_config.fail_time))
+        self.dri_autoable_cb.setChecked(config.exec_config.silentable)
+        self.dri_retryable_cb.setChecked(config.exec_config.retryable)
 
     def select_dri_path(self):
         path = QtWidgets.QFileDialog.getOpenFileName(
