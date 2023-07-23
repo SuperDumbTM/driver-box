@@ -81,7 +81,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         """
         self.prog_msg_box.addItem(f"> {text}")
         self.prog_msg_box.verticalScrollBar().setValue(
-            self.prog_msg_box.verticalScrollBar().minimum())  # scroll to bottom
+            self.prog_msg_box.verticalScrollBar().maximum())  # scroll to bottom
 
     def refresh_hwinfo(self):
         """Rescan and update the hardware information of the computer"""
