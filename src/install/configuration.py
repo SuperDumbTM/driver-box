@@ -2,8 +2,9 @@ import os
 import json
 import random
 import string
-from typing import Any, Final, Optional, Union
-from dataclasses import asdict, dataclass
+from typing import Final, Union
+
+from install.driver import Driver
 
 try:
     from driver_type import DriverType
@@ -26,35 +27,6 @@ FLAG_PRESET: Final[dict] = {
     'Nvidia Display': ["-s", "-noreboot", "Display.Driver"],
     'Realtek LAN': ["-s"]
 }
-
-
-@dataclass(order=False)
-class Driver:
-
-    id: Optional[str]
-    type: DriverType
-    name: str
-    description: str
-    path: str
-    flags: list[str]
-    exec_config: ExecuteConfig
-
-    def asdict(self) -> dict[str, Any]:
-        d = asdict(self)
-        d['type'] = self.type.value
-        d['exec_config'] = self.exec_config.asdict()
-        return d
-
-    def is_validate(self) -> bool:
-        return all((
-            isinstance(self.id, (str, type(None))),
-            isinstance(self.type, DriverType),
-            isinstance(self.name, str),
-            isinstance(self.description, str),
-            isinstance(self.path, str) and os.path.exists(self.path),
-            isinstance(self.flags, list),
-            isinstance(self.exec_config, ExecuteConfig),
-        ))
 
 
 class DriverConfig:
