@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets
 import definitions
 from install import configuration
 from controllers.window_main import MainWindow
+from install.intall_option import InstallOption
 
 
 def main():
@@ -22,8 +23,10 @@ def main():
             configuration.DriverConfig(
                 os.path.join(definitions.DIR_CONF, "driver.json"),
                 definitions.DIR_DRI,
-                True
-            )
+                True),
+            InstallOption.from_file(
+                os.path.join(definitions.DIR_CONF, "install_option.json"),
+                True)
         )
         main_window.show()
         exit_code = app.exec_()

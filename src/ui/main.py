@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(772, 485)
+        MainWindow.resize(772, 494)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -65,7 +65,7 @@ class Ui_MainWindow(object):
         self.hwinfo_scroll_area.setWidgetResizable(True)
         self.hwinfo_scroll_area.setObjectName("hwinfo_scroll_area")
         self.hwinfo_scroll_area_content = QtWidgets.QWidget()
-        self.hwinfo_scroll_area_content.setGeometry(QtCore.QRect(0, 0, 328, 346))
+        self.hwinfo_scroll_area_content.setGeometry(QtCore.QRect(0, 0, 328, 355))
         self.hwinfo_scroll_area_content.setObjectName("hwinfo_scroll_area_content")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.hwinfo_scroll_area_content)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
@@ -306,7 +306,10 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.edit_driver_action = QtWidgets.QAction(MainWindow)
         self.edit_driver_action.setObjectName("edit_driver_action")
+        self.edit_defaults_action = QtWidgets.QAction(MainWindow)
+        self.edit_defaults_action.setObjectName("edit_defaults_action")
         self.menu.addAction(self.edit_driver_action)
+        self.menu.addAction(self.edit_defaults_action)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
 
@@ -343,3 +346,4 @@ class Ui_MainWindow(object):
         self.menu.setTitle(_translate("MainWindow", "管理"))
         self.menu_2.setTitle(_translate("MainWindow", "幫助"))
         self.edit_driver_action.setText(_translate("MainWindow", "編輯軀動程式"))
+        self.edit_defaults_action.setText(_translate("MainWindow", "編輯預設選項"))

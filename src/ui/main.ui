@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>772</width>
-    <height>485</height>
+    <height>494</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -120,7 +120,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>328</width>
-                <height>346</height>
+                <height>355</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -616,6 +616,7 @@
      <string>管理</string>
     </property>
     <addaction name="edit_driver_action"/>
+    <addaction name="edit_defaults_action"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -629,6 +630,11 @@
   <action name="edit_driver_action">
    <property name="text">
     <string>編輯軀動程式</string>
+   </property>
+  </action>
+  <action name="edit_defaults_action">
+   <property name="text">
+    <string>編輯預設選項</string>
    </property>
   </action>
  </widget>

@@ -3,6 +3,7 @@ import threading
 from subprocess import Popen
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from controllers.window_defaults_editor import InstallOptionEditorWindow
 
 import definitions
 from enums.halt_option import HaltOption
@@ -15,6 +16,7 @@ from utils.hw_info_worker import HwInfoWorker
 from widgets.driver_checkbox import DriverOptionCheckBox
 from install.configuration import Driver, DriverConfig
 from install.execute_status import ExecuteStatus
+from install.intall_option import InstallOption
 from install.task_manager import TaskManager
 from install.task import ExecutableTask
 
@@ -24,18 +26,20 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     qsig_msg = QtCore.pyqtSignal(str)
     qsig_hwinfo = QtCore.pyqtSignal(object, str)
 
-    def __init__(self, driconfig: DriverConfig):
+    def __init__(self, driconfig: DriverConfig, installopt: InstallOption):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon(
             os.path.join(definitions.DIR_PIC, "icon.ico")))
 
         self.driconfg = driconfig
-        self.progr_window = ProgressWindow()
-        self.dri_conf_window = DriverConfigViewerWindow(driconfig)
-        self.hwinfo_worker = HwInfoWorker(self.qsig_msg,
-                                          self.qsig_hwinfo,
-                                          parent=self)
+        self.installopt = installopt
+
+        self._progr_window = ProgressWindow()
+        self._hwinfo_worker = HwInfoWorker(self.qsig_msg,
+                                           self.qsig_hwinfo,
+                                           parent=self)
+
         self.refresh_hwinfo()
         # ---------- driver options ----------
         for option in self.driconfg.get_type("network"):
@@ -61,14 +65,15 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.disk_mgt_btn.clicked.connect(
             lambda: Popen(["start", "diskmgmt.msc"], shell=True))
         self.install_btn.clicked.connect(self._install)
-        self.edit_driver_action.triggered.connect(self.dri_conf_window.show)
-        self.at_install_cb.clicked.connect(
-            lambda val: self.set_at_options(val))
+        self.at_install_cb.clicked.connect(self.set_ati_checked)
         self.dri_opt_reset_btn.clicked.connect(self.reset_fields)
-        self.set_passwd_cb.clicked.connect(
-            lambda: self.set_passwd_txt.setEnabled(
-                self.set_passwd_cb.isChecked())
-        )
+        self.set_passwd_cb.clicked.connect(self.set_passwd_checked)
+
+        self.edit_driver_action.triggered.connect(
+            lambda: DriverConfigViewerWindow(driconfig).show())
+        self.edit_defaults_action.triggered.connect(
+            self._show_defaults_edit_window)
+
         # ---------- signals ----------
         self.qsig_msg.connect(self.send_msg)
         self.qsig_hwinfo.connect(
@@ -89,18 +94,25 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         """
         for i in reversed(range(self.hwinfo_vbox.count())):
             self.hwinfo_vbox.itemAt(i).widget().setParent(None)
-        self.hwinfo_worker.start()
+        self._hwinfo_worker.start()
 
-    def set_at_options(self, enable: bool):
+    def set_ati_checked(self, checked: bool):
         """Enable/disable the auto-installation option checkboxes
         """
-        for option in self.install_mode_options.children():
-            if (option.objectName() != self.at_install_cb.objectName()
-                    and isinstance(option, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
-                option.setEnabled(enable)
+        self.at_install_cb.setChecked(checked)
+        for idx in range(self.install_mode_options.count()):
+            widget = self.install_mode_options.itemAt(idx).widget()
+            if (widget.objectName() != self.at_install_cb.objectName()
+                    and isinstance(widget, (QtWidgets.QCheckBox, QtWidgets.QRadioButton))):
+                widget.setEnabled(checked)
 
         if self.is_selected_autoable():
-            self.set_halt_options(enable)
+            self.set_halt_options(checked)
+
+    def set_passwd_checked(self, checked: bool):
+        self.set_passwd_cb.setChecked(checked)
+        self.set_passwd_txt.setEnabled(
+            self.set_passwd_cb.isChecked())
 
     def set_halt_options(self, enable: bool):
         """Enable/disable the halt option checkboxes
@@ -118,7 +130,13 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         for widget in self._misc_dri_options():
             widget.setChecked(False)
 
-        self.set_passwd_cb.setChecked(False)
+        self.set_ati_checked(self.installopt.auto_install)
+        self.async_install_cb.setChecked(self.installopt.async_install)
+        self.at_retry_cb.setChecked(self.installopt.retry_on_fail)
+        self.halt_option_dropdown.setCurrentIndex(
+            self.halt_option_dropdown.findData(self.installopt.halt_option))
+        self.set_passwd_checked(self.installopt.is_set_passwd)
+        self.set_passwd_txt.setPlainText(self.installopt.passwd)
 
     def selected_drivers(self) -> list[Driver]:
         drivers = []
@@ -147,7 +165,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
 
     def _install(self):
         """Start the install process"""
-        manager = TaskManager(self.qsig_msg, self.progr_window.qsig_progress)
+        manager = TaskManager(self.qsig_msg, self._progr_window.qsig_progress)
         manager.qsig_install_result.connect(self._post_install)
 
         # set password
@@ -162,13 +180,13 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             if not manager.is_finished():
                 manager.abort_tasks()
                 self.send_msg("已終止安裝")
-        self.progr_window.qsig_close.connect(prog_close)
+        self._progr_window.qsig_close.connect(prog_close)
 
-        self.progr_window.clear_progresses()
+        self._progr_window.clear_progresses()
         for dri_conf in self.selected_drivers():
             _task = ExecutableTask(
                 dri_conf.name, dri_conf.exec_config, dri_conf.path, dri_conf.flags)
-            self.progr_window.append_progress(_task, "等待安裝中")
+            self._progr_window.append_progress(_task, "等待安裝中")
             manager.add_task(_task)
 
         # start install
@@ -191,7 +209,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                     self.async_install_cb.isChecked(),
                 ],
                 daemon=True).start()
-            self.progr_window.exec_()
+            self._progr_window.exec_()
         else:
             manager.manual_install()
 
@@ -259,7 +277,15 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         return [self.misc_dri_vbox.itemAt(i).widget()
                 for i in range(self.misc_dri_vbox.count())]
 
+    def _show_defaults_edit_window(self):
+        window = InstallOptionEditorWindow(self.installopt)
+
+        def set_installopt(new): self.installopt = new
+        window.qsig_save.connect(set_installopt)
+        window.exec_()
+
     # override
+
     def closeEvent(self, event):
         QtWidgets.QApplication.closeAllWindows()  # force close all windows
         super().closeEvent(event)
