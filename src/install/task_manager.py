@@ -59,9 +59,9 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         for task in self.tasks:
             if paralle:
                 threading.Thread(
-                    target=self.__at_helper, args=[task], daemon=True).start()
+                    target=self.__at_worker, args=[task], daemon=True).start()
             else:
-                self.__at_helper(task)
+                self.__at_worker(task)
 
         while paralle and any((t.status == ExecuteStatus.PENDING or
                                t.is_alive() for t in self.tasks)):
@@ -73,32 +73,32 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         elif any((t.status != ExecuteStatus.SUCCESS for t in self.tasks)):
             if man_fallback:
                 self.qsig_msg.emit("有工作執行失敗，將以手動安裝模式重試")
-                self.manual_install(is_retry=True)
+                self.retry_install()
             return self.qsig_install_result.emit(ExecuteStatus.FAILED)
         else:
             self.qsig_msg.emit("已完成所有選擇的工作")
             return self.qsig_install_result.emit(ExecuteStatus.SUCCESS)
 
-    def manual_install(self, is_retry: bool = False):
-        if not is_retry:
-            for task in (t for t in self.tasks if t.status == ExecuteStatus.PENDING):
-                self.qsig_msg.emit(f"開始安裝 {task.name} (手動模式)")
-                try:
-                    task.execute(no_options=True)
-                except Exception as e:
-                    self.qsig_msg.emit(f"{e} ({task.name})")
-        else:
-            for task in (
-                t for t in self.tasks if t.status not in (
-                    ExecuteStatus.SUCCESS, ExecuteStatus.INPROGRESS, ExecuteStatus.ABORTED)
-            ):
-                self.qsig_msg.emit(f"開始重試 {task.name} (手動模式)")
-                try:
-                    task.execute(no_options=True)
-                except Exception as e:
-                    self.qsig_msg.emit(f"{e} ({task.name})")
+    def manual_install(self):
+        for task in (t for t in self.tasks if t.status == ExecuteStatus.PENDING):
+            self.qsig_msg.emit(f"開始安裝 {task.name} (手動模式)")
+            try:
+                task.execute(no_options=True)
+            except Exception as e:
+                self.qsig_msg.emit(f"{e} ({task.name})")
 
-    def __at_helper(self, task: Task):
+    def retry_install(self, no_options: bool = True):
+        for task in (
+            t for t in self.tasks if t.status not in (
+                ExecuteStatus.SUCCESS, ExecuteStatus.INPROGRESS, ExecuteStatus.ABORTED)
+        ):
+            self.qsig_msg.emit(f"開始重試 {task.name} (手動模式)")
+            try:
+                task.execute(no_options=no_options)
+            except Exception as e:
+                self.qsig_msg.emit(f"{e} ({task.name})")
+
+    def __at_worker(self, task: Task):
         if task.is_aborted:
             return
         self.qsig_msg.emit(f"開始執行 {task.name} (自動模式)")
@@ -110,7 +110,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             if not task.is_alive():
                 break
             self.qsig_progr.emit(
-                task, ExecuteStatus.INPROGRESS, _PBAR[i % len(_PBAR)])
+                task, task.status, _PBAR[i % len(_PBAR)])
         t.join()
 
         # emit message from the executable
