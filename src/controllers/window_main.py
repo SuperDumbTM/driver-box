@@ -5,6 +5,7 @@ from subprocess import Popen
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
+from enums.halt_option import HaltOption
 from .window_progress import ProgressWindow
 from .window_driver import DriverConfigViewerWindow
 from ui.main import Ui_MainWindow
@@ -39,13 +40,11 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         # ---------- driver options ----------
         for option in self.driconfg.get_type("network"):
             self.lan_driver_dropdown.addItem(option.name, option.id)
-        # check autoable
         self.lan_driver_dropdown.currentIndexChanged.connect(
             self._dri_on_select)
 
         for option in self.driconfg.get_type("display"):
             self.display_dri_dropdown.addItem(option.name, option.id)
-        # check autoable
         self.display_dri_dropdown.currentIndexChanged.connect(
             self._dri_on_select)
 
@@ -54,6 +53,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             cb.dri_id = option.id
             self.misc_dri_vbox.addWidget(cb)
             cb.clicked.connect(self._dri_on_select)
+        # ---------- halt options ----------
+        for option in HaltOption:
+            self.halt_option_dropdown.addItem(option.value, option)
         # ---------- events ----------
         self.hwInfo_refresh_btn.clicked.connect(self.refresh_hwinfo)
         self.disk_mgt_btn.clicked.connect(
@@ -106,9 +108,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         if not self.at_install_cb.isChecked():
             enable = False
 
-        self.at_halt_rb.setEnabled(enable)
-        self.at_reboot_rb.setEnabled(enable)
-        self.at_nothing_rb.setEnabled(enable)
+        self.halt_option_dropdown.setEnabled(enable)
 
     def reset_fields(self):
         """Reset all the input fields to default value.
@@ -205,26 +205,27 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             and not (status != ExecuteStatus.ABORTED
                      and not self.at_retry_cb.isChecked())):
             pass
-        elif (is_widget_enabled(self.at_halt_rb)
-              and self.at_halt_rb.isChecked()):
-            threading.Timer(
-                5,
-                lambda: commands.shutdown().execute()
-            ).start()
-            QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動關機")
-        elif (is_widget_enabled(self.at_reboot_rb)
-              and self.at_reboot_rb.isChecked()):
-            threading.Timer(
-                5,
-                lambda: commands.reboot().execute()
-            ).start()
-            QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動重新開機")
-        elif (is_widget_enabled(self.at_bios_rb) and self.at_bios_rb.isChecked()):
-            threading.Timer(
-                5,
-                lambda: commands.reboot_uefi().execute()
-            ).start()
-            QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動重啟至 BIOS")
+        elif (is_widget_enabled(self.halt_option_dropdown)):
+
+            if self.halt_option_dropdown.currentData() == HaltOption.SHUTDOWN:
+                threading.Timer(
+                    5,
+                    lambda: commands.shutdown().execute()
+                ).start()
+                QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動關機")
+            elif self.halt_option_dropdown.currentData() == HaltOption.REBOOT:
+                threading.Timer(
+                    5,
+                    lambda: commands.reboot().execute()
+                ).start()
+                QtWidgets.QMessageBox.information(self, "完成", "完成，即將自動重新開機")
+            elif self.halt_option_dropdown.currentData() == HaltOption.BIOS:
+                threading.Timer(
+                    5,
+                    lambda: commands.reboot_uefi().execute()
+                ).start()
+                QtWidgets.QMessageBox.information(
+                    self, "完成", "完成，即將自動重啟至 BIOS")
         else:
             box = QtWidgets.QMessageBox()
             # box.setWindowTitle("完成")
@@ -250,8 +251,8 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             disable execution options for auto installation mode
         """
         self.set_halt_options(self.is_selected_autoable())
-        if not self.is_selected_autoable():
-            self.at_nothing_rb.setChecked(True)
+        # if not self.is_selected_autoable():
+        #     self.at_nothing_rb.setChecked(True)
 
     def _misc_dri_options(self) -> list[QtWidgets.QCheckBox]:
         """Returns all the "miscellaneous" driver options"""

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
-    <height>467</height>
+    <width>772</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -119,8 +119,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>313</width>
-                <height>328</height>
+                <width>328</width>
+                <height>346</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -319,7 +319,7 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>165</width>
+                     <width>160</width>
                      <height>101</height>
                     </rect>
                    </property>
@@ -344,6 +344,13 @@
          </widget>
         </item>
         <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="lr_hbox" stretch="0,0">
           <property name="leftMargin">
            <number>8</number>
@@ -354,135 +361,77 @@
           <item>
            <layout class="QVBoxLayout" name="install_option_vboc">
             <item>
-             <layout class="QGridLayout" name="exec_options_gridbox">
-              <property name="sizeConstraint">
-               <enum>QLayout::SetFixedSize</enum>
+             <layout class="QGridLayout" name="install_mode_options">
+              <property name="leftMargin">
+               <number>10</number>
+              </property>
+              <property name="rightMargin">
+               <number>10</number>
               </property>
               <property name="bottomMargin">
                <number>0</number>
               </property>
               <item row="0" column="0">
-               <widget class="QWidget" name="install_mode_options" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QCheckBox" name="at_install_cb">
+                <property name="statusTip">
+                 <string>自動安裝所有軀動。</string>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_2">
-                 <item>
-                  <widget class="QCheckBox" name="at_install_cb">
-                   <property name="statusTip">
-                    <string>自動安裝所有軀動。</string>
-                   </property>
-                   <property name="text">
-                    <string>自動安裝</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="async_install_cb">
-                   <property name="statusTip">
-                    <string>同時安裝所有軀動，有機會導致安裝失敗。</string>
-                   </property>
-                   <property name="text">
-                    <string>同步安裝</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="at_retry_cb">
-                   <property name="statusTip">
-                    <string>如有任何軀動程式以自動模式安裝失敗，將以手動模式重試。</string>
-                   </property>
-                   <property name="text">
-                    <string>失敗重試</string>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                   <property name="autoRepeat">
-                    <bool>false</bool>
-                   </property>
-                   <property name="autoExclusive">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <property name="text">
+                 <string>自動安裝</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QWidget" name="halt_options" native="true">
-                <layout class="QVBoxLayout" name="verticalLayout">
-                 <item>
-                  <widget class="QRadioButton" name="at_nothing_rb">
-                   <property name="statusTip">
-                    <string>成功安裝所有軀動後不執行任何動作。</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="text">
-                    <string>毋須關機</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="at_halt_rb">
-                   <property name="statusTip">
-                    <string>成功安裝所有軀動後自動關機。</string>
-                   </property>
-                   <property name="text">
-                    <string>自動關機</string>
-                   </property>
-                   <property name="checked">
-                    <bool>false</bool>
-                   </property>
-                   <property name="autoExclusive">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="at_reboot_rb">
-                   <property name="statusTip">
-                    <string>成功安裝所有軀動後自動重新開機。</string>
-                   </property>
-                   <property name="text">
-                    <string>自動重啟</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                   <property name="autoExclusive">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="at_bios_rb">
-                   <property name="statusTip">
-                    <string>成功安裝所有軀動後自動重新開機並進入BIOS。</string>
-                   </property>
-                   <property name="text">
-                    <string>重啟BIOS</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+               <widget class="QCheckBox" name="at_retry_cb">
+                <property name="statusTip">
+                 <string>如有任何軀動程式以自動模式安裝失敗，將以手動模式重試。</string>
+                </property>
+                <property name="text">
+                 <string>失敗重試</string>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QCheckBox" name="async_install_cb">
+                <property name="statusTip">
+                 <string>同時安裝所有軀動，有機會導致安裝失敗。</string>
+                </property>
+                <property name="text">
+                 <string>同步安裝</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="halt_option_group_box">
+              <property name="title">
+               <string>關機選項</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout">
+               <item>
+                <widget class="QComboBox" name="halt_option_dropdown"/>
+               </item>
+              </layout>
+             </widget>
             </item>
             <item>
              <widget class="Line" name="line">
@@ -658,7 +607,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>768</width>
+     <width>772</width>
      <height>23</height>
     </rect>
    </property>
