@@ -46,10 +46,7 @@ class DriverConfig:
                 raise FileExistsError(f"\"{confpath}\" does not exists")
             os.makedirs(os.path.dirname(confpath), exist_ok=True)
             with open(os.path.join(confpath), 'w') as f:
-                json.dump({DriverType.NET.value: [],
-                           DriverType.DISPLAY.value: [],
-                           DriverType.MISC.value: []},
-                          f)
+                json.dump({dri_type: [] for dri_type in DriverType}, f)
 
         self.confdir = confpath
         self.dridir = dridir
@@ -145,7 +142,7 @@ class DriverConfig:
             buff = json.load(f)
             return {dri_type: [
                 Driver(dri['id'],
-                       DriverType.from_str(dri_type),
+                       DriverType(dri_type),
                        dri['name'],
                        dri['description'],
                        dri['path'],
