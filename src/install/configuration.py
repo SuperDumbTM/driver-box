@@ -144,10 +144,10 @@ class DriverConfig:
     def presist(self) -> None:
         """Write the changes to file system
         """
-        _d = {dri_type: [driver.asdict() for driver in drivers]
-              for dri_type, drivers in self._data.items()}
+        data = {dri_type: [driver.asdict() for driver in drivers]
+                for dri_type, drivers in self._data.items()}
         with open(self.confdir, "w", encoding="utf-8") as f:
-            json.dump(_d, f, indent=4)
+            json.dump(data, f, indent=4)
 
     def is_id_unique(self, id: str) -> bool:
         """Check if a ID is unique amoung existing driver configuration
