@@ -19,7 +19,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
             os.path.join(definitions.DIR_PIC, "setting.ico")))
 
         self.dri_id = dri_id
-        for dri_type in DriverType.members():
+        for dri_type in DriverType:
             self.dri_type_dropdown.addItem(dri_type.value, dri_type)
 
         self.dri_flag_preset_dropdown.setItemData(0, [])
@@ -86,7 +86,7 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
 
     def _get_driver(self) -> Driver:
         return Driver(self.dri_id,
-                      DriverType.from_str(
+                      DriverType(
                           self.dri_type_dropdown.currentData()),
                       self.dri_name_input.text(),
                       "",
