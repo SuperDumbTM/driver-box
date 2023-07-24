@@ -7,6 +7,7 @@ from controllers.window_defaults_editor import InstallOptionEditorWindow
 
 import definitions
 from enums.halt_option import HaltOption
+from install.driver_type import DriverType
 from .window_progress import ProgressWindow
 from .window_driver import DriverConfigViewerWindow
 from ui.main import Ui_MainWindow
@@ -41,17 +42,17 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.refresh_hwinfo()
         # ---------- driver options ----------
-        for option in self.driconfg.get_type("network"):
+        for option in self.driconfg.get_type(DriverType.NET):
             self.lan_driver_dropdown.addItem(option.name, option.id)
         self.lan_driver_dropdown.currentIndexChanged.connect(
             self._dri_on_select)
 
-        for option in self.driconfg.get_type("display"):
+        for option in self.driconfg.get_type(DriverType.DISPLAY):
             self.display_dri_dropdown.addItem(option.name, option.id)
         self.display_dri_dropdown.currentIndexChanged.connect(
             self._dri_on_select)
 
-        for option in self.driconfg.get_type("miscellaneous"):
+        for option in self.driconfg.get_type(DriverType.MISC):
             cb = DriverOptionCheckBox(option.name)
             cb.dri_id = option.id
             self.misc_dri_vbox.addWidget(cb)
