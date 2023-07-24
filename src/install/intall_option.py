@@ -21,8 +21,9 @@ class InstallOption:
             if not not_found_ok:
                 raise FileExistsError(f"\"{path}\" does not exists.")
             else:
-                obj = InstallOption(True, True, True, HaltOption.REBOOT, False)
-                obj.persist(path)
+                obj = InstallOption(path, True, True, True,
+                                    HaltOption.REBOOT, False)
+                obj.persist()
                 return obj
         with open(path, "r") as f:
             config = json.load(f)
