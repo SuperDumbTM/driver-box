@@ -34,15 +34,18 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         self.tasks: list[Task] = []
 
     def add_task(self, task: Task) -> None:
-        """Insert a new task to the queue"""
+        """Insert a new task
+        """
         self.tasks.append(task)
 
     def clear_tasks(self):
-        """Remove all tasks from the queue"""
+        """Remove all tasks
+        """
         self.tasks.clear()
 
     def abort_tasks(self):
-        """Terminate all tasks"""
+        """Terminate all tasks
+        """
         for task in (t for t in self.tasks if t.status in (ExecuteStatus.PENDING, ExecuteStatus.INPROGRESS)):
             task.abort()
             if task.status != ExecuteStatus.ABORTED:
@@ -51,6 +54,8 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 self.qsig_msg.emit(f"已終止執行 {task.name}")
 
     def is_finished(self) -> bool:
+        """Returns whether all task are already executed
+        """
         return all((task.status not in (ExecuteStatus.PENDING, ExecuteStatus.INPROGRESS)
                     for task in self.tasks))
 
@@ -88,6 +93,12 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 self.qsig_msg.emit(f"{e} ({task.name})")
 
     def retry_install(self, no_options: bool = True):
+        """Re-execute all the failed tasks
+
+        Args:
+            no_options (bool, optional): Whether to include the "execution options/flags" to the execution. \
+                Defaults to True.
+        """
         for task in (
             t for t in self.tasks if t.status not in (
                 ExecuteStatus.SUCCESS, ExecuteStatus.INPROGRESS, ExecuteStatus.ABORTED)

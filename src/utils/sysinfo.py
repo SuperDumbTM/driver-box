@@ -2,8 +2,7 @@ import wmi
 
 
 class HwDetail:
-    """
-    get raw system hardware information using wmi module
+    """Providing system hardware information
     """
 
     def __init__(self) -> None:
@@ -34,7 +33,8 @@ class HwInfo:
         self.hwd = HwDetail()
 
     def get_cpu_descr(self) -> list[str]:
-        """get system CPUs description (name)"""
+        """Get system CPUs description (name)
+        """
         output = []
         try:
             for cpu in self.hwd.get_cpu_dets():
@@ -45,7 +45,8 @@ class HwInfo:
             return ["[ERROR]"]
 
     def get_gpu_descr(self) -> list[str]:
-        """get system GPUs description (name + VRAM)"""
+        """Get system GPUs description (name + VRAM)
+        """
         output = []
         try:
             for gpu in self.hwd.get_gpu_dets():
@@ -58,7 +59,8 @@ class HwInfo:
             return ["[ERROR]"]
 
     def get_mb_descr(self) -> list[str]:
-        """get system motherboard description (name)"""
+        """Get system motherboard description (name)
+        """
         output = []
         try:
             for mb in self.hwd.get_mb_dets():
@@ -70,7 +72,8 @@ class HwInfo:
             return ["[ERROR]"]
 
     def get_ram_descr(self) -> list[str]:
-        """get system motherboard description (name + size + speed (running speed))"""
+        """Get system motherboard description (name + size + speed (running speed))
+        """
         output = []
         try:
             for ram in self.hwd.get_ram_dets():
@@ -84,7 +87,7 @@ class HwInfo:
 
     def get_nic_descr(self) -> list[str]:
         """
-        get system NIC description (name)
+        Get system NIC description (name)
 
         auto discard the following:
 
@@ -106,7 +109,8 @@ class HwInfo:
             return ["[ERROR]"]
 
     def get_disk_descr(self) -> list[str]:
-        """get system disks description (name + size)"""
+        """Get system disks description (name + size)
+        """
         output = []
         try:
             for disk in self.hwd.get_disk_dets():

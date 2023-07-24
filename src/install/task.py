@@ -27,7 +27,8 @@ class Task(ABC):
     @property
     @abstractmethod
     def is_aborted(self):
-        """Whether the execution is manually terminated"""
+        """Whether the execution is terminated by users
+        """
         pass
 
     @property
@@ -37,17 +38,20 @@ class Task(ABC):
 
     @abstractmethod
     def execute(self, no_options: bool = False):
-        """Starts the task"""
+        """Starts to execute the task
+        """
         pass
 
     @abstractmethod
     def is_alive(self) -> bool:
-        """Return whether the task is still executing"""
+        """Return whether the task is still in execution
+        """
         pass
 
     @abstractmethod
     def abort(self):
-        """Terminate the task execution"""
+        """Terminate the task execution
+        """
         pass
 
 
@@ -58,7 +62,7 @@ class ExecutableTask(Task):
 
     _status: ExecuteStatus = ExecuteStatus.PENDING
     _process: subprocess.Popen = None
-    """Popen instance of the execution.  `None` if the execution is not yet started"""
+    """Popen instance of the execution. `None` if the execution is not yet started"""
 
     _exception: BaseException = None
 
@@ -85,7 +89,8 @@ class ExecutableTask(Task):
 
     @property
     def messages(self) -> list[str]:
-        """Message outputs during the execution"""
+        """Message outputs during the execution
+        """
         if self._process is None:
             return []
         else:
@@ -136,11 +141,9 @@ class ExecutableTask(Task):
             self._status = ExecuteStatus.FAILED
 
     def is_alive(self) -> bool:
-        """Return whether the executable is still executing"""
         return self._process is not None and self._process.poll() is None
 
     def abort(self):
-        """Terminate the execution"""
         # os.system(f"taskkill /im " + self.executable.split("\\")[-1] + " /f")
         if self._process is None:
             self._status = ExecuteStatus.ABORTED

@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
 from install.execute_config import ExecuteConfig
-from install.configuration import Driver, DriverType, FLAG_PRESET
+from install.driver_option import Driver, DriverType, FLAG_PRESET
 from ui.dri_cfg_editor import Ui_DriverConfigEditor
 
 

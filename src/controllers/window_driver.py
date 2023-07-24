@@ -6,7 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from .window_conf_editor import DriverConfigEditorWindow
 from widgets.tablewidget_dragable import TableWidgetDragable
-from install.configuration import Driver, DriverType, DriverConfig
+from install.driver_option import Driver, DriverType, DriverOption
 from ui.dri_cfg_viewer import Ui_DriverConfigViewer
 
 
@@ -14,7 +14,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
 
     _modified = False
 
-    def __init__(self, dri_conf: DriverConfig, parent: QtWidgets = None) -> None:
+    def __init__(self, dri_conf: DriverOption, parent: QtWidgets = None) -> None:
         super().__init__(parent=parent)
         self.setupUi(self)
         self._setup_tableview()
@@ -38,13 +38,6 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
             lambda: self.refresh_table(DriverType.MISC))
         self.new_dri_btn.clicked.connect(self.open_create_dialog)
         self.dri_opt_table.itemDoubleClicked.connect(self.open_edit_dialog)
-        # ---------- signals ----------
-
-    # override
-    def closeEvent(self, event):
-        if (self._modified):
-            QtWidgets.qApp.exit(-11354)
-        super().closeEvent(event)
 
     def refresh_table(self, type: DriverType):
         """Refresh the driver table widget to show the latest driver options
@@ -136,6 +129,12 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         self.refresh_table(self.crrt_type)
 
         self._modified = True
+
+    # override
+    def closeEvent(self, event):
+        if (self._modified):
+            QtWidgets.qApp.exit(-11354)
+        super().closeEvent(event)
 
     def _setup_tableview(self):
         self.dri_opt_table = TableWidgetDragable(self.dri_info_sa_contents)

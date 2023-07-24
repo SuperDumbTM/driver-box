@@ -32,7 +32,8 @@ def reboot_uefi(timeout: Union[int, float] = 1):
 
 
 def cancel_halt():
-    """Cancel scheduled shutdown/reboot"""
+    """Cancel scheduled shutdown/reboot
+    """
     return ExecutableTask("Cancel Halt", "shutdown", ("/a",))
 
 

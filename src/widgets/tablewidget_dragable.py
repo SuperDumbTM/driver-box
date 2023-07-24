@@ -4,7 +4,11 @@ from PyQt5.QtWidgets import *
 
 
 class TableWidgetDragable(QTableWidget):
-    """source: https://stackoverflow.com/a/43789304/17789727"""
+    """
+    A dragable table widget
+
+    Source: https://stackoverflow.com/a/43789304/17789727
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

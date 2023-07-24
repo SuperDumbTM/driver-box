@@ -4,8 +4,8 @@ import sys
 from PyQt5 import QtWidgets
 
 import definitions
-from install import configuration
 from controllers.window_main import MainWindow
+from install.driver_option import DriverOption
 from install.intall_option import InstallOption
 
 
@@ -20,7 +20,7 @@ def main():
 
     while exit_code is None or exit_code == definitions.UI_RERENDER_CODE:
         main_window = MainWindow(
-            configuration.DriverConfig(
+            DriverOption(
                 os.path.join(definitions.DIR_CONF, "driver.json"),
                 definitions.DIR_DRI,
                 True),

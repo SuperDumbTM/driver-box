@@ -29,11 +29,11 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         """Append and show a "driver install progress" to the UI
 
         Args:
-            task (Task): the task of which the progress is belongs to
-            message (str): installation progress of the task
+            task (Task): The task of which the progress is belongs to
+            message (str): Messages to be displayed
 
         Returns:
-            int: row index of appened progress on the UI
+            int: Row index of appened progress on the UI
         """
         self.progr_table.insertRow(row := self.progr_table.rowCount())
         self.progr_table.setItem(
@@ -46,9 +46,9 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         """Update the status of an "driver install progress\"
 
         Args:
-            task (Task): the task of which the progress is belongs to
-            message (str): installation progress of the task
-            level (str): message type of progress
+            task (Task): The task of which the progress is belongs to
+            progress (str): Installation progress of the task
+            message (str): Messages to be displayed
         """
         item = QtWidgets.QTableWidgetItem(message)
         item.setBackground(self._status_color(progress))
@@ -57,7 +57,9 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         self.progr_table.resizeRowsToContents()
 
     def clear_progresses(self) -> None:
-        """Remove all "driver install progress" from the UI"""
+        """Remove all progress from the UI
+        """
+        return
         for i in range(self.progr_table.rowCount(), -1, -1):
             self.progr_table.removeRow(i)
 
@@ -70,7 +72,7 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         """Gets the color to display for `status`
 
         Args:
-            level (str): The status of the installation
+            level (str): Installation progress of the task
         """
         if progress == ExecuteStatus.EXITED:
             return QtGui.QColor(230, 207, 0, 255)

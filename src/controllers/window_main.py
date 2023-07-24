@@ -15,7 +15,7 @@ from utils import commands
 from utils.qwidget import is_widget_enabled
 from utils.hw_info_worker import HwInfoWorker
 from widgets.driver_checkbox import DriverOptionCheckBox
-from install.configuration import Driver, DriverConfig
+from install.driver_option import Driver, DriverOption
 from install.execute_status import ExecuteStatus
 from install.intall_option import InstallOption
 from install.task_manager import TaskManager
@@ -27,7 +27,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     qsig_msg = QtCore.pyqtSignal(str)
     qsig_hwinfo = QtCore.pyqtSignal(object, str)
 
-    def __init__(self, driconfig: DriverConfig, installopt: InstallOption):
+    def __init__(self, driconfig: DriverOption, installopt: InstallOption):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon(
@@ -219,7 +219,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         """Follow-up routine for the installation process
 
         Args:
-            success (bool): whether the all drivers were installed successfully
+            success (ExecuteStatus): Execution status
         """
         if (status != ExecuteStatus.SUCCESS
             and not (status != ExecuteStatus.ABORTED
@@ -264,7 +264,8 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         #     self.at_nothing_rb.setChecked(True)
 
     def _misc_dri_options(self) -> list[QtWidgets.QCheckBox]:
-        """Returns all the "miscellaneous" driver options"""
+        """Returns all the "miscellaneous" driver options
+        """
         return [self.misc_dri_vbox.itemAt(i).widget()
                 for i in range(self.misc_dri_vbox.count())]
 
@@ -276,7 +277,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         window.exec_()
 
     # override
-
     def closeEvent(self, event):
         QtWidgets.QApplication.closeAllWindows()  # force close all windows
         super().closeEvent(event)

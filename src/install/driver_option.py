@@ -29,7 +29,7 @@ FLAG_PRESET: Final[dict] = {
 }
 
 
-class DriverConfig:
+class DriverOption:
 
     _data: dict[str, list[Driver]]
 
@@ -56,24 +56,24 @@ class DriverConfig:
         """Retrive a driver configuration by driver ID
 
         Args:
-            dri_id (str): Unique ID of the driver
+            dri_id (str): ID of the driver
         """
         _type, _id = self._locate(dri_id)
         return self._data[_type][_id]
 
     def get_type(self, dri_type: DriverType) -> list[Driver]:
-        """Retrive driver configurations by driver type
+        """Retrive driver options by driver type
 
         Args:
-            dri_type (DriverType): Type of drivers
+            dri_type (DriverType): Type of target drivers
 
         Returns:
             list[Driver]: list of drivers of type `dri_type`
         """
-        return self._data[dri_type] if dri_type is not None else self._data
+        return self._data[dri_type]
 
     def create(self, driver: Driver) -> None:
-        """Insert a new driver to the driver configuration
+        """Insert a new driver to the driver option
 
         Args:
             driver (Driver): New driver, `driver.id` will be generated automatically
@@ -91,17 +91,17 @@ class DriverConfig:
         self._data[driver.type].append(driver)
 
     def update(self, dri_id: str, driver: Driver) -> None:
-        """Update a driver configuration by the driver ID
+        """Update a driver option by the driver ID
 
         Args:
             dri_id (str): Target driver ID
-            driver (Driver): New driver configuration
+            driver (Driver): New value
         """
         t, idx = self._locate(dri_id)
         self._data[t][idx] = driver
 
     def delete(self, dri_id: str) -> None:
-        """Remove a driver configuration by the driver ID.
+        """Remove a driver option by the driver ID.
         You have to explicitly call `write` to presist the changes
 
         Args:
@@ -119,7 +119,7 @@ class DriverConfig:
             json.dump(data, f, indent=4)
 
     def is_id_unique(self, id: str) -> bool:
-        """Check if a ID is unique amoung existing driver configuration
+        """Check if a ID is unique amoung existing driver options
 
         Args:
             id (str): The ID to be checked
