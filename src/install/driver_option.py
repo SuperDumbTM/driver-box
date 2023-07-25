@@ -17,7 +17,7 @@ except ImportError:
 ID_LEN: Final[int] = 6
 FLAG_PRESET: Final[dict] = {
     'AMD Chipset': ["/S"],
-    'AMD Display': ["-install", "-OUTPUT detail"],
+    'AMD Display': ["-install"],
     'Intel Bluetooth': ["/quiet", "/norestart", "/fe"],
     'Intel Chipset': ["-s", "-norestart"],
     'Intel Display': ["-s"],
