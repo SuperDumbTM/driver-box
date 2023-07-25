@@ -117,7 +117,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         t = threading.Thread(target=task.execute, daemon=True)
         t.start()
         for i in itertools.count():
-            time.sleep(0.1)
+            time.sleep(0.12)
             if not task.is_alive():
                 break
             self.qsig_progr.emit(
@@ -134,24 +134,28 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         14: setup has completed successfully but a system restart is required
         15: setup has completed successfully and a system restart has been initiated
         """
-        if task.is_aborted:
-            self.qsig_progr.emit(
-                task, ExecuteStatus.ABORTED, "已取消")
-        elif task.status == ExecuteStatus.ERROR:
-            self.qsig_progr.emit(
-                task, task.status, str(task.exception))
-        elif task.status == ExecuteStatus.EXITED:
-            self.qsig_progr.emit(
-                task,
-                task.status,
-                f"執行時間小於{task.exe_conf.fail_time}秒")
-        elif task.exception is not None:
-            self.qsig_progr.emit(task, task.status, "失敗")
-            self.qsig_msg.emit(f"[{task.name}] {task.exception}")
-        elif task.rtcode not in (0, 13, 14, 15):
-            self.qsig_progr.emit(
-                task,
-                ExecuteStatus.FAILED,
-                f"失敗，錯誤代碼：[{task.rtcode}]")
-        else:
-            self.qsig_progr.emit(task, ExecuteStatus.SUCCESS, "完成")
+        try:
+            if task.is_aborted:
+                self.qsig_progr.emit(
+                    task, ExecuteStatus.ABORTED, "已取消")
+            elif task.status == ExecuteStatus.ERROR:
+                self.qsig_progr.emit(
+                    task, task.status, str(task.exception))
+            elif task.status == ExecuteStatus.EXITED:
+                self.qsig_progr.emit(
+                    task,
+                    task.status,
+                    f"執行時間小於{task.exe_conf.fail_time}秒")
+            elif task.exception is not None:
+                self.qsig_progr.emit(task, task.status, "失敗")
+                self.qsig_msg.emit(f"[{task.name}] {task.exception}")
+            elif task.rtcode not in (0, 13, 14, 15):
+                self.qsig_progr.emit(
+                    task,
+                    ExecuteStatus.FAILED,
+                    f"失敗，錯誤代碼：[{task.rtcode}]")
+            else:
+                self.qsig_progr.emit(task, ExecuteStatus.SUCCESS, "完成")
+        except AttributeError as e:
+
+            pass
