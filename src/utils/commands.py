@@ -41,12 +41,14 @@ def set_password(username: str, password: Optional[str]):
     if len(password) > 0:
         return ExecutableTask(
             "Set Password",
+            ExecuteConfig(True, False, [], 1),
             "powershell.exe",
             options=("Set-LocalUser", "-Name", username, "-Password",
                      f"(ConverTo-SecureString {str(password)} -AsPlainText -Force"))
     else:
         return ExecutableTask(
             "Set Password",
+            ExecuteConfig(True, False, [], 1),
             "powershell.exe",
             options=("Set-LocalUser", "-Name", username,
                      "-Password", "(new-object System.Security.SecureString)"))
