@@ -40,7 +40,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                                            self.qsig_hwinfo,
                                            parent=self)
 
-        self.refresh_hwinfo()
         # ---------- driver options ----------
         for option in self.driconfg.get_type(DriverType.NET):
             self.lan_driver_dropdown.addItem(option.name, option.id)
@@ -78,6 +77,9 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.qsig_msg.connect(self.send_msg)
         self.qsig_hwinfo.connect(
             lambda create, text: self.hwinfo_vbox.addWidget(create(text)))
+
+        self.refresh_hwinfo()
+        self.reset_fields()
 
     def send_msg(self, text: str):
         """Display a message to the message box
