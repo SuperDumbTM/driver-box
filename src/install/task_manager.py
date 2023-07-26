@@ -65,6 +65,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             if paralle:
                 threading.Thread(
                     target=self.__at_worker, args=[task], daemon=True).start()
+                self.qsig_progr.emit(task, ExecuteStatus.INPROGRESS, "執行中...")
             else:
                 self.__at_worker(task)
 
