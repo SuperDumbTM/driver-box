@@ -174,10 +174,12 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
 
         # set password
         if self.set_passwd_cb.isChecked():
-            manager.add_task(
-                commands.set_password(commands.get_current_usrname(), self.set_passwd_txt.toPlainText()))
+            _task = commands.set_password(
+                commands.get_current_usrname(), self.set_passwd_txt.toPlainText())
             self.send_msg(
                 f"{commands.get_current_usrname()} 的密碼將會更改為 \"'{self.set_passwd_txt.toPlainText()}\"")
+            manager.add_task(_task)
+            prog_window.append_progress(_task, "等待執行中")
 
         def prog_close():
             """Terminate the remaining tasks when progress window is closed

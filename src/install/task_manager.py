@@ -126,8 +126,11 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 self.qsig_progr.emit(
                     task, task.status, _PBAR[i % len(_PBAR)])
             except AttributeError:
-                # the progress window have been closed
+                # the ProgressWindow have been closed
                 break
+            except KeyError:
+                # task not exists in the ProgressWindow
+                pass
         t.join()
 
         # emit message from the executable
