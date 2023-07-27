@@ -66,6 +66,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 threading.Thread(
                     target=self.__at_worker, args=[task], daemon=True).start()
                 self.qsig_progr.emit(task, ExecuteStatus.INPROGRESS, "執行中...")
+                time.sleep(0.1)  # buffer time for the thread to start
             else:
                 self.__at_worker(task)
 
@@ -117,7 +118,6 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
 
         t = threading.Thread(target=task.execute, daemon=True)
         t.start()
-        time.sleep(0.3)  # buffer time for the thread to start
         for i in itertools.count():
             time.sleep(0.12)
             if not task.is_alive():
