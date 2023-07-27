@@ -120,11 +120,8 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         t.start()
         for i in itertools.count():
             time.sleep(0.12)
-            if not task.is_alive():
-                if t.is_alive():
-                    self.qsig_progr.emit(
-                        task, ExecuteStatus.ERROR,
-                        "subprocess 回報執行完成，但有關的 thread 尚在執行狀態。")
+            # if task.status != ExecuteStatus.PENDING and not task.is_alive():
+            if not t.is_alive():
                 break
             try:
                 self.qsig_progr.emit(
