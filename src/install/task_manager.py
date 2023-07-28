@@ -138,12 +138,6 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         for message in task.messages:
             self.qsig_msg.emit(f"{task.name}\uff1a{message}")
 
-        """    
-        Intel igfx
-        13: a system restart is needed before setup can continue
-        14: setup has completed successfully but a system restart is required
-        15: setup has completed successfully and a system restart has been initiated
-        """
         try:
             if task.status == ExecuteStatus.ABORTED:
                 self.qsig_progr.emit(task, task.status, "已取消")
@@ -154,7 +148,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                     task,
                     task.status,
                     f"執行時間小於{task.exe_conf.fail_time}秒")
-            elif task.rtcode not in (0, 13, 14, 15):
+            elif task.status == ExecuteStatus.FAILED:
                 self.qsig_progr.emit(
                     task,
                     ExecuteStatus.FAILED,

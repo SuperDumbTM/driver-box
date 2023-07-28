@@ -133,12 +133,12 @@ class ExecutableTask(Task):
 
         if self.is_aborted:
             pass
-        elif self.rtcode == 0:
-            self._status = ExecuteStatus.SUCCESS
+        elif self.rtcode not in (0, *self.exe_conf.ok_rtcode):
+            self._status = ExecuteStatus.FAILED
         elif time.time() - exe_time < self.exe_conf.fail_time:
             self._status = ExecuteStatus.EXITED
         else:
-            self._status = ExecuteStatus.FAILED
+            self._status = ExecuteStatus.SUCCESS
 
     def is_alive(self) -> bool:
         return self._process is not None and self._process.poll() is None
