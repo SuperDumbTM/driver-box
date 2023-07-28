@@ -1,5 +1,5 @@
 import time
-import threading
+from threading import Thread
 import itertools
 
 from PyQt5 import QtCore
@@ -61,18 +61,18 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
 
     def auto_install(self, man_fallback: bool, paralle: bool) -> None:
         # ---------- start tasks ----------
-        for task in self.tasks:
-            if paralle:
-                threading.Thread(
-                    target=self.__at_worker, args=[task], daemon=True).start()
-                self.qsig_progr.emit(task, ExecuteStatus.INPROGRESS, "執行中...")
-                time.sleep(0.1)  # buffer time for the thread to start
-            else:
-                self.__at_worker(task)
+        if paralle:
+            threads: list[Thread] = []
+            for task in self.tasks:
+                threads.append(Thread(target=self.__at_worker,
+                               args=[task], daemon=True))
+                threads[-1].start()
 
-        while paralle and any((t.status == ExecuteStatus.PENDING or
-                               t.is_alive() for t in self.tasks)):
-            time.sleep(1)
+            while any((t.is_alive() for t in threads)):
+                time.sleep(1)
+        else:
+            for task in self.tasks:
+                self.__at_worker(task)
 
         # ---------- finish all task ----------
         if any((t.is_aborted for t in self.tasks)):
@@ -116,7 +116,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             return
         self.qsig_msg.emit(f"開始執行 {task.name} (自動模式)")
 
-        t = threading.Thread(target=task.execute, daemon=True)
+        t = Thread(target=task.execute, daemon=True)
         t.start()
         for i in itertools.count():
             time.sleep(0.12)
@@ -145,20 +145,15 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         15: setup has completed successfully and a system restart has been initiated
         """
         try:
-            if task.is_aborted:
-                self.qsig_progr.emit(
-                    task, ExecuteStatus.ABORTED, "已取消")
+            if task.status == ExecuteStatus.ABORTED:
+                self.qsig_progr.emit(task, task.status, "已取消")
             elif task.status == ExecuteStatus.ERROR:
-                self.qsig_progr.emit(
-                    task, task.status, str(task.exception))
+                self.qsig_progr.emit(task, task.status, str(task.exception))
             elif task.status == ExecuteStatus.EXITED:
                 self.qsig_progr.emit(
                     task,
                     task.status,
                     f"執行時間小於{task.exe_conf.fail_time}秒")
-            elif task.exception is not None:
-                self.qsig_progr.emit(task, task.status, "失敗")
-                self.qsig_msg.emit(f"[{task.name}] {task.exception}")
             elif task.rtcode not in (0, 13, 14, 15):
                 self.qsig_progr.emit(
                     task,
@@ -166,6 +161,6 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                     f"失敗，錯誤代碼：[{task.rtcode}]")
             else:
                 self.qsig_progr.emit(task, ExecuteStatus.SUCCESS, "完成")
-        except AttributeError as e:
-
+        except AttributeError:
+            # the ProgressWindow have been closed
             pass
