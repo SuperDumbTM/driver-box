@@ -105,6 +105,8 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             t for t in self.tasks if t.status not in (
                 ExecuteStatus.SUCCESS, ExecuteStatus.INPROGRESS, ExecuteStatus.ABORTED)
         ):
+            if not task.exe_conf.retryable:
+                continue
             self.qsig_msg.emit(f"開始重試 {task.name} (手動模式)")
             try:
                 task.execute(no_options=no_options)
