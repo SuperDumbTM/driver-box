@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>331</width>
-    <height>324</height>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -190,7 +190,7 @@ QLineEdit {
           <string>5.0</string>
          </property>
          <property name="readOnly">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="placeholderText">
           <string/>
@@ -201,6 +201,20 @@ QLineEdit {
         </widget>
        </item>
       </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="dri_okrtcode_label">
+       <property name="text">
+        <string>非失敗 Return Code</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="dri_okrtcode_input"/>
      </item>
     </layout>
    </item>

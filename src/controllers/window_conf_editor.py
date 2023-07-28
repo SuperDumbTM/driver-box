@@ -51,6 +51,8 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         self.dri_fail_time_input.setText(str(config.exec_config.fail_time))
         self.dri_autoable_cb.setChecked(config.exec_config.silentable)
         self.dri_retryable_cb.setChecked(config.exec_config.retryable)
+        self.dri_okrtcode_input.setText(
+            ','.join(map(str, config.exec_config.ok_rtcode)))
 
     def select_dri_path(self):
         path = QtWidgets.QFileDialog.getOpenFileName(
@@ -73,7 +75,12 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
         box.exec_()
 
     def save(self):
-        dri = self._get_driver()
+        try:
+            dri = self._get_driver()
+        except ValueError:
+            self.open_save_err_msgbox()
+            return
+
         if dri.is_validate():
             self.qsig_save.emit(dri)
             self.close()
@@ -95,5 +102,8 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                       ExecuteConfig(
                           self.dri_autoable_cb.isChecked(),
                           self.dri_retryable_cb.isChecked(),
-                          fail_time=float(self.dri_fail_time_input.text()))
+                          tuple(
+                              map(int, self.dri_okrtcode_input.text().split(',')))
+                          if self.dri_okrtcode_input.text() != '' else [],
+                          float(self.dri_fail_time_input.text()))
                       )

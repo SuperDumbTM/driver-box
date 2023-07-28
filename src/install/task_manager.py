@@ -67,7 +67,6 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 threads.append(Thread(target=self.__at_worker,
                                args=[task], daemon=True))
                 threads[-1].start()
-
             while any((t.is_alive() for t in threads)):
                 time.sleep(1)
         else:
