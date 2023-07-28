@@ -119,13 +119,11 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         t = Thread(target=task.execute, daemon=True)
         t.start()
         for i in itertools.count():
-            time.sleep(0.12)
-            # if task.status != ExecuteStatus.PENDING and not task.is_alive():
             if not t.is_alive():
                 break
             try:
-                self.qsig_progr.emit(
-                    task, task.status, _PBAR[i % len(_PBAR)])
+                self.qsig_progr.emit(task, task.status, _PBAR[i % len(_PBAR)])
+                time.sleep(0.12)
             except AttributeError:
                 # the ProgressWindow have been closed
                 break
