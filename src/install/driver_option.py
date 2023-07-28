@@ -18,7 +18,7 @@ ID_LEN: Final[int] = 6
 FLAG_PRESET: Final[dict] = {
     'AMD Chipset': ["/S"],
     'AMD Display': ["-install"],
-    'Intel Bluetooth': ["/quiet", "/norestart", "/fe"],
+    'Intel Bluetooth': ["/quiet", "/norestart"],
     'Intel Chipset': ["-s", "-norestart"],
     'Intel Display': ["-s"],
     'Intel iGPU': ["-s"],
