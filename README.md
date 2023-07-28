@@ -18,7 +18,7 @@
 
 ## 下載
 主程式<br>
-[![version](https://img.shields.io/badge/version-0.6.0-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/v0.6.0)
+[![version](https://img.shields.io/badge/version-0.6.1-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/v0.6.1)
 
 軀動包<br>
 [Google Drive](https://drive.google.com/drive/folders/1VqND0o75oBR80Ft2IK8WjTTbXaezmajw?usp=sharing)
