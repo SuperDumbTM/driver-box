@@ -149,5 +149,6 @@ class ExecutableTask(Task):
             self._status = ExecuteStatus.ABORTED
         else:
             self._process.kill()
+            time.sleep(2)
             if self._process.poll() is not None:
                 self._status = ExecuteStatus.ABORTED
