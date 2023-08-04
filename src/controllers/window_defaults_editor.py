@@ -4,10 +4,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from enums.halt_option import HaltOption
 from install.intall_option import InstallOption
-from ui.defaults_editor import Ui_DefaultsEditor
+from ui.generated.intall_opt_cfg_editor import Ui_InstallOptionEditor
 
 
-class InstallOptionEditorWindow(Ui_DefaultsEditor, QtWidgets.QDialog):
+class InstallOptionEditorWindow(Ui_InstallOptionEditor, QtWidgets.QDialog):
 
     qsig_save = QtCore.pyqtSignal(InstallOption)
 

@@ -10,7 +10,7 @@ from enums.halt_option import HaltOption
 from install.driver_type import DriverType
 from .window_progress import ProgressWindow
 from .window_driver import DriverConfigViewerWindow
-from ui.main import Ui_MainWindow
+from ui.generated.main import Ui_MainWindow
 from utils import commands
 from utils.qwidget import is_widget_enabled
 from utils.hw_info_worker import HwInfoWorker

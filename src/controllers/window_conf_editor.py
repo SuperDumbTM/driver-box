@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from install.execute_config import ExecuteConfig
 from install.driver_option import Driver, DriverType, FLAG_PRESET
-from ui.dri_cfg_editor import Ui_DriverConfigEditor
+from ui.generated.dri_cfg_editor import Ui_DriverConfigEditor
 
 
 class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):

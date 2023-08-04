@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from install.execute_status import ExecuteStatus
 from install.task import Task
-from ui.progress import Ui_InstallProgress
+from ui.generated.progress import Ui_InstallProgress
 
 
 class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):

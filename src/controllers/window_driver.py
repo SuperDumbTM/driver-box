@@ -7,7 +7,7 @@ import definitions
 from .window_conf_editor import DriverConfigEditorWindow
 from widgets.tablewidget_dragable import TableWidgetDragable
 from install.driver_option import Driver, DriverType, DriverOption
-from ui.dri_cfg_viewer import Ui_DriverConfigViewer
+from ui.generated.dri_cfg_viewer import Ui_DriverConfigViewer
 
 
 class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):

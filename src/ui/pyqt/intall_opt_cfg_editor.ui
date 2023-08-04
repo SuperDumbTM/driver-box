@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DefaultsEditor</class>
- <widget class="QDialog" name="DefaultsEditor">
+ <class>InstallOptionEditor</class>
+ <widget class="QDialog" name="InstallOptionEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -125,7 +125,7 @@ QLineEdit {
   <connection>
    <sender>action_btns</sender>
    <signal>accepted()</signal>
-   <receiver>DefaultsEditor</receiver>
+   <receiver>InstallOptionEditor</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -141,7 +141,7 @@ QLineEdit {
   <connection>
    <sender>action_btns</sender>
    <signal>rejected()</signal>
-   <receiver>DefaultsEditor</receiver>
+   <receiver>InstallOptionEditor</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
