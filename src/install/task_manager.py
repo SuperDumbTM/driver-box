@@ -89,7 +89,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         for task in (t for t in self.tasks if t.status == ExecuteStatus.PENDING):
             self.qsig_msg.emit(f"開始安裝 {task.name} (手動模式)")
             try:
-                task.execute(no_options=True)
+                Thread(target=task.execute, args=(True,), daemon=False).start()
             except Exception as e:
                 self.qsig_msg.emit(f"{e} ({task.name})")
 
@@ -108,7 +108,10 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 continue
             self.qsig_msg.emit(f"開始重試 {task.name} (手動模式)")
             try:
-                task.execute(no_options=no_options)
+                Thread(
+                    target=task.execute,
+                    args=(no_options,),
+                    daemon=False).start()
             except Exception as e:
                 self.qsig_msg.emit(f"{e} ({task.name})")
 
