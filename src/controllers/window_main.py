@@ -181,6 +181,12 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             manager.add_task(_task)
             prog_window.append_progress(_task, "等待執行中")
 
+        # init disks
+        if self.at_init_disks_cb.isChecked():
+            _task = commands.initialise_all_disks()
+            manager.add_task(_task)
+            prog_window.append_progress(_task, "等待執行中")
+
         def prog_close():
             """Terminate the remaining tasks when progress window is closed
             """

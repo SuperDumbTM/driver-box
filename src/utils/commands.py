@@ -60,3 +60,11 @@ def get_current_usrname() -> str:
 
 def get_users_info() -> list[wmi._wmi_object]:
     return _WMI.Win32_UserAccount()
+
+
+def initialise_all_disks():
+    return ExecutableTask(
+        "Disks Initialisation",
+        ExecuteConfig(True, False, [], 1),
+        "powershell",
+        options=("Get-Disk | Where-Object PartitionStyle -Eq \"RAW\" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume"))
