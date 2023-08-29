@@ -12,6 +12,7 @@ class InstallOption:
     async_install: bool
     retry_on_fail: bool
     halt_option: HaltOption
+    is_init_disks: bool
     is_set_passwd: bool
     passwd: str = ""
 
@@ -22,7 +23,7 @@ class InstallOption:
                 raise FileExistsError(f"\"{path}\" does not exists.")
             else:
                 obj = InstallOption(path, True, True, True,
-                                    HaltOption.REBOOT, False)
+                                    HaltOption.REBOOT, False, False)
                 obj.persist()
                 return obj
         with open(path, "r") as f:

@@ -137,6 +137,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.at_retry_cb.setChecked(self.installopt.retry_on_fail)
         self.halt_option_dropdown.setCurrentIndex(
             self.halt_option_dropdown.findData(self.installopt.halt_option))
+        self.at_init_disks_cb.setChecked(self.installopt.is_init_disks)
         self.set_passwd_checked(self.installopt.is_set_passwd)
         self.set_passwd_txt.setPlainText(self.installopt.passwd)
 

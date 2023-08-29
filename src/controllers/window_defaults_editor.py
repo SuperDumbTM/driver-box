@@ -32,6 +32,7 @@ class InstallOptionEditorWindow(Ui_InstallOptionEditor, QtWidgets.QDialog):
         self.at_retry_cb.setChecked(config.retry_on_fail)
         self.halt_option_dropdown.setCurrentIndex(
             self.halt_option_dropdown.findData(config.halt_option))
+        self.at_init_disks_cb.setChecked(config.is_init_disks)
         self.set_passwd_cb.setChecked(config.is_set_passwd)
         self.set_passwd_txt.setText(config.passwd)
 
@@ -40,6 +41,7 @@ class InstallOptionEditorWindow(Ui_InstallOptionEditor, QtWidgets.QDialog):
         self.config.async_install = self.async_install_cb.isChecked()
         self.config.retry_on_fail = self.at_retry_cb.isChecked()
         self.config.halt_option = self.halt_option_dropdown.currentData()
+        self.config.is_init_disks = self.at_init_disks_cb.isChecked()
         self.config.is_set_passwd = self.set_passwd_cb.isChecked()
         self.config.passwd = self.set_passwd_txt.text()
         self.config.persist()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>232</width>
-    <height>209</height>
+    <height>233</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,39 +39,21 @@ QLineEdit {
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="1">
-    <widget class="QCheckBox" name="at_retry_cb">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
+   <item row="6" column="1">
+    <widget class="QLineEdit" name="set_passwd_txt"/>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>同步安裝</string>
+   <item row="7" column="1">
+    <widget class="QDialogButtonBox" name="action_btns">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>設定密碼</string>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QCheckBox" name="async_install_cb">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QComboBox" name="halt_option_dropdown"/>
-   </item>
-   <item row="4" column="1">
-    <widget class="QCheckBox" name="set_passwd_cb">
      <property name="text">
       <string/>
      </property>
@@ -84,27 +66,27 @@ QLineEdit {
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>同步安裝</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QComboBox" name="halt_option_dropdown"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>設定密碼</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>自動安裝</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QDialogButtonBox" name="action_btns">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>關機選項</string>
      </property>
     </widget>
    </item>
@@ -115,8 +97,41 @@ QLineEdit {
      </property>
     </widget>
    </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="at_retry_cb">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>關機選項</string>
+     </property>
+    </widget>
+   </item>
    <item row="5" column="1">
-    <widget class="QLineEdit" name="set_passwd_txt"/>
+    <widget class="QCheckBox" name="set_passwd_cb">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>初始化
+儲存裝置</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="at_init_disks_cb">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
