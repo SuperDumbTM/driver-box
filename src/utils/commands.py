@@ -42,20 +42,20 @@ def set_password(username: str, password: Optional[str]):
         return ExecutableTask(
             "Set Password",
             ExecuteConfig(True, False, [], 1),
-            "powershell.exe",
+            "powershell",
             options=("Set-LocalUser", "-Name", username, "-Password",
                      f"(ConverTo-SecureString {str(password)} -AsPlainText -Force"))
     else:
         return ExecutableTask(
             "Set Password",
             ExecuteConfig(True, False, [], 1),
-            "powershell.exe",
+            "powershell",
             options=("Set-LocalUser", "-Name", username,
                      "-Password", "(new-object System.Security.SecureString)"))
 
 
 def get_current_usrname() -> str:
-    return check_output(["powershell.exe", "$Env:UserName"]).strip().decode()
+    return check_output(["powershell", "$Env:UserName"]).strip().decode()
 
 
 def get_users_info() -> list[wmi._wmi_object]:
@@ -67,4 +67,4 @@ def initialise_all_disks():
         "Disks Initialisation",
         ExecuteConfig(True, False, [], 1),
         "powershell",
-        options=("Get-Disk | Where-Object PartitionStyle -Eq \"RAW\" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume"))
+        options=("Get-Disk | Where-Object PartitionStyle -Eq \"RAW\" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume",))
