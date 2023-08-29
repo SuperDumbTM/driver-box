@@ -14,7 +14,7 @@ class HwInfo:
         """
         output = []
         try:
-            for cpu in self.hwd.get_cpu_dets():
+            for cpu in self.hwd.cpu_info():
                 output.append(cpu.name)
 
             return output if len(output) > 0 else ["Not Found"]
@@ -26,7 +26,7 @@ class HwInfo:
         """
         output = []
         try:
-            for gpu in self.hwd.get_gpu_dets():
+            for gpu in self.hwd.gpu_info():
                 tmp = gpu.Name + \
                     " (" + str(int(abs(gpu.AdapterRAM)) // 1024**3) + " GB)"
                 output.append(tmp)
@@ -40,7 +40,7 @@ class HwInfo:
         """
         output = []
         try:
-            for mb in self.hwd.get_mb_dets():
+            for mb in self.hwd.mother_board_info():
                 tmp = mb.Manufacturer.split(" ")[0] + " " + mb.Product
                 output.append(tmp)
 
@@ -53,7 +53,7 @@ class HwInfo:
         """
         output = []
         try:
-            for ram in self.hwd.get_ram_dets():
+            for ram in self.hwd.ram_info():
                 tmp = ram.Manufacturer + "\t" + ram.PartNumber.strip(" ") + "\t" + str(
                     int(ram.Capacity) // (1024**3)) + "GB@" + str(ram.Speed)
                 output.append(tmp)
@@ -77,7 +77,7 @@ class HwInfo:
                     'WAN Miniport (L2TP)', 'WAN Miniport (PPTP)', 'WAN Miniport (PPPOE)', 'WAN Miniport (IP)',
                     'WAN Miniport (IPv6)', 'WAN Miniport (Network Monitor)', 'Microsoft Wi-Fi Direct Virtual Adapter',
                     'Microsoft Wi-Fi Direct Virtual Adapter #2', "Bluetooth Device (Personal Area Network)")  # ignor results
-            for nic in self.hwd.get_nic_dets():
+            for nic in self.hwd.nic_info():
                 if nic.Name not in dump:
                     output.append(nic.Name)
 
@@ -90,7 +90,7 @@ class HwInfo:
         """
         output = []
         try:
-            for disk in self.hwd.get_disk_dets():
+            for disk in self.hwd.disk_info():
                 tmp = disk.Model + " @ " + \
                     str(int(disk.Size) // (1000**3)) + "GB"
                 output.append(tmp)

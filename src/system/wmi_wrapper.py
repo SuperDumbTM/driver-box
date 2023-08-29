@@ -8,20 +8,23 @@ class WmiWrapper:
     def __init__(self) -> None:
         self.c = wmi.WMI()
 
-    def get_cpu_dets(self) -> list[wmi._wmi_object]:
+    def cpu_info(self) -> list[wmi._wmi_object]:
         return self.c.Win32_Processor()
 
-    def get_gpu_dets(self) -> list[wmi._wmi_object]:
+    def gpu_info(self) -> list[wmi._wmi_object]:
         return self.c.Win32_VideoController()
 
-    def get_ram_dets(self) -> list[wmi._wmi_object]:
+    def ram_info(self) -> list[wmi._wmi_object]:
         return self.c.Win32_PhysicalMemory()
 
-    def get_mb_dets(self) -> list[wmi._wmi_object]:
+    def mother_board_info(self) -> list[wmi._wmi_object]:
         return self.c.Win32_BaseBoard()
 
-    def get_nic_dets(self) -> list[wmi._wmi_object]:
+    def nic_info(self) -> list[wmi._wmi_object]:
         return self.c.Win32_NetworkAdapter()
 
-    def get_disk_dets(self) -> list[wmi._wmi_object]:
+    def disk_info(self) -> list[wmi._wmi_object]:
         return self.c.Win32_DiskDrive()
+
+    def partition_info(self) -> list[wmi._wmi_object]:
+        return self.c.Win32_DiskPartition()
