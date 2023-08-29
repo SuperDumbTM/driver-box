@@ -12,9 +12,9 @@
   - [安裝選項](#安裝選項)
   - [修改及更新軀動](#修改及更新軀動)
 
-![main_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/702bc843-2ff5-4a6b-b422-0210e20bd6dc)
+![main_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/ec78e2e8-3f7c-4897-a409-99bd9a11f019)
+![progress_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/66e3a520-fc3c-4d07-80c7-88861cf9639f)
 
-![progress_window](https://user-images.githubusercontent.com/71750702/226849659-71b77b32-eefb-4649-9865-74050818e249.png)
 
 ## 下載
 主程式<br>
@@ -62,14 +62,16 @@
 ## 修改及更新軀動
 `管理 -> 編輯軀動程式`
 
-![dri_conf_window](https://user-images.githubusercontent.com/71750702/226865796-6f39f684-18fb-4302-a7f3-c44fb9ac0c46.png)
+![dri_conf_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/48275781-7b4d-4429-825e-c400dc8ef6fb)
 
+紅色背景代表該軀動程式路徑不存在<br>
 黃色背景代表該軀動程式不能以自動模式安裝[（用戶自訂）](#autoable-descr)
+
 - 雙擊目標行（row）以編輯軀動程式
 - 按 `新增` 以新增軀動程式
 
-![dri_edit_window_new](https://user-images.githubusercontent.com/71750702/226859055-33cb78ed-ca79-4361-8be9-00fa35d8b2db.png)
-![dri_edit_window_old](https://user-images.githubusercontent.com/71750702/226878600-0051f092-97b1-468c-adb3-2bc856253b7b.png)
+![dri_edit_window_new](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/027d1683-dabf-4796-97e6-54abd81997fd)
+![dri_edit_window_old](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/e3b289eb-8212-4f44-9d1f-d460fb3dc1cc)
 
 
 1. 軀動分類<br>
