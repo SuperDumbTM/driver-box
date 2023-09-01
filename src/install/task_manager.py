@@ -46,12 +46,19 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
     def abort_tasks(self):
         """Terminate all tasks
         """
-        for task in (t for t in self.tasks if t.status in (ExecuteStatus.PENDING, ExecuteStatus.INPROGRESS)):
+        def abort(task: Task):
+            self.qsig_progr.emit(
+                task, ExecuteStatus.ABORTING, f"正在結束...")
             task.abort()
+
             if task.status != ExecuteStatus.ABORTED:
-                self.qsig_msg.emit(f"未能終止 {task.name}\uff01")
+                self.qsig_progr.emit(task, ExecuteStatus.ERROR, f"未能終止安裝")
+                self.qsig_msg.emit(f"未能終止安裝 {task.name}\uff01")
             else:
-                self.qsig_msg.emit(f"已終止執行 {task.name}")
+                self.qsig_progr.emit(task, ExecuteStatus.ABORTED, f"已終止安裝")
+                self.qsig_msg.emit(f"已終止安裝 {task.name}")
+        for task in (t for t in self.tasks if t.status in (ExecuteStatus.PENDING, ExecuteStatus.INPROGRESS)):
+            Thread(target=abort, args=(task,)).start()
 
     def is_finished(self) -> bool:
         """Returns whether all task are already executed

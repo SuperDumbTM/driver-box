@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'dri_cfg_editor.ui'
+# Form implementation generated from reading ui file 'driver_config_edit_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #

@@ -4,29 +4,23 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from .window_conf_editor import DriverConfigEditorWindow
+from .driver_config_edit_window import DriverConfigEditWindow
 from widgets.tablewidget_dragable import TableWidgetDragable
 from install.driver_option import Driver, DriverType, DriverOption
-from ui.generated.dri_cfg_viewer import Ui_DriverConfigViewer
+from ui.generated.driver_config_window import Ui_DriverConfigViewer
 
 
-class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
+class DriverConfigWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
 
     _modified = False
 
     def __init__(self, dri_conf: DriverOption, parent: QtWidgets = None) -> None:
         super().__init__(parent=parent)
-        self.setupUi(self)
-        self._setup_tableview()
-        self.setWindowIcon(QtGui.QIcon(
-            os.path.join(definitions.DIR_PIC, "list.ico")))
-
-        # set table auto resize porpotion to window
-        self.dri_opt_table.horizontalHeader().setSectionResizeMode(
-            QtWidgets.QHeaderView.Stretch)
 
         self.dri_conf = dri_conf
         self.crrt_type = DriverType.NET
+
+        self.setupUi(self)
         self.refresh_table(self.crrt_type)
 
         # ---------- events ----------
@@ -96,7 +90,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
     def open_edit_dialog(self, item: QtWidgets.QTableWidgetItem):
         tgt_dri: Driver = item.data(QtCore.Qt.ItemDataRole.UserRole)
 
-        window = DriverConfigEditorWindow(tgt_dri.id)
+        window = DriverConfigEditWindow(tgt_dri.id)
         window.qsig_save.connect(self.save_edited_driver)
         window.qsig_del.connect(self.delete_driver)
 
@@ -105,7 +99,7 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         window.exec_()
 
     def open_create_dialog(self) -> None:
-        window = DriverConfigEditorWindow()
+        window = DriverConfigEditWindow()
         window.qsig_save.connect(self.save_new_driver)
         window.del_dri_btn.setEnabled(False)
         window.exec_()
@@ -133,13 +127,12 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
 
         self._modified = True
 
-    # override
-    def closeEvent(self, event):
-        if (self._modified):
-            QtWidgets.qApp.exit(-11354)
-        super().closeEvent(event)
+    def setupUi(self, DriverConfigViewer):
+        super().setupUi(DriverConfigViewer)
 
-    def _setup_tableview(self):
+        self.setWindowIcon(QtGui.QIcon(
+            os.path.join(definitions.DIR_PIC, "list.ico")))
+
         self.dri_opt_table = TableWidgetDragable(self.dri_info_sa_contents)
         self.dri_opt_table.setFocusPolicy(QtCore.Qt.NoFocus)
         self.dri_opt_table.setStyleSheet("QHeaderView::section {\n"
@@ -179,6 +172,9 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         self.verticalLayout_2.addWidget(self.dri_opt_table)
         self.dri_info_scrollarea.setWidget(self.dri_info_sa_contents)
         self.gridLayout.addWidget(self.dri_info_scrollarea, 0, 1, 1, 1)
+        # set table auto resize porpotion to window
+        self.dri_opt_table.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.Stretch)
 
         _translate = QtCore.QCoreApplication.translate
         # self.dri_cfg_table.setSortingEnabled(False)
@@ -188,3 +184,9 @@ class DriverConfigViewerWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
         item.setText(_translate("DriverConfigViewer", "路徑"))
         item = self.dri_opt_table.horizontalHeaderItem(2)
         item.setText(_translate("DriverConfigViewer", "安裝參數"))
+
+    # override
+    def closeEvent(self, event):
+        if (self._modified):
+            QtWidgets.qApp.exit(definitions.UI_RERENDER_CODE)
+        super().closeEvent(event)

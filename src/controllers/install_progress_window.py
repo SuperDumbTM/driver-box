@@ -5,25 +5,24 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from install.execute_status import ExecuteStatus
 from install.task import Task
-from ui.generated.progress import Ui_InstallProgress
+from ui.generated.install_progress_window_ import Ui_InstallProgressDialog
 
 
-class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
+class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
 
     qsig_progress = QtCore.pyqtSignal(Task, ExecuteStatus, str)
-    qsig_window_close = QtCore.pyqtSignal()
+    qsig_abort = QtCore.pyqtSignal()
 
     def __init__(self, parent: QtWidgets.QWidget = None) -> None:
         super().__init__(parent=parent)
-        self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon(
-            os.path.join(definitions.DIR_PIC, "progress.ico")))
-        # set table auto resize porpotion to window
-        self.progr_table.horizontalHeader().setSectionResizeMode(
-            QtWidgets.QHeaderView.Stretch)
 
-        self.qsig_progress.connect(self.update_progress)
         self._progresses: dict[str, int] = {}
+
+        self.setupUi(self)
+
+        # ---------- events ----------
+        self.qsig_progress.connect(self.update_progress)
+        self.action_btns.clicked.connect(self._action_buttons_clicked)
 
     def append_progress(self, task: Task, message: str) -> int:
         """Append and show a "driver install progress" to the UI
@@ -59,14 +58,8 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
     def clear_progresses(self) -> None:
         """Remove all progress from the UI
         """
-        return
         for i in range(self.progr_table.rowCount(), -1, -1):
             self.progr_table.removeRow(i)
-
-    # override
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        self.qsig_window_close.emit()
-        return super().closeEvent(a0)
 
     def _status_color(self, progress: ExecuteStatus) -> QtGui.QColor:
         """Gets the color to display for `status`
@@ -74,11 +67,32 @@ class ProgressWindow(Ui_InstallProgress, QtWidgets.QDialog):
         Args:
             level (str): Installation progress of the task
         """
-        if progress == ExecuteStatus.EXITED:
+        if progress in (ExecuteStatus.EXITED, ExecuteStatus.ABORTING):
             return QtGui.QColor(230, 207, 0, 255)
         elif progress == ExecuteStatus.SUCCESS:
             return QtGui.QColor(0, 179, 12, 200)
-        elif progress in (ExecuteStatus.FAILED, ExecuteStatus.ABORTED, ExecuteStatus.ERROR):
-            return QtGui.QColor(171, 34, 34, 200)
+        elif progress in (ExecuteStatus.FAILED, ExecuteStatus.ERROR):
+            return QtGui.QColor(171, 34, 34, 192)
+        elif progress == ExecuteStatus.ABORTED:
+            return QtGui.QColor(192, 192, 192, 200)
         else:
             return QtGui.QColor(255, 255, 255, 1)
+
+    def _action_buttons_clicked(self, button: QtWidgets.QPushButton):
+        if (button == self.action_btns.button(QtWidgets.QDialogButtonBox.Abort)):
+            self.qsig_abort.emit()
+
+    # override
+    def setupUi(self, InstallProgressDialog):
+        super().setupUi(InstallProgressDialog)
+
+        self.setWindowIcon(QtGui.QIcon(
+            os.path.join(definitions.DIR_PIC, "progress.ico")))
+        # set table auto resize porpotion to window
+        self.progr_table.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.Stretch)
+
+    # override
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        self.qsig_abort.emit()
+        return super().closeEvent(a0)

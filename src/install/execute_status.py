@@ -8,4 +8,5 @@ class ExecuteStatus(Enum):
     SUCCESS = 4
     ERROR = 5
     FAILED = 6
-    ABORTED = 7
+    ABORTING = 7
+    ABORTED = 8

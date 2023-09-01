@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'progress.ui'
+# Form implementation generated from reading ui file 'install_progress_window_.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -11,19 +11,30 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_InstallProgress(object):
-    def setupUi(self, InstallProgress):
-        InstallProgress.setObjectName("InstallProgress")
-        InstallProgress.resize(349, 238)
-        self.gridLayout = QtWidgets.QGridLayout(InstallProgress)
+class Ui_InstallProgressDialog(object):
+    def setupUi(self, InstallProgressDialog):
+        InstallProgressDialog.setObjectName("InstallProgressDialog")
+        InstallProgressDialog.resize(350, 250)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(InstallProgressDialog.sizePolicy().hasHeightForWidth())
+        InstallProgressDialog.setSizePolicy(sizePolicy)
+        InstallProgressDialog.setMinimumSize(QtCore.QSize(350, 250))
+        font = QtGui.QFont()
+        font.setFamily("Microsoft JhengHei")
+        font.setPointSize(10)
+        InstallProgressDialog.setFont(font)
+        self.gridLayout = QtWidgets.QGridLayout(InstallProgressDialog)
         self.gridLayout.setObjectName("gridLayout")
-        self.progr_table = QtWidgets.QTableWidget(InstallProgress)
+        self.progr_table = QtWidgets.QTableWidget(InstallProgressDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.progr_table.sizePolicy().hasHeightForWidth())
         self.progr_table.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
+        font.setFamily("Microsoft JhengHei UI")
         font.setPointSize(10)
         self.progr_table.setFont(font)
         self.progr_table.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -78,14 +89,19 @@ class Ui_InstallProgress(object):
         self.progr_table.verticalHeader().setCascadingSectionResizes(False)
         self.progr_table.verticalHeader().setHighlightSections(False)
         self.gridLayout.addWidget(self.progr_table, 0, 0, 1, 1)
+        self.action_btns = QtWidgets.QDialogButtonBox(InstallProgressDialog)
+        self.action_btns.setStandardButtons(QtWidgets.QDialogButtonBox.Abort)
+        self.action_btns.setCenterButtons(False)
+        self.action_btns.setObjectName("action_btns")
+        self.gridLayout.addWidget(self.action_btns, 1, 0, 1, 1)
 
-        self.retranslateUi(InstallProgress)
-        QtCore.QMetaObject.connectSlotsByName(InstallProgress)
+        self.retranslateUi(InstallProgressDialog)
+        QtCore.QMetaObject.connectSlotsByName(InstallProgressDialog)
 
-    def retranslateUi(self, InstallProgress):
+    def retranslateUi(self, InstallProgressDialog):
         _translate = QtCore.QCoreApplication.translate
-        InstallProgress.setWindowTitle(_translate("InstallProgress", "安裝狀態"))
+        InstallProgressDialog.setWindowTitle(_translate("InstallProgressDialog", "安裝狀態"))
         item = self.progr_table.horizontalHeaderItem(0)
-        item.setText(_translate("InstallProgress", "軀動名稱"))
+        item.setText(_translate("InstallProgressDialog", "軀動名稱"))
         item = self.progr_table.horizontalHeaderItem(1)
-        item.setText(_translate("InstallProgress", "狀態"))
+        item.setText(_translate("InstallProgressDialog", "狀態"))

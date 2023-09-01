@@ -4,24 +4,21 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from enums.halt_option import HaltOption
 from install.intall_option import InstallOption
-from ui.generated.intall_opt_cfg_editor import Ui_InstallOptionEditor
+from ui.generated.install_option_edit_window import Ui_InstallOptionEditor
 
 
-class InstallOptionEditorWindow(Ui_InstallOptionEditor, QtWidgets.QDialog):
+class InstallOptionEditWindow(Ui_InstallOptionEditor, QtWidgets.QDialog):
 
     qsig_save = QtCore.pyqtSignal(InstallOption)
 
     def __init__(self, config: InstallOption, parent: QtWidgets.QWidget = None) -> None:
         super().__init__(parent=parent)
-        self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon(
-            os.path.join(definitions.DIR_PIC, "setting.ico")))
-
-        for option in HaltOption:
-            self.halt_option_dropdown.addItem(option.value, option)
 
         self.config = config
+
+        self.setupUi(self)
         self.fill_data(config)
+
         # ---------- events ----------
         self.action_btns.accepted.connect(self.save)
         self.action_btns.rejected.connect(self.close)
@@ -47,3 +44,13 @@ class InstallOptionEditorWindow(Ui_InstallOptionEditor, QtWidgets.QDialog):
         self.config.persist()
 
         self.qsig_save.emit(self.config)
+
+    # override
+    def setupUi(self, InstallOptionEditor):
+        super().setupUi(InstallOptionEditor)
+
+        self.setWindowIcon(QtGui.QIcon(
+            os.path.join(definitions.DIR_PIC, "setting.ico")))
+
+        for option in HaltOption:
+            self.halt_option_dropdown.addItem(option.value, option)

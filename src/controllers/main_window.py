@@ -3,14 +3,14 @@ import threading
 from subprocess import Popen
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from controllers.window_defaults_editor import InstallOptionEditorWindow
+from controllers.install_option_edit_window import InstallOptionEditWindow
 
 import definitions
 from enums.halt_option import HaltOption
 from install.driver_type import DriverType
-from .window_progress import ProgressWindow
-from .window_driver import DriverConfigViewerWindow
-from ui.generated.main import Ui_MainWindow
+from .install_progress_window import InstallProgressWindow
+from .driver_config_window import DriverConfigWindow
+from ui.generated.main_window import Ui_MainWindow
 from utils import commands
 from utils.qwidget import is_widget_enabled
 from utils.hw_info_worker import HwInfoWorker
@@ -29,36 +29,16 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
 
     def __init__(self, driconfig: DriverOption, installopt: InstallOption):
         super().__init__()
-        self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon(
-            os.path.join(definitions.DIR_PIC, "icon.ico")))
 
         self.driconfg = driconfig
         self.installopt = installopt
+        self._hwinfo_worker = HwInfoWorker(
+            self.qsig_msg, self.qsig_hwinfo, parent=self)
 
-        self._hwinfo_worker = HwInfoWorker(self.qsig_msg,
-                                           self.qsig_hwinfo,
-                                           parent=self)
+        self.setupUi(self)
+        self.refresh_hwinfo()
+        self.reset_fields()
 
-        # ---------- driver options ----------
-        for option in self.driconfg.get_type(DriverType.NET):
-            self.lan_driver_dropdown.addItem(option.name, option.id)
-        self.lan_driver_dropdown.currentIndexChanged.connect(
-            self._dri_on_select)
-
-        for option in self.driconfg.get_type(DriverType.DISPLAY):
-            self.display_dri_dropdown.addItem(option.name, option.id)
-        self.display_dri_dropdown.currentIndexChanged.connect(
-            self._dri_on_select)
-
-        for option in self.driconfg.get_type(DriverType.MISC):
-            cb = DriverOptionCheckBox(option.name)
-            cb.dri_id = option.id
-            self.misc_dri_vbox.addWidget(cb)
-            cb.clicked.connect(self._dri_on_select)
-        # ---------- halt options ----------
-        for option in HaltOption:
-            self.halt_option_dropdown.addItem(option.value, option)
         # ---------- events ----------
         self.hwInfo_refresh_btn.clicked.connect(self.refresh_hwinfo)
         self.disk_mgt_btn.clicked.connect(
@@ -69,7 +49,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.set_passwd_cb.clicked.connect(self.set_passwd_checked)
 
         self.edit_driver_action.triggered.connect(
-            lambda: DriverConfigViewerWindow(driconfig).show())
+            lambda: DriverConfigWindow(driconfig).show())
         self.edit_defaults_action.triggered.connect(
             self._show_defaults_edit_window)
 
@@ -77,9 +57,6 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
         self.qsig_msg.connect(self.send_msg)
         self.qsig_hwinfo.connect(
             lambda create, text: self.hwinfo_vbox.addWidget(create(text)))
-
-        self.refresh_hwinfo()
-        self.reset_fields()
 
     def send_msg(self, text: str):
         """Display a message to the message box
@@ -169,7 +146,7 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     def _install(self):
         """Start the install process
         """
-        prog_window = ProgressWindow()
+        prog_window = InstallProgressWindow()
         manager = TaskManager(self.qsig_msg, prog_window.qsig_progress)
         manager.qsig_install_result.connect(self._post_install)
 
@@ -188,13 +165,13 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             manager.add_task(_task)
             prog_window.append_progress(_task, "等待執行中")
 
-        def prog_close():
-            """Terminate the remaining tasks when progress window is closed
-            """
+        def _p():
+            print('qsig_abort')
             if not manager.is_finished():
                 manager.abort_tasks()
-                self.send_msg("已終止安裝")
-        prog_window.qsig_window_close.connect(prog_close)
+        prog_window.qsig_abort.connect(_p)
+        # prog_window.qsig_abort.connect(lambda: threading.Thread(
+        #     target=manager.abort_tasks).start() if not manager.is_finished() else None)
 
         for dri_conf in self.selected_drivers():
             _task = ExecutableTask(
@@ -281,11 +258,38 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 for i in range(self.misc_dri_vbox.count())]
 
     def _show_defaults_edit_window(self):
-        window = InstallOptionEditorWindow(self.installopt)
+        window = InstallOptionEditWindow(self.installopt)
 
-        def set_installopt(new): self.installopt = new
+        def set_installopt(new):
+            self.installopt = new
         window.qsig_save.connect(set_installopt)
         window.exec_()
+
+    # override
+    def setupUi(self, MainWindow):
+        super().setupUi(MainWindow)
+
+        self.setWindowIcon(
+            QtGui.QIcon(os.path.join(definitions.DIR_PIC, "icon.ico")))
+        # ---------- driver options ----------
+        for option in self.driconfg.get_type(DriverType.NET):
+            self.lan_driver_dropdown.addItem(option.name, option.id)
+        self.lan_driver_dropdown.currentIndexChanged.connect(
+            self._dri_on_select)
+
+        for option in self.driconfg.get_type(DriverType.DISPLAY):
+            self.display_dri_dropdown.addItem(option.name, option.id)
+        self.display_dri_dropdown.currentIndexChanged.connect(
+            self._dri_on_select)
+
+        for option in self.driconfg.get_type(DriverType.MISC):
+            cb = DriverOptionCheckBox(option.name)
+            cb.dri_id = option.id
+            self.misc_dri_vbox.addWidget(cb)
+            cb.clicked.connect(self._dri_on_select)
+        # ---------- halt options ----------
+        for option in HaltOption:
+            self.halt_option_dropdown.addItem(option.value, option)
 
     # override
     def closeEvent(self, event):

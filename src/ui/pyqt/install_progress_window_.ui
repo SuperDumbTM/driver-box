@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>InstallProgress</class>
- <widget class="QDialog" name="InstallProgress">
+ <class>InstallProgressDialog</class>
+ <widget class="QWidget" name="InstallProgressDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>349</width>
-    <height>238</height>
+    <width>350</width>
+    <height>250</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>350</width>
+    <height>250</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Microsoft JhengHei</family>
+    <pointsize>10</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>安裝狀態</string>
@@ -24,6 +42,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Microsoft JhengHei UI</family>
        <pointsize>10</pointsize>
       </font>
      </property>
@@ -143,6 +162,16 @@
        </font>
       </property>
      </column>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="action_btns">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Abort</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
   </layout>

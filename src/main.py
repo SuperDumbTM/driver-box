@@ -4,7 +4,7 @@ import sys
 from PyQt5 import QtWidgets
 
 import definitions
-from controllers.window_main import MainWindow
+from controllers.main_window import MainWindow
 from install.driver_option import DriverOption
 from install.intall_option import InstallOption
 

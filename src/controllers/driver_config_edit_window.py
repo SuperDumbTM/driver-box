@@ -4,27 +4,21 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import definitions
 from install.execute_config import ExecuteConfig
 from install.driver_option import Driver, DriverType, FLAG_PRESET
-from ui.generated.dri_cfg_editor import Ui_DriverConfigEditor
+from ui.generated.driver_config_edit_window import Ui_DriverConfigEditor
 
 
-class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
+class DriverConfigEditWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
 
     qsig_save = QtCore.pyqtSignal(Driver)
     qsig_del = QtCore.pyqtSignal(Driver)
 
     def __init__(self, dri_id: str = None, parent: QtWidgets.QWidget = None) -> None:
         super().__init__(parent=parent)
-        self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon(
-            os.path.join(definitions.DIR_PIC, "setting.ico")))
 
         self.dri_id = dri_id
-        for dri_type in DriverType:
-            self.dri_type_dropdown.addItem(dri_type.value, dri_type)
 
-        self.dri_flag_preset_dropdown.setItemData(0, [])
-        for name, flags in FLAG_PRESET.items():
-            self.dri_flag_preset_dropdown.addItem(name, flags)
+        self.setupUi(self)
+
         # ---------- events ----------
         # disable close window behavior when action buttons are clicked
         self.action_btns.disconnect()
@@ -107,3 +101,17 @@ class DriverConfigEditorWindow(Ui_DriverConfigEditor, QtWidgets.QDialog):
                           if self.dri_okrtcode_input.text() != '' else [],
                           float(self.dri_fail_time_input.text()))
                       )
+
+    # override
+    def setupUi(self, DriverConfigEditor):
+        super().setupUi(DriverConfigEditor)
+
+        self.setWindowIcon(QtGui.QIcon(
+            os.path.join(definitions.DIR_PIC, "setting.ico")))
+
+        for dri_type in DriverType:
+            self.dri_type_dropdown.addItem(dri_type.value, dri_type)
+
+        self.dri_flag_preset_dropdown.setItemData(0, [])
+        for name, flags in FLAG_PRESET.items():
+            self.dri_flag_preset_dropdown.addItem(name, flags)
