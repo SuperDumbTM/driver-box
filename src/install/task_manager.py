@@ -47,16 +47,22 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         """Terminate all tasks
         """
         def abort(task: Task):
-            self.qsig_progr.emit(
-                task, ExecuteStatus.ABORTING, f"正在結束...")
-            task.abort()
+            old_status = task.status
+            t = Thread(target=task.abort)
+            t.start()
+            self.qsig_progr.emit(task, ExecuteStatus.ABORTING, "正在結束...")
+            t.join()
 
-            if task.status != ExecuteStatus.ABORTED:
-                self.qsig_progr.emit(task, ExecuteStatus.ERROR, f"未能終止安裝")
-                self.qsig_msg.emit(f"未能終止安裝 {task.name}\uff01")
-            else:
-                self.qsig_progr.emit(task, ExecuteStatus.ABORTED, f"已終止安裝")
+            if old_status == ExecuteStatus.PENDING:
+                self.qsig_progr.emit(task, ExecuteStatus.ABORTED, f"已取消")
+            elif task.status == ExecuteStatus.ABORTED:
+                # task is in execution
+                # __at_worker post-exec routine will handle the progress update
                 self.qsig_msg.emit(f"已終止安裝 {task.name}")
+            else:
+                # self.qsig_progr.emit(task, ExecuteStatus.ERROR, f"未能終止安裝")
+                self.qsig_msg.emit(f"未能終止安裝 {task.name}\uff01")
+
         for task in (t for t in self.tasks if t.status in (ExecuteStatus.PENDING, ExecuteStatus.INPROGRESS)):
             Thread(target=abort, args=(task,)).start()
 
@@ -116,9 +122,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             self.qsig_msg.emit(f"開始重試 {task.name} (手動模式)")
             try:
                 Thread(
-                    target=task.execute,
-                    args=(no_options,),
-                    daemon=False).start()
+                    target=task.execute, args=(no_options,), daemon=False).start()
             except Exception as e:
                 self.qsig_msg.emit(f"{e} ({task.name})")
 

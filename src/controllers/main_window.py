@@ -165,13 +165,8 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
             manager.add_task(_task)
             prog_window.append_progress(_task, "等待執行中")
 
-        def _p():
-            print('qsig_abort')
-            if not manager.is_finished():
-                manager.abort_tasks()
-        prog_window.qsig_abort.connect(_p)
-        # prog_window.qsig_abort.connect(lambda: threading.Thread(
-        #     target=manager.abort_tasks).start() if not manager.is_finished() else None)
+        prog_window.qsig_abort.connect(lambda: threading.Thread(
+            target=manager.abort_tasks).start() if not manager.is_finished() else None)
 
         for dri_conf in self.selected_drivers():
             _task = ExecutableTask(

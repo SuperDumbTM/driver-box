@@ -145,6 +145,7 @@ class ExecutableTask(Task):
 
     def abort(self):
         # os.system(f"taskkill /im " + self.executable.split("\\")[-1] + " /f")
+        self._status = ExecuteStatus.ABORTING
         if self._process is None:
             self._status = ExecuteStatus.ABORTED
         else:
@@ -152,3 +153,5 @@ class ExecutableTask(Task):
             time.sleep(2)
             if self._process.poll() is not None:
                 self._status = ExecuteStatus.ABORTED
+            else:
+                pass
