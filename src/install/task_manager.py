@@ -159,7 +159,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
                 case ExecuteStatus.ERROR:
                     self.qsig_progr.emit(
                         task, task.status, str(task.exception))
-                case ExecuteStatus.EXITED:
+                case ExecuteStatus.EARLYEXIT:
                     self.qsig_progr.emit(
                         task, task.status,
                         f"執行時間小於{task.exe_conf.fail_time}秒")

@@ -136,7 +136,7 @@ class ExecutableTask(Task):
         elif self.rtcode not in (0, *self.exe_conf.ok_rtcode):
             self._status = ExecuteStatus.FAILED
         elif time.time() - exe_time < self.exe_conf.fail_time:
-            self._status = ExecuteStatus.EXITED
+            self._status = ExecuteStatus.EARLYEXIT
         else:
             self._status = ExecuteStatus.SUCCESS
 

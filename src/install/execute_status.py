@@ -4,7 +4,7 @@ from enum import Enum
 class ExecuteStatus(Enum):
     PENDING = 1
     INPROGRESS = 2
-    EXITED = 3
+    EARLYEXIT = 3
     SUCCESS = 4
     ERROR = 5
     FAILED = 6
@@ -17,7 +17,7 @@ class ExecuteStatus(Enum):
                 return "等待執行中"
             case ExecuteStatus.INPROGRESS:
                 return "執行中"
-            case ExecuteStatus.EXITED:
+            case ExecuteStatus.EARLYEXIT:
                 return "過早結束執行"
             case ExecuteStatus.SUCCESS:
                 return "已完成"

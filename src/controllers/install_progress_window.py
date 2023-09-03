@@ -67,7 +67,7 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
         Args:
             level (str): Installation progress of the task
         """
-        if progress in (ExecuteStatus.EXITED, ExecuteStatus.ABORTING):
+        if progress in (ExecuteStatus.EARLYEXIT, ExecuteStatus.ABORTING):
             return QtGui.QColor(230, 207, 0, 255)
         elif progress == ExecuteStatus.SUCCESS:
             return QtGui.QColor(0, 179, 12, 200)
