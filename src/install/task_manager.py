@@ -128,9 +128,10 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
 
     def __at_worker(self, task: Task):
         if task.is_aborted:
+            self.qsig_progr.emit(task, task.status, task.status.text())
             return
-        self.qsig_msg.emit(f"開始執行 {task.name} (自動模式)")
 
+        self.qsig_msg.emit(f"開始執行 {task.name} (自動模式)")
         t = Thread(target=task.execute, daemon=True)
         t.start()
         for i in itertools.count():
