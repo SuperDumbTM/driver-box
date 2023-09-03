@@ -50,11 +50,11 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             old_status = task.status
             t = Thread(target=task.abort)
             t.start()
-            self.qsig_progr.emit(task, ExecuteStatus.ABORTING, "正在結束...")
+            self.qsig_progr.emit(task, "正在結束...", ExecuteStatus.ABORTING)
             t.join()
 
             if old_status == ExecuteStatus.PENDING:
-                self.qsig_progr.emit(task, ExecuteStatus.ABORTED, f"已取消")
+                self.qsig_progr.emit(task, f"已取消", ExecuteStatus.ABORTED)
             elif task.status == ExecuteStatus.ABORTED:
                 # task is in execution
                 # __at_worker post-exec routine will handle the progress update
@@ -128,7 +128,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
 
     def __at_worker(self, task: Task):
         if task.is_aborted:
-            self.qsig_progr.emit(task, task.status, task.status.text())
+            self.qsig_progr.emit(task, task.status.text(), task.status)
             return
 
         self.qsig_msg.emit(f"開始執行 {task.name} (自動模式)")
@@ -138,7 +138,7 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             if not t.is_alive():
                 break
             try:
-                self.qsig_progr.emit(task, task.status, _PBAR[i % len(_PBAR)])
+                self.qsig_progr.emit(task, _PBAR[i % len(_PBAR)], task.status)
                 time.sleep(0.12)
             except AttributeError:
                 # the ProgressWindow have been closed
@@ -155,18 +155,16 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
         try:
             match (task.status):
                 case (ExecuteStatus.SUCCESS | ExecuteStatus.ABORTED):
-                    self.qsig_progr.emit(task, task.status, task.status.text())
+                    self.qsig_progr.emit(task, task.status.text(), task.status)
                 case ExecuteStatus.ERROR:
                     self.qsig_progr.emit(
-                        task, task.status, str(task.exception))
+                        task, str(task.exception), task.status)
                 case ExecuteStatus.EARLYEXIT:
                     self.qsig_progr.emit(
-                        task, task.status,
-                        f"執行時間小於{task.exe_conf.fail_time}秒")
+                        task, f"執行時間小於{task.exe_conf.fail_time}秒", task.status)
                 case ExecuteStatus.FAILED:
                     self.qsig_progr.emit(
-                        task, task.status,
-                        f"失敗，錯誤代碼：[{task.rtcode}]")
+                        task, f"失敗，錯誤代碼：[{task.rtcode}]", task.status)
         except AttributeError:
             # the ProgressWindow have been closed
             pass

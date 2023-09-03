@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -10,7 +11,7 @@ from ui.generated.install_progress_window_ import Ui_InstallProgressDialog
 
 class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
 
-    qsig_progress = QtCore.pyqtSignal(Task, ExecuteStatus, str)
+    qsig_progress = QtCore.pyqtSignal(Task, str, ExecuteStatus)
     qsig_abort = QtCore.pyqtSignal()
 
     def __init__(self, parent: QtWidgets.QWidget = None) -> None:
@@ -41,7 +42,7 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
         self._progresses.update({task.__hash__(): row})
         return row
 
-    def update_progress(self, task: Task, progress: ExecuteStatus, message: str):
+    def update_progress(self, task: Task, message: str, progress: ExecuteStatus = None):
         """Update the execution status for the given `task`
 
         Args:
@@ -50,7 +51,7 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
             message (str): Messages to be displayed
         """
         item = QtWidgets.QTableWidgetItem(message)
-        item.setBackground(self._status_color(progress))
+        item.setBackground(self._status_color(progress or task.status))
 
         self.progr_table.setItem(self._progresses[task.__hash__()], 1, item)
         self.progr_table.resizeRowsToContents()
@@ -72,7 +73,7 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
                 return QtGui.QColor(230, 207, 0, 255)
             case ExecuteStatus.SUCCESS:
                 return QtGui.QColor(0, 179, 12, 200)
-            case (ExecuteStatus.FAILED, ExecuteStatus.ERROR):
+            case (ExecuteStatus.FAILED | ExecuteStatus.ERROR):
                 return QtGui.QColor(171, 34, 34, 192)
             case ExecuteStatus.ABORTED:
                 return QtGui.QColor(192, 192, 192, 200)
