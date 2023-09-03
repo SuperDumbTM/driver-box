@@ -25,7 +25,7 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
         self.action_btns.clicked.connect(self._action_buttons_clicked)
 
     def append_progress(self, task: Task, message: str) -> int:
-        """Append and show a "driver install progress" to the UI
+        """Append a progress for the given `task` to the UI
 
         Args:
             task (Task): The task of which the progress is belongs to
@@ -42,11 +42,11 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
         return row
 
     def update_progress(self, task: Task, progress: ExecuteStatus, message: str):
-        """Update the status of an "driver install progress\"
+        """Update the execution status for the given `task`
 
         Args:
             task (Task): The task of which the progress is belongs to
-            progress (str): Installation progress of the task
+            progress (ExecuteStatus): Execution status of a task
             message (str): Messages to be displayed
         """
         item = QtWidgets.QTableWidgetItem(message)
@@ -89,7 +89,7 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
 
         self.setWindowIcon(QtGui.QIcon(
             os.path.join(definitions.DIR_PIC, "progress.ico")))
-        # set table auto resize porpotion to window
+        # set table auto resize proportion to window
         self.progr_table.horizontalHeader().setSectionResizeMode(
             QtWidgets.QHeaderView.Stretch)
 
