@@ -62,21 +62,22 @@ class InstallProgressWindow(Ui_InstallProgressDialog, QtWidgets.QDialog):
             self.progr_table.removeRow(i)
 
     def _status_color(self, progress: ExecuteStatus) -> QtGui.QColor:
-        """Gets the color to display for `status`
+        """Get the color to display for the given `status`
 
         Args:
-            level (str): Installation progress of the task
+            progress (ExecuteStatus): Execution status of a task
         """
-        if progress in (ExecuteStatus.EARLYEXIT, ExecuteStatus.ABORTING):
-            return QtGui.QColor(230, 207, 0, 255)
-        elif progress == ExecuteStatus.SUCCESS:
-            return QtGui.QColor(0, 179, 12, 200)
-        elif progress in (ExecuteStatus.FAILED, ExecuteStatus.ERROR):
-            return QtGui.QColor(171, 34, 34, 192)
-        elif progress == ExecuteStatus.ABORTED:
-            return QtGui.QColor(192, 192, 192, 200)
-        else:
-            return QtGui.QColor(255, 255, 255, 1)
+        match (progress):
+            case (ExecuteStatus.EARLYEXIT | ExecuteStatus.ABORTING):
+                return QtGui.QColor(230, 207, 0, 255)
+            case ExecuteStatus.SUCCESS:
+                return QtGui.QColor(0, 179, 12, 200)
+            case (ExecuteStatus.FAILED, ExecuteStatus.ERROR):
+                return QtGui.QColor(171, 34, 34, 192)
+            case ExecuteStatus.ABORTED:
+                return QtGui.QColor(192, 192, 192, 200)
+            case _:
+                return QtGui.QColor(255, 255, 255, 1)
 
     def _action_buttons_clicked(self, button: QtWidgets.QPushButton):
         if (button == self.action_btns.button(QtWidgets.QDialogButtonBox.Abort)):
