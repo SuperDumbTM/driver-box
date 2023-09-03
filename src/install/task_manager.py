@@ -152,22 +152,20 @@ class TaskManager(QtCore.QObject):  # inherit QObject to use pyqtSignal
             self.qsig_msg.emit(f"{task.name}\uff1a{message}")
 
         try:
-            if task.status == ExecuteStatus.ABORTED:
-                self.qsig_progr.emit(task, task.status, "已取消")
-            elif task.status == ExecuteStatus.ERROR:
-                self.qsig_progr.emit(task, task.status, str(task.exception))
-            elif task.status == ExecuteStatus.EXITED:
-                self.qsig_progr.emit(
-                    task,
-                    task.status,
-                    f"執行時間小於{task.exe_conf.fail_time}秒")
-            elif task.status == ExecuteStatus.FAILED:
-                self.qsig_progr.emit(
-                    task,
-                    ExecuteStatus.FAILED,
-                    f"失敗，錯誤代碼：[{task.rtcode}]")
-            else:
-                self.qsig_progr.emit(task, ExecuteStatus.SUCCESS, "完成")
+            match (task.status):
+                case (ExecuteStatus.SUCCESS | ExecuteStatus.ABORTED):
+                    self.qsig_progr.emit(task, task.status, task.status.text())
+                case ExecuteStatus.ERROR:
+                    self.qsig_progr.emit(
+                        task, task.status, str(task.exception))
+                case ExecuteStatus.EXITED:
+                    self.qsig_progr.emit(
+                        task, task.status,
+                        f"執行時間小於{task.exe_conf.fail_time}秒")
+                case ExecuteStatus.FAILED:
+                    self.qsig_progr.emit(
+                        task, task.status,
+                        f"失敗，錯誤代碼：[{task.rtcode}]")
         except AttributeError:
             # the ProgressWindow have been closed
             pass
