@@ -2,7 +2,7 @@ import os
 import json
 import random
 import string
-from typing import Final, Union
+from typing import Final
 
 from install.driver import Driver
 
@@ -37,8 +37,8 @@ class DriverOption:
     """Directory name for driver executables"""
 
     def __init__(self,
-                 confpath: Union[str, os.PathLike],
-                 dridir: Union[str, os.PathLike],
+                 confpath: str | os.PathLike,
+                 dridir: str | os.PathLike,
                  not_found_ok: bool
                  ) -> None:
         if not os.path.exists(confpath):

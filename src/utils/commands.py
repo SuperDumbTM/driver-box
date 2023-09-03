@@ -1,5 +1,5 @@
 from subprocess import check_output
-from typing import Optional, Union
+from typing import Optional
 import wmi
 
 try:
@@ -16,17 +16,17 @@ except ImportError:
 _WMI = wmi.WMI()
 
 
-def shutdown(timeout: Union[int, float] = 1):
+def shutdown(timeout: int | float = 1):
     return ExecutableTask(
         "Shutdown", ExecuteConfig(True, False, fail_time=-1), "shutdown", ("/s", "/t", str(timeout)))
 
 
-def reboot(timeout: Union[int, float] = 1):
+def reboot(timeout: int | float = 1):
     return ExecutableTask(
         "Reboot", ExecuteConfig(True, False, fail_time=-1), "shutdown", ("/r", "/t", str(timeout)))
 
 
-def reboot_uefi(timeout: Union[int, float] = 1):
+def reboot_uefi(timeout: int | float = 1):
     return ExecutableTask(
         "Reboot to BIOS", ExecuteConfig(True, False, fail_time=-1), "shutdown", ("/r", "/fw", "/t", str(timeout)))
 

@@ -10,7 +10,7 @@ DIR_CONF: Final[os.PathLike] = os.path.join(DIR_ROOT, "conf")
 DIR_PIC: Final[os.PathLike] = os.path.join(DIR_ROOT, "pic")
 DIR_DRI: Final[os.PathLike] = os.path.join(DIR_ROOT, "driver")
 
-DIR_FLAG_PRESETS = {
+DIR_FLAG_PRESETS: Final[dict[str, list[str]]] = {
     "Intel Lan Driver": ["/s"],
     "Realtek Lan Driver": ["-s"],
     "Nvidia Display": ["-s", "-noreboot", "Display.Driver"],
@@ -21,4 +21,4 @@ DIR_FLAG_PRESETS = {
     "AMD Chipset": ["/S"]
 }
 
-UI_RERENDER_CODE = -11354
+UI_RERENDER_CODE: Final[int] = -11354

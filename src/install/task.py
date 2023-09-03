@@ -3,7 +3,7 @@ import os
 import time
 import struct
 import subprocess
-from typing import Callable, Iterable, Optional, Union
+from typing import Iterable, Optional
 
 
 try:
@@ -57,7 +57,7 @@ class Task(ABC):
 
 class ExecutableTask(Task):
 
-    command: Union[str, os.PathLike]
+    command: str | os.PathLike
     options: Optional[Iterable[str]]
 
     _status: ExecuteStatus = ExecuteStatus.PENDING
@@ -69,7 +69,7 @@ class ExecutableTask(Task):
     def __init__(self,
                  name: str,
                  exe_conf: ExecuteConfig,
-                 command: Union[str, os.PathLike],
+                 command: str | os.PathLike,
                  options: Optional[Iterable[str]] = None) -> None:
         super().__init__(name, exe_conf)
         self.command = command
