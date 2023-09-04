@@ -3,6 +3,7 @@ driver/
 conf/
 *.exe
 *.bak
+/*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
