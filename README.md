@@ -20,26 +20,8 @@
 主程式<br>
 [![version](https://img.shields.io/badge/version-0.7.0-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/v0.7.0)
 
-軀動包<br>
+常用軀動程式集<br>
 [Google Drive](https://drive.google.com/drive/folders/1VqND0o75oBR80Ft2IK8WjTTbXaezmajw?usp=sharing)
-
-- Driver Source<br>
-    **Display**<br>
-    [GeForce Game Ready Driver (version 531.29 WHQL)](https://www.nvidia.com.tw/download/driverResults.aspx/200222/tw)<br>
-    [AMD Software: Adrenalin Edition (version 23.3.1 WHQL)](https://www.amd.com/en/support/graphics/amd-radeon-rx-7000-series/amd-radeon-rx-7900-series/amd-radeon-rx-7900xtx)<br>
-    [Intel® 6th-10th Gen Processor Graphics - Windows (version 31.0.101.2115)](https://www.intel.com/content/www/us/en/download/762755/intel-6th-10th-gen-processor-graphics-windows.html)<br>
-    [Intel® Arc™ & Iris® Xe Graphics - WHQL - Windows* (version 31.0.101.4146)](https://www.intel.com/content/www/us/en/download/726609/intel-arc-iris-xe-graphics-whql-windows.html)
-
-    **Network**<br>
-    [Intel Network Drivers (version 26.2.0.1)](https://tw.msi.com/Motherboard/MAG-Z590-TOMAHAWK-WIFI/support#driver)<br>
-    [Intel® Ethernet Adapter Complete Driver Pack (version 28.0)](https://www.intel.com/content/www/us/en/download/15084/intel-ethernet-adapter-complete-driver-pack.html)<br>
-    [Realtek PCI-E Ethernet Drivers (version 11-11.10.720.2022)](https://tw.msi.com/Motherboard/MAG-B760-TOMAHAWK-WIFI-DDR4/support#driver)
-
-    **Miscellaneous**<br>
-    [Windows® 10 and Windows 11* Wi-Fi Drivers for Intel® Wireless Adapters (version 22.200.0)](https://www.intel.com/content/www/us/en/download/19351/windows-10-and-windows-11-wi-fi-drivers-for-intel-wireless-adapters.html)<br>
-    [Intel® Wireless Bluetooth® for Windows® 10 and Windows 11*  (version 22.200.0)](https://www.intel.com/content/www/us/en/download/18649/intel-wireless-bluetooth-for-windows-10-and-windows-11.html)<br>
-    [Intel Chipset Driver 600/700 (version 10.1.19199.8340)](https://tw.msi.com/Motherboard/MAG-B660-TOMAHAWK-WIFI-DDR4/support#driver)<br>
-    [AMD Chipset Drivers (version 5.02.19.2221)](https://www.amd.com/en/support/chipsets/amd-socket-am4/b550)
 
 ## 常用軀動安裝參數參考
 [driver install flag](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/tree/main/docs/driver%20install%20flag)
@@ -76,7 +58,7 @@
 
 1. 軀動分類<br>
     只有 `miscellaneous` 分類是「多選」<br>
-    `display`, `network` 是單選，每次安裝只能從分類中選擇其中一個軀動來安裝。
+    `display`, `network` 是單選。每次安裝只能從分類中選擇安裝其中一個軀動程式。
 2. 軀動路徑<br>
     軀動程式的安裝程序執行檔（例如 `setup.exe`, `xxxx.exe`）
     > driver\display\nvidia 531.29 WHQL\setup.exe
