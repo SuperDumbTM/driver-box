@@ -1,6 +1,7 @@
 import os
 import threading
 from subprocess import Popen
+import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from controllers.install_option_edit_window import InstallOptionEditWindow
@@ -216,9 +217,22 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 commands.reboot(5).execute()
                 QtWidgets.QMessageBox.information(self, "完成", "即將重新開機")
             elif self.halt_option_dropdown.currentData() == HaltOption.BIOS:
-                commands.reboot_uefi(5).execute()
+                retry_cnt = 0
+                cmd = commands.reboot_uefi(5)
+                cmd.execute()
+
+                while retry_cnt > 5:
+                    if cmd.rtcode == 0:
+                        break
+                    cmd.execute()
+                    retry_cnt += 1
+                else:
+                    QtWidgets.QMessageBox.information(
+                        self, "完成", "即將自動重啟至 BIOS")
+                    return
                 QtWidgets.QMessageBox.information(
-                    self, "完成", "即將自動重啟至 BIOS")
+                    self, "錯誤", "無法重啟至 BIOS")
+                self.send_msg(f"重啟至 BIOS 指令返回代碼：{cmd.rtcode}")
         else:
             box = QtWidgets.QMessageBox()
             box.setWindowIcon(self.windowIcon())
