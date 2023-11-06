@@ -1,20 +1,55 @@
+import argparse
+import glob
 import os
-import subprocess
+import pathlib
 import shutil
+import subprocess
 import time
 
-from definitions import DIR_ROOT, DIR_PIC
+from definitions import DIR_PIC, DIR_ROOT
 
-name = str(int(time.time()))
 
-subprocess.run(
-    ["pyinstaller", "-F", "-w", "--uac-admin",
-     os.path.join(DIR_ROOT, "src", "main.py"),
-     "--icon=" + os.path.join(DIR_PIC, "icon.ico"),
-     f"-n{name}"]
-)
+def clear_build_files(root: os.PathLike, args: argparse.Namespace):
+    # remove .spec file
+    os.remove(os.path.join(root, f"{args.name}.spec"))
+    # remove build and dist folder
+    shutil.rmtree(os.path.join(root, "build"))
+    shutil.rmtree(os.path.join(root, "dist"))
 
-shutil.move(os.path.join(DIR_ROOT, "dist", f"{name}.exe"), DIR_ROOT)
-os.remove(os.path.join(DIR_ROOT, f"{name}.spec"))
-shutil.rmtree(os.path.join(DIR_ROOT, "build"))
-shutil.rmtree(os.path.join(DIR_ROOT, "dist"))
+
+def clear_executables(root: os.PathLike):
+    for filename in glob.glob('*.exe', root_dir=root):
+        pathlib.Path(filename).unlink(True)
+
+
+def build(root: os.PathLike, args: argparse.Namespace):
+    if args.release:
+        pathlib.Path(os.path.join(root, f"{args.name}")).unlink(True)
+
+    subprocess.run(["pyinstaller",
+                    "-F",
+                    "-w",
+                    "--uac-admin",
+                    os.path.join(root, "src", "main.py"),
+                    f"--icon={args.icon}",
+                    f"-n{args.name}"
+                    ])
+
+    # move the executable to the root directory
+    shutil.move(os.path.join(root, "dist", args.name), root)
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--release", action='store_true')
+parser.add_argument("-n", "--name", default=f"{int(time.time())}.exe")
+parser.add_argument("-i",
+                    "--icon",
+                    default=os.path.join(DIR_PIC, "icon.ico"),
+                    )
+args = parser.parse_args()
+
+if args.release:
+    args.name = "OneClick-Drivers-Installer.exe"
+
+build(DIR_ROOT, args)
+clear_build_files(DIR_ROOT, args)
