@@ -8,9 +8,8 @@
 
 - [OneClick-Drivers-Installer](#oneclick-drivers-installer)
   - [下載](#下載)
-  - [常用軀動安裝參數參考](#常用軀動安裝參數參考)
   - [安裝選項](#安裝選項)
-  - [修改及更新軀動](#修改及更新軀動)
+  - [編輯軀動程式](#編輯軀動程式)
 
 ![main_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/ec78e2e8-3f7c-4897-a409-99bd9a11f019)
 ![progress_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/66e3a520-fc3c-4d07-80c7-88861cf9639f)
@@ -20,52 +19,34 @@
 主程式<br>
 [![version](https://img.shields.io/badge/version-0.7.0-blue)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/releases/tag/v0.7.0)
 
-軀動包<br>
+常用軀動程式集<br>
 [Google Drive](https://drive.google.com/drive/folders/1VqND0o75oBR80Ft2IK8WjTTbXaezmajw?usp=sharing)
 
-- Driver Source<br>
-    **Display**<br>
-    [GeForce Game Ready Driver (version 531.29 WHQL)](https://www.nvidia.com.tw/download/driverResults.aspx/200222/tw)<br>
-    [AMD Software: Adrenalin Edition (version 23.3.1 WHQL)](https://www.amd.com/en/support/graphics/amd-radeon-rx-7000-series/amd-radeon-rx-7900-series/amd-radeon-rx-7900xtx)<br>
-    [Intel® 6th-10th Gen Processor Graphics - Windows (version 31.0.101.2115)](https://www.intel.com/content/www/us/en/download/762755/intel-6th-10th-gen-processor-graphics-windows.html)<br>
-    [Intel® Arc™ & Iris® Xe Graphics - WHQL - Windows* (version 31.0.101.4146)](https://www.intel.com/content/www/us/en/download/726609/intel-arc-iris-xe-graphics-whql-windows.html)
-
-    **Network**<br>
-    [Intel Network Drivers (version 26.2.0.1)](https://tw.msi.com/Motherboard/MAG-Z590-TOMAHAWK-WIFI/support#driver)<br>
-    [Intel® Ethernet Adapter Complete Driver Pack (version 28.0)](https://www.intel.com/content/www/us/en/download/15084/intel-ethernet-adapter-complete-driver-pack.html)<br>
-    [Realtek PCI-E Ethernet Drivers (version 11-11.10.720.2022)](https://tw.msi.com/Motherboard/MAG-B760-TOMAHAWK-WIFI-DDR4/support#driver)
-
-    **Miscellaneous**<br>
-    [Windows® 10 and Windows 11* Wi-Fi Drivers for Intel® Wireless Adapters (version 22.200.0)](https://www.intel.com/content/www/us/en/download/19351/windows-10-and-windows-11-wi-fi-drivers-for-intel-wireless-adapters.html)<br>
-    [Intel® Wireless Bluetooth® for Windows® 10 and Windows 11*  (version 22.200.0)](https://www.intel.com/content/www/us/en/download/18649/intel-wireless-bluetooth-for-windows-10-and-windows-11.html)<br>
-    [Intel Chipset Driver 600/700 (version 10.1.19199.8340)](https://tw.msi.com/Motherboard/MAG-B660-TOMAHAWK-WIFI-DDR4/support#driver)<br>
-    [AMD Chipset Drivers (version 5.02.19.2221)](https://www.amd.com/en/support/chipsets/amd-socket-am4/b550)
-
-## 常用軀動安裝參數參考
-[driver install flag](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/tree/main/docs/driver%20install%20flag)
+常用軀動安裝參數參考<br>
+[Flags/options reference](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/tree/main/docs/driver%20install%20flag)
 
 ## 安裝選項
-1. 自動安裝<br>
-    ![圖片](https://user-images.githubusercontent.com/71750702/226850047-1d67eebd-2a97-414f-a44a-e7aa05f6980c.png)<br>
-    軀動程式會在背景自動安裝，用戶毋須與軀動程式安裝程序互動
-2. 失敗重試<br>
-    ![圖片](https://user-images.githubusercontent.com/71750702/226852116-544d01ce-919d-4a37-b463-e33ceaa60a82.png)<br>
-    當有軀動程式在自動安裝模式下安裝失敗，以手動模式重試
-3. 同步安裝<br>
-    ![圖片](https://user-images.githubusercontent.com/71750702/226852351-3e44838b-ad04-48fb-b786-5bff2736daa0.png)<br>
-    自動安裝模式預設是以 *一個接一個（blocking）* 的方式執行安裝程序。
-    此選項更改安裝方式成 *同時執行（asynchronous）* 所有安裝程序
-4. 自動關機<br>
-    ![圖片](https://user-images.githubusercontent.com/71750702/226853670-8ce5c33e-b84c-4284-a466-d0ea7ddc718a.png)<br>
-    在**自動安裝模式**下及**成功安裝所有**軀動程式時，執行選項的相應動作
+
+### 執行設定
+| **選項**   | **意思**                                                                        |
+|----------|-------------------------------------------------------------------------------|
+| **自動安裝** | 軀動程式會在背景自動安裝，用戶毋須與安裝程序互動                                                      |
+| **失敗重試** | 自動安裝失敗時，以手動模式重試                                                          |
+| **同步安裝** | 自動安裝模式預設是以 _一個接一個（blocking）_ 的方式執行安裝程序。<br> 此選項更改安裝方式成 _同時執行（asynchronous）_ 所有安裝程序 |
+
+
+### 關機選項
+_只適用於自動安裝模，並且所有已選軀動程式都支援自動安裝_
     
-## 修改及更新軀動
+## 編輯軀動程式
 `管理 -> 編輯軀動程式`
 
 ![dri_conf_window](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/assets/71750702/48275781-7b4d-4429-825e-c400dc8ef6fb)
 
-紅色背景代表該軀動程式路徑不存在<br>
-黃色背景代表該軀動程式不能以自動模式安裝[（用戶自訂）](#autoable-descr)
+| **背景顏色** | **意思**    |
+|----------|-----------|
+| **紅色**   | 路徑不存在     |
+| **黃色**   | 不能以自動模式安裝[（用戶自訂）](#autoable-descr) |
 
 - 雙擊目標行（row）以編輯軀動程式
 - 按 `新增` 以新增軀動程式
@@ -76,7 +57,7 @@
 
 1. 軀動分類<br>
     只有 `miscellaneous` 分類是「多選」<br>
-    `display`, `network` 是單選，每次安裝只能從分類中選擇其中一個軀動來安裝。
+    `display`, `network` 是單選。每次安裝只能從分類中選擇安裝其中一個軀動程式。
 2. 軀動路徑<br>
     軀動程式的安裝程序執行檔（例如 `setup.exe`, `xxxx.exe`）
     > driver\display\nvidia 531.29 WHQL\setup.exe
@@ -96,8 +77,8 @@
     不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋
     > realtek audio silent install
     
-    或利用 [Silent Install Builder](https://www.silentinstall.org/) 自行製作
+    或利用 [Silent Install Builder](https://www.silentinstall.org/) 等類似的軟件自行製作
 4. <a name="autoable-descr">可自動安裝</a><br>
     勾選如軀動支援 [silent install](https://www.makeuseof.com/windows-silent-installation-explained/)。
     
-    錯誤選擇會導致 *不能被自動安裝的軀動* 以手動模式的方式被執行（需要用戶在安裝介面操作），即使該軀動該未完成安裝，亦會被視作成功安裝，繼而自動關機（如適用）
+    錯誤選擇會導致 *不能被自動安裝的軀動* 沒有以 _silent install_ 的方式執行（需要用戶在安裝介面操作），即使該軀動該未完成安裝，亦 **可能** 會被視作成功安裝。
