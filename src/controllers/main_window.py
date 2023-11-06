@@ -1,26 +1,27 @@
 import os
 import threading
-from subprocess import Popen
 import time
+from subprocess import Popen
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from controllers.install_option_edit_window import InstallOptionEditWindow
 
 import definitions
+from controllers.install_option_edit_window import InstallOptionEditWindow
 from enums.halt_option import HaltOption
-from install.driver_type import DriverType
-from .install_progress_window import InstallProgressWindow
-from .driver_config_window import DriverConfigWindow
-from ui.generated.main_window import Ui_MainWindow
-from utils import commands
-from utils.qwidget import is_widget_enabled
-from utils.hw_info_worker import HwInfoWorker
-from widgets.driver_checkbox import DriverOptionCheckBox
 from install.driver_option import Driver, DriverOption
+from install.driver_type import DriverType
 from install.execute_status import ExecuteStatus
 from install.intall_option import InstallOption
-from install.task_manager import TaskManager
 from install.task import ExecutableTask
+from install.task_manager import TaskManager
+from ui.generated.main_window import Ui_MainWindow
+from utils import commands
+from utils.hw_info_worker import HwInfoWorker
+from utils.qwidget import is_widget_enabled
+from widgets.driver_checkbox import DriverOptionCheckBox
+
+from .driver_config_window import DriverConfigWindow
+from .install_progress_window import InstallProgressWindow
 
 
 class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
@@ -221,18 +222,19 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
                 cmd = commands.reboot_uefi(5)
                 cmd.execute()
 
-                while retry_cnt > 5:
+                while retry_cnt < 5:
                     if cmd.rtcode == 0:
                         break
                     cmd.execute()
+                    time.sleep(0.3)
                     retry_cnt += 1
                 else:
                     QtWidgets.QMessageBox.information(
-                        self, "完成", "即將自動重啟至 BIOS")
+                        self, "錯誤", "無法重啟至 BIOS")
+                    self.send_msg(f"重啟至 BIOS 指令返回代碼：{cmd.rtcode}")
                     return
                 QtWidgets.QMessageBox.information(
-                    self, "錯誤", "無法重啟至 BIOS")
-                self.send_msg(f"重啟至 BIOS 指令返回代碼：{cmd.rtcode}")
+                    self, "完成", "即將自動重啟至 BIOS")
         else:
             box = QtWidgets.QMessageBox()
             box.setWindowIcon(self.windowIcon())
