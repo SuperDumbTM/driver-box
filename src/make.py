@@ -26,30 +26,32 @@ def build(root: os.PathLike, args: argparse.Namespace):
     if args.release:
         pathlib.Path(os.path.join(root, f"{args.name}")).unlink(True)
 
-    subprocess.run(["pyinstaller",
-                    "-F",
-                    "-w",
-                    "--uac-admin",
-                    os.path.join(root, "src", "main.py"),
-                    f"--icon={args.icon}",
-                    f"-n{args.name}"
-                    ])
+    proc = subprocess.run(["pyinstaller",
+                           "-F",
+                           "-w",
+                           "--uac-admin",
+                           os.path.join(root, "src", "main.py"),
+                           f"--icon={args.icon}",
+                           f"-n{args.name}"
+                           ])
+    print(proc.returncode)
 
     # move the executable to the root directory
     shutil.move(os.path.join(root, "dist", args.name), root)
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-r", "--release", action='store_true')
-parser.add_argument("-n", "--name", default=f"{int(time.time())}.exe")
-parser.add_argument("-i",
-                    "--icon",
-                    default=os.path.join(DIR_PIC, "icon.ico"),
-                    )
-args = parser.parse_args()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-r", "--release", action='store_true')
+    parser.add_argument("-n", "--name", default=f"{int(time.time())}.exe")
+    parser.add_argument("-i",
+                        "--icon",
+                        default=os.path.join(DIR_PIC, "icon.ico"),
+                        )
+    args = parser.parse_args()
 
-if args.release:
-    args.name = "OneClick-Drivers-Installer.exe"
+    if args.release:
+        args.name = "OneClick-Drivers-Installer.exe"
 
-build(DIR_ROOT, args)
-clear_build_files(DIR_ROOT, args)
+    build(DIR_ROOT, args)
+    clear_build_files(DIR_ROOT, args)
