@@ -2,7 +2,7 @@ import os
 from dataclasses import asdict, dataclass
 from typing import Any, Optional
 
-from install.driver_type import DriverType
+from install.enums import DriverType
 from install.execute_config import ExecuteConfig
 
 

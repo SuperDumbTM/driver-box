@@ -1,17 +1,17 @@
-from abc import ABC, abstractmethod
 import os
-import time
 import struct
 import subprocess
+import time
+from abc import ABC, abstractmethod
 from typing import Iterable, Optional
-
 
 try:
     from execute_config import ExecuteConfig
-    from execute_status import ExecuteStatus
+
+    from enums import ExecuteStatus
 except ImportError:
+    from .enums import ExecuteStatus
     from .execute_config import ExecuteConfig
-    from .execute_status import ExecuteStatus
 
 
 class Task(ABC):

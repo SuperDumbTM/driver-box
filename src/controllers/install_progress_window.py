@@ -4,7 +4,7 @@ from typing import Optional
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from install.execute_status import ExecuteStatus
+from install.enums import ExecuteStatus
 from install.task import Task
 from ui.generated.install_progress_window_ import Ui_InstallProgressDialog
 

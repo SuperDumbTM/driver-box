@@ -1,5 +1,5 @@
-import os
 import json
+import os
 import random
 import string
 from typing import Final
@@ -7,10 +7,11 @@ from typing import Final
 from install.driver import Driver
 
 try:
-    from driver_type import DriverType
     from execute_config import ExecuteConfig
+
+    from enums import DriverType
 except ImportError:
-    from .driver_type import DriverType
+    from .enums import DriverType
     from .execute_config import ExecuteConfig
 
 

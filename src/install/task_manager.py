@@ -1,14 +1,15 @@
+import itertools
 import time
 from threading import Thread
-import itertools
 
 from PyQt5 import QtCore
 
 try:
-    from execute_status import ExecuteStatus
     from task import Task
+
+    from enums import ExecuteStatus
 except ImportError:
-    from .execute_status import ExecuteStatus
+    from .enums import ExecuteStatus
     from .task import Task
 
 

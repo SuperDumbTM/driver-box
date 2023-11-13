@@ -4,10 +4,12 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from .driver_config_edit_window import DriverConfigEditWindow
-from widgets.tablewidget_dragable import TableWidgetDragable
-from install.driver_option import Driver, DriverType, DriverOption
+from install.driver_option import Driver, DriverOption
+from install.enums import DriverType
 from ui.generated.driver_config_window import Ui_DriverConfigViewer
+from widgets.tablewidget_dragable import TableWidgetDragable
+
+from .driver_config_edit_window import DriverConfigEditWindow
 
 
 class DriverConfigWindow(Ui_DriverConfigViewer, QtWidgets.QWidget):
