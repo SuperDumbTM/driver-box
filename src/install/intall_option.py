@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import asdict, dataclass
 
-from enums.halt_option import HaltOption
+from enums import HaltOption
 
 
 @dataclass

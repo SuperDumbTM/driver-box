@@ -1,8 +1,9 @@
 import os
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from enums.halt_option import HaltOption
+from enums import HaltOption
 from install.intall_option import InstallOption
 from ui.generated.install_option_edit_window import Ui_InstallOptionEditor
 

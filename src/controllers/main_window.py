@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
 from controllers.install_option_edit_window import InstallOptionEditWindow
-from enums.halt_option import HaltOption
+from enums import HaltOption
 from install.driver_option import Driver, DriverOption
 from install.driver_type import DriverType
 from install.execute_status import ExecuteStatus
