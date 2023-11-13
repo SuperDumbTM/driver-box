@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets
 import definitions
 from controllers.main_window import MainWindow
 from install.driver_option import DriverOption
-from install.intall_option import InstallOption
+from install.models import InstallOption
 
 
 def main():

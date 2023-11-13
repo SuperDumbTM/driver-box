@@ -6,12 +6,12 @@ from abc import ABC, abstractmethod
 from typing import Iterable, Optional
 
 try:
-    from execute_config import ExecuteConfig
+    from models import ExecuteConfig
 
     from enums import ExecuteStatus
 except ImportError:
     from .enums import ExecuteStatus
-    from .execute_config import ExecuteConfig
+    from .models import ExecuteConfig
 
 
 class Task(ABC):

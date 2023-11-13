@@ -3,9 +3,9 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from install.driver_option import FLAG_PRESET, Driver
+from install.driver_option import FLAG_PRESET
 from install.enums import DriverType
-from install.execute_config import ExecuteConfig
+from install.models import Driver, ExecuteConfig
 from ui.generated.driver_config_edit_window import Ui_DriverConfigEditor
 
 

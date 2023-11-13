@@ -1,16 +1,17 @@
 from subprocess import check_output
 from typing import Optional
+
 import wmi
 
 try:
     import os
     import sys
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    from install.task import Task, ExecutableTask
-    from install.execute_config import ExecuteConfig
+    from install.models import ExecuteConfig
+    from install.task import ExecutableTask, Task
 except ImportError:
-    from ..install.task import Task, ExecutableTask
-    from ..install.execute_config import ExecuteConfig
+    from ..install.models import ExecuteConfig
+    from ..install.task import ExecutableTask, Task
 
 
 _WMI = wmi.WMI()

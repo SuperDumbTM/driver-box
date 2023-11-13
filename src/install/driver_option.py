@@ -4,15 +4,13 @@ import random
 import string
 from typing import Final
 
-from install.driver import Driver
-
 try:
-    from execute_config import ExecuteConfig
+    from models import Driver, ExecuteConfig
 
     from enums import DriverType
 except ImportError:
     from .enums import DriverType
-    from .execute_config import ExecuteConfig
+    from .models import Driver, ExecuteConfig
 
 
 ID_LEN: Final[int] = 6

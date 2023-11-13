@@ -37,3 +37,10 @@ class ExecuteStatus(Enum):
             case ExecuteStatus.ABORTED:
                 return "已取消"
         return ""
+
+
+class HaltOption(Enum):
+    NONE = "沒有動作"
+    SHUTDOWN = "關機"
+    REBOOT = "重新開機"
+    BIOS = "進入 BIOS"

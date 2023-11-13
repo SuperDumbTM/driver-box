@@ -4,8 +4,9 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
-from install.driver_option import Driver, DriverOption
+from install.driver_option import DriverOption
 from install.enums import DriverType
+from install.models import Driver
 from ui.generated.driver_config_window import Ui_DriverConfigViewer
 from widgets.tablewidget_dragable import TableWidgetDragable
 

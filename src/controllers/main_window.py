@@ -7,10 +7,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import definitions
 from controllers.install_option_edit_window import InstallOptionEditWindow
-from enums import HaltOption
-from install.driver_option import Driver, DriverOption
-from install.enums import DriverType, ExecuteStatus
-from install.intall_option import InstallOption
+from install.driver_option import DriverOption
+from install.enums import DriverType, ExecuteStatus, HaltOption
+from install.models import Driver, InstallOption
 from install.task import ExecutableTask
 from install.task_manager import TaskManager
 from ui.generated.main_window import Ui_MainWindow
