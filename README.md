@@ -1,4 +1,4 @@
-# OneClick-Drivers-Installer
+# Driver-Box
 
 [![en](https://img.shields.io/badge/README-en-green.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-en.md)
 [![zh-hk](https://img.shields.io/badge/README-zh--hk-yellow.svg)](https://github.com/SuperDumbTM/OneClick-Drivers-Installer/blob/main/docs/README-zh_hk.md)
@@ -6,7 +6,7 @@
 
 一鍵安裝電腦所需的基本軀動程式
 
-- [OneClick-Drivers-Installer](#oneclick-drivers-installer)
+- [Driver-Box](#Driver-Box)
   - [下載](#下載)
   - [安裝選項](#安裝選項)
   - [編輯軀動程式](#編輯軀動程式)
