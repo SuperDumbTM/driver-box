@@ -1,4 +1,4 @@
-module src
+module driver-box
 
 go 1.21
 
