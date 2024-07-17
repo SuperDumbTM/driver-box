@@ -10,4 +10,7 @@
           "color": "#ff000050"
         },
     ],
+    "[svelte]": {
+     "editor.defaultFormatter": "svelte.svelte-vscode"
+   },
 }

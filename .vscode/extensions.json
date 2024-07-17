@@ -1,11 +1,6 @@
 {
     "recommendations": [
-        "ms-python.isort",
-        "mhutchie.git-graph",
-        "adam-bender.commit-message-editor",
-        "njpwerner.autodocstring",
-        "kevinrose.vsc-python-indent",
-        "ms-python.autopep8",
-        "ms-python.python"
+        "svelte.svelte-vscode",
+        "golang.go"
     ]
 }
