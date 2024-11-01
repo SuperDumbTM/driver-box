@@ -1,0 +1,5 @@
+@import './base.css';
+
+input[type='checkbox'] {
+  accent-color: theme('colors.powder-blue.700');
+}

@@ -1,16 +1,7 @@
 {
-    "terminal.integrated.defaultProfile.windows": "Command Prompt",
-    "editor.rulers": [
-        {
-          "column": 80,
-          "color": "#ffee0050"
-        },
-        {
-          "column": 120,
-          "color": "#ff000050"
-        },
-    ],
-    "[svelte]": {
-     "editor.defaultFormatter": "svelte.svelte-vscode"
-   },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

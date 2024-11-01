@@ -1,6 +1,10 @@
 {
-    "recommendations": [
-        "svelte.svelte-vscode",
-        "golang.go"
-    ]
+  "recommendations": [
+    "golang.go",
+    "ms-vscode.vscode-typescript-next",
+    "Vue.volar",
+    "dbaeumer.vscode-eslint",
+    "EditorConfig.EditorConfig",
+    "esbenp.prettier-vscode"
+  ]
 }

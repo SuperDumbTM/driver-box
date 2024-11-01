@@ -17,7 +17,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "src",
+		Title:  "driver-box",
 		Width:  1024,
 		Height: 768,
 		AssetServer: &assetserver.Options{
