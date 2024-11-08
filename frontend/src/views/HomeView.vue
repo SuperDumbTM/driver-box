@@ -1,8 +1,148 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import * as manager from '@/wailsjs/go/store/DriverManager'
+import * as commandExecutor from '@/wailsjs/go/execute/CommandExecutor'
+import { store, sysinfo, execute } from '@/wailsjs/go/models'
+import { ref } from 'vue'
+import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
+
+const drivers = ref<Array<store.Driver>>([])
+const hwinfos = ref<{
+  motherboard: Array<sysinfo.Win32_BaseBoard>
+  cpu: Array<sysinfo.Win32_Processor>
+  gpu: Array<sysinfo.Win32_VideoController>
+  memory: Array<sysinfo.Win32_PhysicalMemory>
+  nic: Array<sysinfo.Win32_NetworkAdapter>
+  disk: Array<sysinfo.Win32_DiskDrive>
+} | null>(null)
+
+manager.Read().then(d => {
+  drivers.value = d
+})
+
+Promise.all([
+  sysinfoqy.MotherboardInfo(),
+  sysinfoqy.CpuInfo(),
+  sysinfoqy.GpuInfo(),
+  sysinfoqy.MemoryInfo(),
+  sysinfoqy.NicInfo(),
+  sysinfoqy.DiskInfo()
+]).then(infos => {
+  hwinfos.value = ['motherboard', 'cpu', 'gpu', 'memory', 'nic', 'disk'].reduce(
+    (obj, key, index) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      obj[key] = infos[index]
+      return obj
+    },
+    {} as typeof hwinfos.value
+  )
+})
+
+async function exec() {
+  const drivers = [
+    ['cmd.exe', '/C ping 127.0.0.1 -n 10 -w 1000'],
+    ['cmd.exe', '/C ping 1.1.1.1 -n 10 -w 1000']
+  ]
+
+  const ids: Array<string> = []
+
+  drivers.forEach(v => {
+    commandExecutor
+      .Add(
+        new execute.Command({
+          program: v[0],
+          options: [v[1]]
+        })
+      )
+      .then(id => {
+        console.log(id)
+        ids.push(id)
+        console.log(`Added, ID: ${id}`)
+        commandExecutor.Start(id)
+      })
+  })
+
+  console.log('Added all.')
+
+  setTimeout(() => {
+    commandExecutor.Abort(ids[1])
+  }, 3500)
+
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 1000))
+    ids.forEach(id => {
+      commandExecutor.Status(id).then(console.log)
+    })
+  }
+}
+</script>
 
 <template>
   <div class="flex flex-col h-full">
-    <div class="grow min-h-28 border rounded"></div>
+    <div
+      id="sysinfo"
+      class="flex flex-col grow gap-y-1 min-h-28 overflow-y-auto p-1 border rounded"
+      :class="{ loading: hwinfos === null }"
+    >
+      <template v-if="hwinfos !== null">
+        <div>
+          <h2 class="text-sm font-bold">底板</h2>
+
+          <p v-for="(mb, i) in hwinfos.motherboard" :key="i" class="text-sm">
+            {{ `${mb.Manufacturer} ${mb.Product}` }}
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-bold">中央處理器</h2>
+
+          <p v-for="(cpu, i) in hwinfos.cpu" :key="i" class="text-sm">
+            {{ cpu.Name }}
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-bold">記憶體</h2>
+
+          <p v-for="(mem, i) in hwinfos.memory" :key="i" class="text-sm">
+            {{
+              `${mem.Manufacturer} ${mem.PartNumber}  ${mem.Capacity / Math.pow(1024, 3)}GB ${mem.Speed}MHz`
+            }}
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-bold">顯示卡</h2>
+
+          <p v-for="(dp, i) in hwinfos.gpu" :key="i" class="text-sm">
+            {{ `${dp.Name} (${dp.AdapterRAM / Math.pow(1024, 3)}GB)` }}
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-bold">網絡介面卡</h2>
+
+          <p v-for="(dp, i) in hwinfos.nic" :key="i" class="text-sm">
+            {{ dp.Name }}
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-bold">儲存裝置</h2>
+
+          <p v-for="(dp, i) in hwinfos.disk" :key="i" class="text-sm">
+            {{ `${dp.Model} (${Math.round(dp.Size / Math.pow(1024, 3))}GB)` }}
+          </p>
+        </div>
+      </template>
+
+      <template v-else>
+        <div v-for="i in 6" :key="i">
+          <h2 class="h-5 mb-1" :style="{ width: `${Math.random() * (25 - 15) + 15}%` }"></h2>
+          <p class="h-5" :style="{ width: `${Math.random() * (85 - 30) + 30}%` }"></p>
+        </div>
+      </template>
+    </div>
 
     <hr class="my-4" />
 
@@ -10,12 +150,17 @@
       <div class="flex flex-col flex-1 gap-y-3 justify-around">
         <div class="relative w-full">
           <select
+            name="network"
             class="block w-full peer ps-3 pe-9 pt-5 pb-2 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
           >
             <option>請選擇</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
+            <option
+              v-for="d in drivers.filter(d => d.type == store.DriverType.NETWORK)"
+              :key="d.id"
+              :value="d.id"
+            >
+              {{ d.name }}
+            </option>
           </select>
           <label
             class="absolute top-0 start-0 h-full p-4 pt-3 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
@@ -26,12 +171,17 @@
 
         <div class="relative w-full">
           <select
+            name="display"
             class="block w-full peer ps-3 pe-9 pt-5 pb-2 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
           >
             <option>請選擇</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
+            <option
+              v-for="d in drivers.filter(d => d.type == store.DriverType.DISPLAY)"
+              :key="d.id"
+              :value="d.id"
+            >
+              {{ d.name }}
+            </option>
           </select>
           <label
             class="absolute top-0 start-0 h-full p-4 pt-3 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
@@ -45,8 +195,13 @@
         <div class="relative w-full h-full mb-3">
           <div class="block h-full overflow-y-scroll ps-2 pt-3 rounded border">
             <div class="flex items-center mb-1">
-              <input type="checkbox" class="w-4 h-4" />
-              <label class="ms-2 text-sm text-gray-900">Default checkbox</label>
+              <template
+                v-for="d in drivers.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
+                :key="d.id"
+              >
+                <input type="checkbox" name="miscellaneous" class="w-4 h-4" :value="d.id" />
+                <label class="ms-2 text-sm text-gray-900">{{ d.name }}</label>
+              </template>
             </div>
           </div>
           <label
@@ -69,6 +224,7 @@
             <div class="flex items-center mb-4">
               <input
                 type="checkbox"
+                name="create_partition"
                 class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
               <label class="ms-2 text-sm">建立磁區</label>
@@ -77,6 +233,7 @@
             <div class="flex items-center mb-4">
               <input
                 type="checkbox"
+                name="set_password"
                 class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
               <label class="ms-2 text-sm">設定密碼</label>
@@ -91,6 +248,7 @@
             <div class="flex items-center mb-4">
               <input
                 type="checkbox"
+                name="parallel_install"
                 class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
               <label class="ms-2 text-sm">同步安裝</label>
@@ -102,12 +260,14 @@
       <div class="flex flex-col grow justify-between">
         <fieldset class="w-full">
           <label class="block mb-1 text-sm font-bold text-gray-900">關機設定</label>
-          <select class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg">
-            <option>請選擇</option>
-            <option value="none">沒有動作</option>
-            <option value="shutdown">關機</option>
-            <option value="reboot">重新開機</option>
-            <option value="firmware">進入 BIOS/UEFI</option>
+          <select
+            name="success_action"
+            class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
+          >
+            <option :value="store.SuccessAction.NOTHING">沒有動作</option>
+            <option :value="store.SuccessAction.SHUTDOWN">關機</option>
+            <option :value="store.SuccessAction.REBOOT">重新開機</option>
+            <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
           </select>
         </fieldset>
 
@@ -121,6 +281,7 @@
           <button
             type="button"
             class="h-8 px-3 text-white text-sm focus:outline-none bg-half-baked-600 hover:bg-half-baked-500 rounded"
+            @click="exec"
           >
             執行
           </button>
@@ -129,3 +290,23 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+#sysinfo.loading {
+  h2,
+  p {
+    background-color: #e2e2e2;
+    animation: skeleton 1.5s infinite;
+  }
+}
+
+@keyframes skeleton {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+</style>

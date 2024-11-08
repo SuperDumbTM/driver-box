@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import InputModal from '@/components/driver_view/InputModal.vue'
+import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
+import TrashIcon from '@/components/icons/TrashIcon.vue'
+import * as manager from '@/wailsjs/go/store/DriverManager'
+import { store } from '@/wailsjs/go/models'
 import { ref } from 'vue'
 
-const driverType = ref('newtowk')
+const driType = ref(store.DriverType.NETWORK)
+const drivers = ref<Array<store.Driver> | null>(null)
+
+manager.Read().then(d => {
+  drivers.value = d
+})
 </script>
 
 <template>
@@ -12,10 +21,10 @@ const driverType = ref('newtowk')
         <a
           class="block px-4 py-3 text-xs leading-normal font-bold uppercase shadow-lg rounded"
           :class="{
-            'text-half-baked-600 bg-white': driverType !== 'newtowk',
-            'text-white bg-half-baked-600': driverType === 'newtowk'
+            'text-half-baked-600 bg-white': driType !== store.DriverType.NETWORK,
+            'text-white bg-half-baked-600': driType === store.DriverType.NETWORK
           }"
-          @click="driverType = 'newtowk'"
+          @click="driType = store.DriverType.NETWORK"
         >
           有線網絡介面卡
         </a>
@@ -24,10 +33,10 @@ const driverType = ref('newtowk')
         <a
           class="block px-4 py-3 text-xs leading-normal font-bold uppercase shadow-lg rounded"
           :class="{
-            'text-half-baked-600 bg-white': driverType !== 'display',
-            'text-white bg-half-baked-600': driverType === 'display'
+            'text-half-baked-600 bg-white': driType !== store.DriverType.DISPLAY,
+            'text-white bg-half-baked-600': driType === store.DriverType.DISPLAY
           }"
-          @click="driverType = 'display'"
+          @click="driType = store.DriverType.DISPLAY"
         >
           顯示卡
         </a>
@@ -36,10 +45,10 @@ const driverType = ref('newtowk')
         <a
           class="block px-4 py-3 text-xs leading-normal font-bold uppercase shadow-lg rounded"
           :class="{
-            'text-half-baked-600 bg-white': driverType !== 'miscellaneous',
-            'text-white bg-half-baked-600': driverType === 'miscellaneous'
+            'text-half-baked-600 bg-white': driType !== store.DriverType.MISCELLANEOUS,
+            'text-white bg-half-baked-600': driType === store.DriverType.MISCELLANEOUS
           }"
-          @click="driverType = 'miscellaneous'"
+          @click="driType = store.DriverType.MISCELLANEOUS"
         >
           其他
         </a>
@@ -47,23 +56,49 @@ const driverType = ref('newtowk')
     </ul>
 
     <div class="flex flex-col grow min-h-48 overflow-y-auto shadow-lg rounded">
-      <table class="text-sm text-left text-gray-500">
+      <table class="table-fixed text-sm text-left text-gray-500">
         <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
-            <th scope="col" class="px-6 py-3">軀動名稱</th>
-            <th scope="col" class="px-6 py-3">路徑</th>
-            <th scope="col" class="px-6 py-3">安裝參數</th>
-            <th scope="col" class="px-6 py-3">動作</th>
+            <th scope="col" class="px-6 py-3 text-nowrap">軀動名稱</th>
+            <th scope="col" class="px-6 py-3 text-nowrap">路徑</th>
+            <th scope="col" class="px-6 py-3 text-nowrap">安裝參數</th>
+            <th scope="col" class="px-6 py-3 text-nowrap">動作</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="i in 2" :key="i" class="bg-white border-b">
+          <tr
+            v-for="d in drivers?.filter(d => d.type == driType)"
+            :key="d.id"
+            class="bg-white border-b"
+          >
             <th scope="row" class="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
-              Apple MacBook Pro 17"
+              {{ d.name }}
             </th>
-            <td class="px-5 py-3">Silver</td>
-            <td class="px-5 py-3">Laptop</td>
-            <td class="px-5 py-3"></td>
+            <td class="px-5 py-3">{{ d.path }}</td>
+            <td class="px-5 py-3">{{ d.flags }}</td>
+            <td class="px-5 py-3">
+              <div class="flex gap-x-3">
+                <button
+                  class="p-1 text-sm font-medium bg-gray-200 rounded"
+                  @click="$refs.inputModal?.show(d)"
+                >
+                  <PencilSquareIcon></PencilSquareIcon>
+                </button>
+
+                <button
+                  class="p-1 text-sm font-medium bg-gray-200 rounded"
+                  @click="
+                    manager.Remove(d).then(() =>
+                      manager.Read().then(d => {
+                        drivers = d
+                      })
+                    )
+                  "
+                >
+                  <TrashIcon></TrashIcon>
+                </button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -73,12 +108,34 @@ const driverType = ref('newtowk')
       <button
         type="button"
         class="h-8 px-3 text-white text-sm focus:outline-none bg-powder-blue-800 hover:bg-powder-blue-600 rounded"
-        @click="$refs.inputModal?.openModal()"
+        @click="$refs.inputModal?.show({ type: driType })"
       >
         新增
       </button>
     </div>
 
-    <InputModal ref="inputModal"></InputModal>
+    <InputModal
+      ref="inputModal"
+      @submit="
+        async dri => {
+          console.log(dri)
+          try {
+            if (dri.id) {
+              await manager.Update(dri)
+            } else {
+              await manager.Add(dri)
+            }
+          } catch (error: any) {
+            $toast.error(error.toString())
+            return
+          }
+
+          manager.Read().then(d => {
+            drivers = d
+            $refs.inputModal?.hide()
+          })
+        }
+      "
+    ></InputModal>
   </div>
 </template>

@@ -1,14 +1,41 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import CrossIcon from '../icons/CrossIcon.vue'
+import { store } from '@/wailsjs/go/models'
+import { SelectFile } from '@/wailsjs/go/main/App'
 
 defineExpose({
-  openModal: () => {
+  show: (data?: Partial<store.Driver>) => {
     show.value = true
+    if (data) {
+      dri.value = {
+        ...dri.value,
+        ...data,
+        flags: data.flags?.join(','),
+        allowRtCodes: data.allowRtCodes?.join(',')
+      }
+    }
+  },
+  hide: () => {
+    show.value = false
+    dri.value = {}
   }
 })
 
+const emit = defineEmits<{
+  submit: [dri: store.Driver]
+}>()
+
 const show = ref(false)
+const dri = ref<{
+  id?: string
+  name?: string
+  type?: store.DriverType
+  path?: string
+  flags?: string
+  minExeTime?: number
+  allowRtCodes?: string
+}>({})
 </script>
 
 <template>
@@ -18,35 +45,64 @@ const show = ref(false)
 
   <Transition name="modal">
     <div
-      class="flex fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+      class="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full"
       v-show="show"
     >
-      <div class="relative p-4 w-full max-w-md max-h-full">
+      <div class="max-w-md max-h-full p-4">
         <!-- Modal content -->
-        <div class="relative max-h-[80vh] overflow-y-auto bg-white rounded-lg shadow">
+        <div class="bg-white rounded-lg shadow">
           <!-- Modal header -->
-          <div class="flex items-center justify-between p-3 border-b rounded-t">
-            <h3 class="font-semibold">新增軀動程式</h3>
+          <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t bg-white">
+            <h3 class="font-semibold">
+              {{ dri ? '編輯軀動程式' : '新增軀動程式' }}
+            </h3>
             <button
               type="button"
-              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center"
-              @click="show = false"
+              class="inline-flex justify-center items-center h-8 w-8 ms-auto text-sm text-gray-400 hover:text-gray-900 bg-transparent hover:bg-gray-200 rounded-lg"
+              @click="
+                () => {
+                  show = false
+                  dri = {}
+                }
+              "
             >
               <CrossIcon></CrossIcon>
             </button>
           </div>
 
           <!-- Modal body -->
-          <div class="py-2 px-4">
-            <form class="flex flex-col gap-y-3">
+          <div class="max-h-[70vh] overflow-y-auto py-2 px-4">
+            <form
+              class="flex flex-col gap-y-3"
+              @submit.prevent="
+                _ => {
+                  emit(
+                    'submit',
+                    new store.Driver({
+                      ...dri,
+                      flags: dri.flags ? dri.flags.split(',') : [],
+                      allowRtCodes: dri.allowRtCodes
+                        ? dri.allowRtCodes
+                            ?.split(',')
+                            .map(c => parseInt(c))
+                            .filter(c => !Number.isNaN(c))
+                        : []
+                    })
+                  )
+                }
+              "
+            >
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900"> 軀動類別 </label>
                 <select
+                  name="type"
+                  v-model="dri.type"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                  required
                 >
-                  <option value="network">有線網絡介面卡</option>
-                  <option value="display">顯示卡</option>
-                  <option value="miscellaneous">其他</option>
+                  <option :value="store.DriverType.NETWORK">有線網絡介面卡</option>
+                  <option :value="store.DriverType.DISPLAY">顯示卡</option>
+                  <option :value="store.DriverType.MISCELLANEOUS">其他</option>
                 </select>
               </div>
 
@@ -54,6 +110,8 @@ const show = ref(false)
                 <label class="block mb-2 text-sm font-medium text-gray-900"> 軀動名稱 </label>
                 <input
                   type="text"
+                  name="name"
+                  v-model="dri.name"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
                   required
                 />
@@ -61,10 +119,29 @@ const show = ref(false)
 
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">軀動路徑</label>
-                <input
-                  type="file"
-                  class="w-full text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm file:bg-gray-50 file:border-0 file:me-3 file:p-2 file:pe-3"
-                />
+
+                <div class="flex">
+                  <button
+                    type="button"
+                    class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md"
+                    @click="
+                      SelectFile().then(path => {
+                        dri.path = path
+                      })
+                    "
+                  >
+                    選擇檔案
+                  </button>
+                  <input
+                    type="text"
+                    name="path"
+                    v-model="dri.path"
+                    class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 border rounded-none rounded-e-lg shadow-sm"
+                    ref="pathInput"
+                    readonly
+                    required
+                  />
+                </div>
               </div>
 
               <div>
@@ -73,6 +150,7 @@ const show = ref(false)
                 <div class="grid grid-cols-4 gap-2">
                   <div class="col-span-1">
                     <select
+                      name="flags"
                       class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
                     >
                       <option>手動輸入</option>
@@ -84,8 +162,9 @@ const show = ref(false)
                   <div class="col-span-3">
                     <input
                       type="text"
+                      name="flags"
+                      v-model="dri.flags"
                       class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                      required
                     />
                   </div>
                 </div>
@@ -95,8 +174,10 @@ const show = ref(false)
                 <label class="block mb-2 text-sm font-medium text-gray-900">執行時間（秒）</label>
                 <input
                   type="number"
+                  name="minExeTime"
+                  v-model="dri.minExeTime"
+                  step="0.1"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                  value="5"
                   required
                 />
                 <p class="mt-1 text-xs text-apple-green-800">
@@ -108,23 +189,22 @@ const show = ref(false)
                 <label class="block mb-2 text-sm font-medium text-gray-900">非錯誤狀態代碼</label>
                 <input
                   type="text"
+                  name="allowRtCodes"
+                  v-model="dri.allowRtCodes"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                  required
                 />
                 <p class="mt-1 text-xs text-apple-green-800">
                   安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。
                 </p>
               </div>
-            </form>
-          </div>
 
-          <!-- Modal footer -->
-          <div class="flex items-center justify-between p-4 gap-x-4">
-            <button
-              class="text-white inline-flex w-full justify-center bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-            >
-              儲存
-            </button>
+              <button
+                type="submit"
+                class="w-full my-1 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-800 rounded-lg"
+              >
+                儲存
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -141,5 +221,10 @@ const show = ref(false)
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+
+label:has(+ input:required, + select:required):after {
+  content: ' *';
+  color: red;
 }
 </style>
