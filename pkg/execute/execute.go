@@ -1,18 +1,28 @@
 package execute
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"os/exec"
+	"time"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type CommandExecutor struct {
-	commands map[string]*Command
+	ctx      context.Context
+	commands map[string]Command
 }
 
-func (m *CommandExecutor) Add(t Command) string {
-	if m.commands == nil {
-		m.commands = make(map[string]*Command)
+func (ce *CommandExecutor) SetContext(ctx context.Context) {
+	ce.ctx = ctx
+}
+
+func (ce *CommandExecutor) Run(program string, options []string) string {
+	if ce.commands == nil {
+		ce.commands = make(map[string]Command)
 	}
 
 	cmdId := ""
@@ -23,45 +33,48 @@ func (m *CommandExecutor) Add(t Command) string {
 		}
 
 		id := hex.EncodeToString(b)
-		if _, ok := m.commands[id]; ok {
+		if _, ok := ce.commands[id]; ok {
 			continue
 		}
 		cmdId = id
 	}
 
-	m.commands[cmdId] = &t
+	command := Command{
+		cmd: exec.Command(program, options...),
+	}
+	command.cmd.Stdout = &command.stdout
+	command.cmd.Stderr = &command.stderr
+
+	ce.commands[cmdId] = command
+
+	go ce.dispatch(cmdId, &command)
+
 	return cmdId
 }
 
-// func (m *CommandExecutor) Commands() []*Command {
-// 	return m.tasks
-// }
-
-func (m *CommandExecutor) Start(id string) error {
-	if task, ok := m.commands[id]; !ok {
+func (ce CommandExecutor) Abort(id string) error {
+	if task, ok := ce.commands[id]; !ok {
 		return errors.New("execute: id not found")
 	} else {
-		task.Start()
-		return nil
-	}
-}
-
-func (m *CommandExecutor) Abort(id string) error {
-	if task, ok := m.commands[id]; !ok {
-		return errors.New("execute: id not found")
-	} else {
-		task.Stop()
-		return nil
-	}
-}
-
-func (m *CommandExecutor) Status(id string) (string, error) {
-	if task, ok := m.commands[id]; !ok {
-		return "", errors.New("execute: id not found")
-	} else {
-		if task.cmd.ProcessState == nil {
-			return "nil", nil
+		if err := task.Stop(); err != nil {
+			return errors.New("execute: abort failed")
 		}
-		return id + " " + task.cmd.ProcessState.String(), nil
+		return nil
 	}
+}
+
+func (ce *CommandExecutor) dispatch(id string, command *Command) CommandResult {
+	command.startTime = time.Now()
+	command.err = command.cmd.Run()
+
+	result := CommandResult{
+		id,
+		command.Lapse(),
+		command.cmd.ProcessState.ExitCode(),
+		command.stdout.String(),
+		command.stderr.String(),
+	}
+
+	runtime.EventsEmit(ce.ctx, "execute:exited", result)
+	return result
 }

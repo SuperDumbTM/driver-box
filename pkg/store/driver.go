@@ -110,4 +110,5 @@ type Driver struct {
 	Flags        []string   `json:"flags"`
 	MinExeTime   float32    `json:"minExeTime"`
 	AllowRtCodes []int32    `json:"allowRtCodes"`
+	Incompatible []string   `json:"incompatible"`
 }

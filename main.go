@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"driver-box/pkg/execute"
 	"driver-box/pkg/store"
 	"driver-box/pkg/sysinfo"
@@ -32,7 +33,8 @@ func main() {
 		}
 	}
 
-	app := NewApp()
+	app := &App{}
+	mgt := &execute.CommandExecutor{}
 
 	err := wails.Run(&options.App{
 		Title:  "driver-box",
@@ -42,13 +44,16 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.startup,
+		OnStartup: func(ctx context.Context) {
+			app.SetContext(ctx)
+			mgt.SetContext(ctx)
+		},
 		Bind: []interface{}{
 			app,
+			mgt,
 			&store.DriverManager{Path: filepath.Join(dirConf, "drivers.json")},
 			&store.AppSettingManager{Path: filepath.Join(dirConf, "setting.json")},
 			&sysinfo.SysInfo{},
-			&execute.CommandExecutor{},
 		},
 		EnumBind: []interface{}{
 			[]struct {

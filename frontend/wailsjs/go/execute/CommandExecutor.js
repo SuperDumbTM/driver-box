@@ -6,14 +6,10 @@ export function Abort(arg1) {
   return window['go']['execute']['CommandExecutor']['Abort'](arg1);
 }
 
-export function Add(arg1) {
-  return window['go']['execute']['CommandExecutor']['Add'](arg1);
+export function Run(arg1, arg2) {
+  return window['go']['execute']['CommandExecutor']['Run'](arg1, arg2);
 }
 
-export function Start(arg1) {
-  return window['go']['execute']['CommandExecutor']['Start'](arg1);
-}
-
-export function Status(arg1) {
-  return window['go']['execute']['CommandExecutor']['Status'](arg1);
+export function SetContext(arg1) {
+  return window['go']['execute']['CommandExecutor']['SetContext'](arg1);
 }

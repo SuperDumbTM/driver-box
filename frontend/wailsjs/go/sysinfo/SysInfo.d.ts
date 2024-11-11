@@ -15,3 +15,5 @@ export function MemoryInfo():Promise<Array<sysinfo.Win32_PhysicalMemory>>;
 export function MotherboardInfo():Promise<Array<sysinfo.Win32_BaseBoard>>;
 
 export function NicInfo():Promise<Array<sysinfo.Win32_NetworkAdapter>>;
+
+export function UserAccountInfo():Promise<Array<sysinfo.Win32_UserAccount>>;

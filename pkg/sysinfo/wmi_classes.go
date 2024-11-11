@@ -401,3 +401,27 @@ type Win32_DiskPartition struct {
 	SystemName                  string
 	Type                        string
 }
+
+/*
+The Win32_UserAccount WMI class contains information about a user account on a computer system running Windows.
+
+See: https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-useraccount
+*/
+type Win32_UserAccount struct {
+	AccountType        uint32
+	Caption            string
+	Description        string
+	Disabled           bool
+	Domain             string
+	FullName           string
+	InstallDate        time.Time
+	LocalAccount       bool
+	Lockout            bool
+	Name               string
+	PasswordChangeable bool
+	PasswordExpires    bool
+	PasswordRequired   bool
+	SID                string
+	SIDType            uint8
+	Status             string
+}

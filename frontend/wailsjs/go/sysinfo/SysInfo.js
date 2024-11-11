@@ -29,3 +29,7 @@ export function MotherboardInfo() {
 export function NicInfo() {
   return window['go']['sysinfo']['SysInfo']['NicInfo']();
 }
+
+export function UserAccountInfo() {
+  return window['go']['sysinfo']['SysInfo']['UserAccountInfo']();
+}
