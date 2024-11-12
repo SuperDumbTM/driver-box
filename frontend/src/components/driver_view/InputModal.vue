@@ -130,7 +130,7 @@ const dri = ref<{
                     type="button"
                     class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md"
                     @click="
-                      SelectFile().then(path => {
+                      SelectFile(true).then(path => {
                         dri.path = path
                       })
                     "

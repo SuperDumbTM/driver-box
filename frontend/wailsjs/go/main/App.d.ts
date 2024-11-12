@@ -4,6 +4,6 @@ import {context} from '../models';
 
 export function RunCommand(arg1:string,arg2:Array<string>):Promise<string>;
 
-export function SelectFile():Promise<string>;
+export function SelectFile(arg1:boolean):Promise<string>;
 
 export function SetContext(arg1:context.Context):Promise<void>;

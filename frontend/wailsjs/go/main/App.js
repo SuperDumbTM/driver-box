@@ -6,8 +6,8 @@ export function RunCommand(arg1, arg2) {
   return window['go']['main']['App']['RunCommand'](arg1, arg2);
 }
 
-export function SelectFile() {
-  return window['go']['main']['App']['SelectFile']();
+export function SelectFile(arg1) {
+  return window['go']['main']['App']['SelectFile'](arg1);
 }
 
 export function SetContext(arg1) {
