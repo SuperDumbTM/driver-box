@@ -7,7 +7,7 @@ import (
 
 type AppSettingManager struct {
 	Path    string
-	loaded bool
+	loaded  bool
 	setting AppSetting
 }
 
@@ -16,12 +16,17 @@ func (s *AppSettingManager) Read() (AppSetting, error) {
 		var setting AppSetting
 		bytes, err := os.ReadFile(s.Path)
 		if err != nil {
-			setting = AppSetting{}
+			setting = AppSetting{SuccessAction: Nothing}
 		}
 
 		if err := json.Unmarshal(bytes, &setting); err != nil {
-			setting = AppSetting{}
+			setting = AppSetting{SuccessAction: Nothing}
 		}
+
+		if setting.SuccessAction == "" {
+			setting.SuccessAction = Nothing
+		}
+
 		s.setting = setting
 	}
 	s.loaded = true
@@ -39,10 +44,10 @@ func (s *AppSettingManager) Update(setting AppSetting) error {
 }
 
 type AppSetting struct {
-	CreatePartition bool `json:"create_partition"`
-	SetPassword     bool `json:"set_password"`
-	Password        string `json:"password"`
-	ParallelInstall bool `json:"parallel_install"`
+	CreatePartition bool          `json:"create_partition"`
+	SetPassword     bool          `json:"set_password"`
+	Password        string        `json:"password"`
+	ParallelInstall bool          `json:"parallel_install"`
 	SuccessAction   SuccessAction `json:"success_action"`
 }
 
