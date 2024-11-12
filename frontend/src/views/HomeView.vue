@@ -182,7 +182,7 @@ async function handleSubmit(event: SubmitEvent) {
       </template>
     </div>
 
-    <hr class="my-4" />
+    <hr class="my-3" />
 
     <form
       @submit.prevent="
@@ -191,12 +191,12 @@ async function handleSubmit(event: SubmitEvent) {
         }
       "
     >
-      <div class="flex gap-x-3 h-32">
+      <div class="flex gap-x-3 h-28">
         <div class="flex flex-col flex-1 gap-y-3 justify-around">
           <div class="relative w-full">
             <select
               name="network"
-              class="block w-full peer ps-3 pe-9 pt-5 pb-2 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+              class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
             >
               <option>請選擇</option>
               <option
@@ -208,7 +208,7 @@ async function handleSubmit(event: SubmitEvent) {
               </option>
             </select>
             <label
-              class="absolute top-0 start-0 h-full p-4 pt-3 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
+              class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
             >
               網絡介面卡
             </label>
@@ -217,7 +217,7 @@ async function handleSubmit(event: SubmitEvent) {
           <div class="relative w-full">
             <select
               name="display"
-              class="block w-full peer ps-3 pe-9 pt-5 pb-2 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+              class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
             >
               <option>請選擇</option>
               <option
@@ -229,7 +229,7 @@ async function handleSubmit(event: SubmitEvent) {
               </option>
             </select>
             <label
-              class="absolute top-0 start-0 h-full p-4 pt-3 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
+              class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
             >
               顯示卡
             </label>
@@ -259,7 +259,7 @@ async function handleSubmit(event: SubmitEvent) {
         </div>
       </div>
 
-      <hr class="my-4" />
+      <hr class="my-3" />
 
       <div class="flex gap-x-6">
         <div class="flex flex-col">

@@ -38,8 +38,8 @@ func main() {
 
 	err := wails.Run(&options.App{
 		Title:  "driver-box",
-		Width:  800,
-		Height: 600,
+		Width:  768,
+		Height: 576,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
