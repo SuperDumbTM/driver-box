@@ -67,8 +67,6 @@ runtime.EventsOn(
       command.status = 'completed'
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
     dispatchCommand()
     if (commands.value.every(cmd => cmd.status === 'completed')) {
       emit('completed')

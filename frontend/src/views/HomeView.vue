@@ -268,23 +268,27 @@ async function handleSubmit(event: SubmitEvent) {
 
             <div class="flex gap-x-3">
               <div class="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="create_partition"
-                  v-model="settings.create_partition"
-                  class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label class="ms-2 text-sm">建立磁區</label>
+                <label class="flex item-center w-full select-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="create_partition"
+                    v-model="settings.create_partition"
+                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  建立磁區
+                </label>
               </div>
 
               <div class="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="set_password"
-                  v-model="settings.set_password"
-                  class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label class="ms-2 text-sm">設定密碼</label>
+                <label class="flex item-center w-full select-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="set_password"
+                    v-model="settings.set_password"
+                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  設定密碼
+                </label>
               </div>
             </div>
           </fieldset>
@@ -294,13 +298,16 @@ async function handleSubmit(event: SubmitEvent) {
 
             <div class="flex gap-x-3">
               <div class="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="parallel_install"
-                  v-model="settings.parallel_install"
-                  class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label class="ms-2 text-sm">同步安裝</label>
+                <!-- <label class="ms-2 text-sm"> -->
+                <label class="flex item-center w-full select-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="parallel_install"
+                    v-model="settings.parallel_install"
+                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  同步安裝
+                </label>
               </div>
             </div>
           </fieldset>
