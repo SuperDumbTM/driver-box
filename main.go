@@ -6,7 +6,6 @@ import (
 	"driver-box/pkg/store"
 	"driver-box/pkg/sysinfo"
 	"embed"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -24,8 +23,7 @@ func main() {
 	if dirRoot, err := os.Executable(); err != nil {
 		panic(err)
 	} else {
-		dirConf := filepath.Join(filepath.Dir(dirRoot), "conf")
-		fmt.Println(dirConf)
+		dirConf = filepath.Join(filepath.Dir(dirRoot), "conf")
 		if _, err := os.Stat(dirConf); err != nil {
 			if err := os.MkdirAll(dirConf, os.ModePerm); err != nil {
 				panic(err)
