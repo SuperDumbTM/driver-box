@@ -8,12 +8,13 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type CommandExecutor struct {
 	ctx      context.Context
-	commands map[string]Command
+	commands *xsync.MapOf[string, Command]
 }
 
 func (ce *CommandExecutor) SetContext(ctx context.Context) {
@@ -22,7 +23,7 @@ func (ce *CommandExecutor) SetContext(ctx context.Context) {
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
 	if ce.commands == nil {
-		ce.commands = make(map[string]Command)
+		ce.commands = xsync.NewMapOf[string, Command]()
 	}
 
 	cmdId := ""
@@ -33,7 +34,7 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 		}
 
 		id := hex.EncodeToString(b)
-		if _, ok := ce.commands[id]; ok {
+		if _, ok := ce.commands.Load(id); ok {
 			continue
 		}
 		cmdId = id
@@ -45,15 +46,15 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 	command.cmd.Stdout = &command.stdout
 	command.cmd.Stderr = &command.stderr
 
-	ce.commands[cmdId] = command
+	ce.commands.Store(cmdId, command)
 
 	go ce.dispatch(cmdId, &command)
 
 	return cmdId
 }
 
-func (ce CommandExecutor) Abort(id string) error {
-	if task, ok := ce.commands[id]; !ok {
+func (ce *CommandExecutor) Abort(id string) error {
+	if task, ok := ce.commands.Load(id); !ok {
 		return errors.New("execute: id not found")
 	} else {
 		if err := task.Stop(); err != nil {
@@ -63,7 +64,7 @@ func (ce CommandExecutor) Abort(id string) error {
 	}
 }
 
-func (ce CommandExecutor) dispatch(id string, command *Command) CommandResult {
+func (ce *CommandExecutor) dispatch(id string, command *Command) CommandResult {
 	command.startTime = time.Now()
 	command.err = command.cmd.Run()
 
