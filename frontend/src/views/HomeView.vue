@@ -1,13 +1,25 @@
 <script setup lang="ts">
 import * as manager from '@/wailsjs/go/store/DriverManager'
+import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import { store, sysinfo } from '@/wailsjs/go/models'
 import { ref, useTemplateRef } from 'vue'
 import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
 import CommandStatueModal from '@/components/home_view/CommandStatueModal.vue'
 import { RunCommand } from '@/wailsjs/go/main/App'
+import { useToast } from 'vue-toast-notification'
 
 const statusModal = useTemplateRef('statusModal')
+
 const drivers = ref<Array<store.Driver>>([])
+
+const settings = ref<store.AppSetting>({
+  create_partition: false,
+  set_password: false,
+  password: '',
+  parallel_install: false,
+  success_action: store.SuccessAction.NOTHING
+})
+
 const hwinfos = ref<{
   motherboard: Array<sysinfo.Win32_BaseBoard>
   cpu: Array<sysinfo.Win32_Processor>
@@ -17,9 +29,8 @@ const hwinfos = ref<{
   disk: Array<sysinfo.Win32_DiskDrive>
 } | null>(null)
 
-manager.Read().then(d => {
-  drivers.value = d
-})
+manager.Read().then(d => (drivers.value = d))
+app_manager.Read().then(s => (settings.value = s))
 
 Promise.all([
   sysinfoqy.MotherboardInfo(),
@@ -41,13 +52,7 @@ Promise.all([
 })
 
 async function handleSubmit(event: SubmitEvent) {
-  console.log(event.target)
   const inputs = new FormData(event.target as HTMLFormElement)
-
-  for (const pair of inputs.entries()) {
-    console.log(pair[0] + ', ' + pair[1])
-  }
-
   const commands: Array<{
     name: string
     program: string
@@ -56,9 +61,7 @@ async function handleSubmit(event: SubmitEvent) {
     allowRtCodes: Array<number>
   }> = []
 
-  if (inputs.has('set_password')) {
-    const password = inputs.get('password')
-
+  if (settings.value.set_password) {
     commands.push({
       name: '設定密碼',
       program: 'powershell',
@@ -66,8 +69,8 @@ async function handleSubmit(event: SubmitEvent) {
         'Set-LocalUser',
         (await RunCommand('powershell', ['$Env:UserName'])).trim(),
         '-Password',
-        password && password.toString().length > 0
-          ? `ConverTo-SecureString ${password} -AsPlainText -Force")`
+        settings.value.parallel_install.toString().length > 0
+          ? `ConverTo-SecureString ${settings.value.parallel_install} -AsPlainText -Force")`
           : '(new-object System.Security.SecureString)'
       ],
       minExeTime: 1,
@@ -75,7 +78,7 @@ async function handleSubmit(event: SubmitEvent) {
     })
   }
 
-  if (inputs.has('create_partition')) {
+  if (settings.value.create_partition) {
     commands.push({
       name: '建立磁碟分區及掛載檔案系統',
       program: 'powershell',
@@ -103,7 +106,12 @@ async function handleSubmit(event: SubmitEvent) {
       })
     })
 
-  statusModal.value?.show(inputs.has('parallel_install'), commands)
+  if (commands.length == 0) {
+    useToast().warning('請先選擇軀動或工作', { position: 'top-right' })
+    return
+  }
+
+  statusModal.value?.show(settings.value.parallel_install, commands)
 }
 </script>
 
@@ -235,17 +243,11 @@ async function handleSubmit(event: SubmitEvent) {
                 v-for="d in drivers.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
                 :key="d.id"
               >
-                <div class="flex mb-1">
-                  <input
-                    type="checkbox"
-                    name="miscellaneous"
-                    class="w-4 h-4 my-auto"
-                    :value="d.id"
-                  />
-                  <label class="ms-2 text-sm text-gray-900">
-                    {{ d.name }}
-                  </label>
-                </div>
+                <!-- <label class="ms-2 text-sm text-gray-900"> -->
+                <label class="flex items-center w-full my-1 select-none cursor-pointer">
+                  <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
+                  {{ d.name }}
+                </label>
               </template>
             </div>
             <label
@@ -269,6 +271,7 @@ async function handleSubmit(event: SubmitEvent) {
                 <input
                   type="checkbox"
                   name="create_partition"
+                  v-model="settings.create_partition"
                   class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label class="ms-2 text-sm">建立磁區</label>
@@ -278,6 +281,7 @@ async function handleSubmit(event: SubmitEvent) {
                 <input
                   type="checkbox"
                   name="set_password"
+                  v-model="settings.set_password"
                   class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label class="ms-2 text-sm">設定密碼</label>
@@ -293,6 +297,7 @@ async function handleSubmit(event: SubmitEvent) {
                 <input
                   type="checkbox"
                   name="parallel_install"
+                  v-model="settings.parallel_install"
                   class="text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label class="ms-2 text-sm">同步安裝</label>
@@ -306,6 +311,7 @@ async function handleSubmit(event: SubmitEvent) {
             <label class="block mb-1 text-sm font-bold text-gray-900">關機設定</label>
             <select
               name="success_action"
+              v-model="settings.success_action"
               class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
             >
               <option :value="store.SuccessAction.NOTHING">沒有動作</option>
@@ -334,7 +340,14 @@ async function handleSubmit(event: SubmitEvent) {
     </form>
   </div>
 
-  <CommandStatueModal ref="statusModal"></CommandStatueModal>
+  <CommandStatueModal
+    ref="statusModal"
+    @completed="
+      () => {
+        RunCommand('powershell', ['$Env:UserName'])
+      }
+    "
+  ></CommandStatueModal>
 </template>
 
 <style scoped>

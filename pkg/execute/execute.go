@@ -63,7 +63,7 @@ func (ce CommandExecutor) Abort(id string) error {
 	}
 }
 
-func (ce *CommandExecutor) dispatch(id string, command *Command) CommandResult {
+func (ce CommandExecutor) dispatch(id string, command *Command) CommandResult {
 	command.startTime = time.Now()
 	command.err = command.cmd.Run()
 

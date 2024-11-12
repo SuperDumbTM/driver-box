@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import IncompatibleDriverSelector from '@/components/driver_view/IncompatibleDriverSelector.vue'
+import { SelectFile } from '@/wailsjs/go/main/App'
+import { store } from '@/wailsjs/go/models'
 import { ref } from 'vue'
 import CrossIcon from '../icons/CrossIcon.vue'
-import { store } from '@/wailsjs/go/models'
-import { SelectFile } from '@/wailsjs/go/main/App'
-import Arrow from '../icons/Arrow.vue'
+
+defineProps<{ drivers: Array<store.Driver> }>()
 
 defineExpose({
   show: (data?: Partial<store.Driver>) => {
@@ -36,6 +38,7 @@ const dri = ref<{
   flags?: string
   minExeTime?: number
   allowRtCodes?: string
+  incompatible?: Array<string>
 }>({})
 </script>
 
@@ -77,6 +80,7 @@ const dri = ref<{
               class="flex flex-col gap-y-3"
               @submit.prevent="
                 _ => {
+                  console.log(dri.incompatible)
                   emit(
                     'submit',
                     new store.Driver({
@@ -174,35 +178,10 @@ const dri = ref<{
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">不能同時安裝</label>
 
-                <div class="relative w-max">
-                  <button
-                    type="button"
-                    class="px-3 py-2 text-white text-sm font-semibold rounded border-none bg-blue-600 hover:bg-blue-700 active:bg-blue-600"
-                  >
-                    選擇
-                    <Arrow class="fill-white"></Arrow>
-                  </button>
-
-                  <ul
-                    class="absolute block min-w-full w-max max-h-96 py-2 px-2 z-20 overflow-auto bg-white shadow-lg rounded"
-                  >
-                    <li class="mb-2">
-                      <input
-                        placeholder="搜尋..."
-                        class="px-4 py-2.5 w-full rounded text-black text-sm border-none outline-blue-600 bg-gray-50 focus:bg-transparent"
-                      />
-                    </li>
-
-                    <li class="py-2.5 px-4 text-sm">
-                      <div class="flex items-center">
-                        <label class="flex w-full select-none cursor-pointer">
-                          <input type="checkbox" class="me-1.5" />
-                          Marketing
-                        </label>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+                <IncompatibleDriverSelector
+                  :options="drivers"
+                  v-model="dri.incompatible"
+                ></IncompatibleDriverSelector>
               </div>
 
               <div>
@@ -235,7 +214,7 @@ const dri = ref<{
 
               <button
                 type="submit"
-                class="w-full my-1 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-800 rounded-lg"
+                class="w-full my-1 py-2 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded-lg"
               >
                 儲存
               </button>

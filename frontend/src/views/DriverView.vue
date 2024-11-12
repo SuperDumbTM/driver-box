@@ -115,10 +115,10 @@ manager.Read().then(d => {
     </div>
 
     <InputModal
+      :drivers="drivers ?? []"
       ref="inputModal"
       @submit="
         async dri => {
-          console.log(dri)
           try {
             if (dri.id) {
               await manager.Update(dri)
