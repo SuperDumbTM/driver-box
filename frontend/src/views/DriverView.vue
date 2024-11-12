@@ -59,10 +59,10 @@ manager.Read().then(d => {
       <table class="table-fixed text-sm text-left text-gray-500">
         <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
-            <th scope="col" class="px-6 py-3 text-nowrap">軀動名稱</th>
-            <th scope="col" class="px-6 py-3 text-nowrap">路徑</th>
-            <th scope="col" class="px-6 py-3 text-nowrap">安裝參數</th>
-            <th scope="col" class="px-6 py-3 text-nowrap">動作</th>
+            <th scope="col" class="px-4 py-4 text-nowrap">軀動名稱</th>
+            <th scope="col" class="px-4 py-4 text-nowrap">路徑</th>
+            <th scope="col" class="sm:px-4 py-4 text-nowrap">安裝參數</th>
+            <th scope="col" class="px-4 py-4 text-nowrap">動作</th>
           </tr>
         </thead>
         <tbody>
@@ -71,12 +71,12 @@ manager.Read().then(d => {
             :key="d.id"
             class="bg-white border-b"
           >
-            <th scope="row" class="px-5 py-3 font-medium text-gray-900 whitespace-nowrap">
+            <th scope="row" class="px-4 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
               {{ d.name }}
             </th>
-            <td class="px-5 py-3">{{ d.path }}</td>
-            <td class="px-5 py-3">{{ d.flags }}</td>
-            <td class="px-5 py-3">
+            <td class="px-4 py-2 min-w-28 text-xs break-all">{{ d.path }}</td>
+            <td class="px-4 py-2 text-xs">{{ d.flags }}</td>
+            <td class="px-4 py-2">
               <div class="flex gap-x-3">
                 <button
                   class="p-1 text-sm font-medium bg-gray-200 rounded"
