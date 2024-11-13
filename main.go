@@ -20,18 +20,25 @@ var assets embed.FS
 func main() {
 	// setup /conf directorys
 	var dirConf string
-	if dirRoot, err := os.Executable(); err != nil {
+	if exePath, err := os.Executable(); err != nil {
 		panic(err)
 	} else {
-		dirConf = filepath.Join(filepath.Dir(dirRoot), "conf")
+		dirConf = filepath.Join(filepath.Dir(exePath), "conf")
 		if _, err := os.Stat(dirConf); err != nil {
 			if err := os.MkdirAll(dirConf, os.ModePerm); err != nil {
 				panic(err)
 			}
 		}
 
+		dirDir := filepath.Join(filepath.Dir(exePath), "drivers")
+		if _, err := os.Stat(dirDir); err != nil {
+			if err := os.MkdirAll(dirDir, os.ModePerm); err != nil {
+				panic(err)
+			}
+		}
+
 		for _, name := range [3]string{"network", "display", "miscellaneous"} {
-			os.MkdirAll(filepath.Join(dirConf, name), os.ModePerm)
+			os.MkdirAll(filepath.Join(dirDir, name), os.ModePerm)
 		}
 	}
 
