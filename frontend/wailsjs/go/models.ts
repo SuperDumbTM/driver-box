@@ -39,7 +39,7 @@ export namespace store {
 	    flags: string[];
 	    minExeTime: number;
 	    allowRtCodes: number[];
-	    incompatible: string[];
+	    incompatibles: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Driver(source);
@@ -54,7 +54,7 @@ export namespace store {
 	        this.flags = source["flags"];
 	        this.minExeTime = source["minExeTime"];
 	        this.allowRtCodes = source["allowRtCodes"];
-	        this.incompatible = source["incompatible"];
+	        this.incompatibles = source["incompatibles"];
 	    }
 	}
 

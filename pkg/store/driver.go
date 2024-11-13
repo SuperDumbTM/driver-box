@@ -103,12 +103,12 @@ const (
 )
 
 type Driver struct {
-	Id           string     `json:"id"`
-	Name         string     `json:"name"`
-	Type         DriverType `json:"type"`
-	Path         string     `json:"path"`
-	Flags        []string   `json:"flags"`
-	MinExeTime   float32    `json:"minExeTime"`
-	AllowRtCodes []int32    `json:"allowRtCodes"`
-	Incompatible []string   `json:"incompatible"`
+	Id            string     `json:"id"`
+	Name          string     `json:"name"`
+	Type          DriverType `json:"type"`
+	Path          string     `json:"path"`
+	Flags         []string   `json:"flags"`
+	MinExeTime    float32    `json:"minExeTime"`
+	AllowRtCodes  []int32    `json:"allowRtCodes"`
+	Incompatibles []string   `json:"incompatibles"`
 }

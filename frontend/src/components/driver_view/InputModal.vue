@@ -38,8 +38,10 @@ const dri = ref<{
   flags?: string
   minExeTime?: number
   allowRtCodes?: string
-  incompatible?: Array<string>
-}>({})
+  incompatibles?: Array<string>
+}>({
+  minExeTime: 5
+})
 </script>
 
 <template>
@@ -80,7 +82,6 @@ const dri = ref<{
               class="flex flex-col gap-y-3"
               @submit.prevent="
                 _ => {
-                  console.log(dri.incompatible)
                   emit(
                     'submit',
                     new store.Driver({
@@ -91,7 +92,8 @@ const dri = ref<{
                             ?.split(',')
                             .map(c => parseInt(c))
                             .filter(c => !Number.isNaN(c))
-                        : []
+                        : [],
+                      incompatibles: dri.incompatibles ?? []
                     })
                   )
                 }
@@ -118,6 +120,7 @@ const dri = ref<{
                   name="name"
                   v-model="dri.name"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                  autocomplete="off"
                   required
                 />
               </div>
@@ -143,7 +146,7 @@ const dri = ref<{
                     v-model="dri.path"
                     class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 border rounded-none rounded-e-lg shadow-sm"
                     ref="pathInput"
-                    readonly
+                    autocomplete="off"
                     required
                   />
                 </div>
@@ -170,6 +173,7 @@ const dri = ref<{
                       name="flags"
                       v-model="dri.flags"
                       class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                      autocomplete="off"
                     />
                   </div>
                 </div>
@@ -180,7 +184,7 @@ const dri = ref<{
 
                 <IncompatibleDriverSelector
                   :options="drivers"
-                  v-model="dri.incompatible"
+                  v-model="dri.incompatibles"
                 ></IncompatibleDriverSelector>
               </div>
 
@@ -192,6 +196,7 @@ const dri = ref<{
                   v-model="dri.minExeTime"
                   step="0.1"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                  autocomplete="off"
                   required
                 />
                 <p class="mt-1 text-xs text-apple-green-800">
@@ -206,6 +211,7 @@ const dri = ref<{
                   name="allowRtCodes"
                   v-model="dri.allowRtCodes"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                  autocomplete="off"
                 />
                 <p class="mt-1 text-xs text-apple-green-800">
                   安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。
