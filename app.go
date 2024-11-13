@@ -25,10 +25,10 @@ func (a *App) SelectFile(relative bool) (string, error) {
 	if path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{}); err != nil || path == "" {
 		return "", err
 	} else if relative {
-		if basePath, err := os.Executable(); err != nil {
+		if exePath, err := os.Executable(); err != nil {
 			return "", err
 		} else {
-			return filepath.Rel(basePath, path)
+			return filepath.Rel(filepath.Dir(exePath), path)
 		}
 	} else {
 		return path, nil
