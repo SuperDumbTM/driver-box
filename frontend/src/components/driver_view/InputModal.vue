@@ -192,7 +192,7 @@ const dri = ref<{
                 <label class="block mb-2 text-sm font-medium text-gray-900">不能同時安裝</label>
 
                 <IncompatibleDriverSelector
-                  :options="drivers"
+                  :options="drivers.filter(d => d.id !== dri.id)"
                   v-model="dri.incompatibles"
                 ></IncompatibleDriverSelector>
               </div>
