@@ -12,6 +12,8 @@ const statusModal = useTemplateRef('statusModal')
 
 const form = useTemplateRef('form')
 
+const $toast = useToast({ position: 'top-right' })
+
 const drivers = ref<Array<store.Driver>>([])
 
 const settings = ref<store.AppSetting>({
@@ -31,9 +33,19 @@ const hwinfos = ref<{
   disk: Array<sysinfo.Win32_DiskDrive>
 } | null>(null)
 
-manager.Read().then(d => (drivers.value = d))
+manager
+  .Read()
+  .then(d => (drivers.value = d))
+  .catch(() => {
+    $toast.error('無法讀取軀動資料')
+  })
 
-app_manager.Read().then(s => (settings.value = s))
+app_manager
+  .Read()
+  .then(s => (settings.value = s))
+  .catch(() => {
+    $toast.error('無法讀預設選項資料')
+  })
 
 Promise.all([
   sysinfoqy.MotherboardInfo(),
@@ -56,7 +68,7 @@ Promise.all([
 
 async function handleSubmit() {
   if (!form.value) {
-    useToast().error('無法出得輸入', { position: 'top-right' })
+    $toast.error('無法出得輸入')
     return
   }
 
@@ -123,7 +135,7 @@ async function handleSubmit() {
     })
 
   if (commands.length == 0) {
-    useToast().warning('請先選擇軀動或工作', { position: 'top-right' })
+    $toast.warning('請先選擇軀動或工作')
     return
   }
 
@@ -365,7 +377,7 @@ async function handleSubmit() {
     ref="statusModal"
     @completed="
       () => {
-        $toast.success('完成。', { position: 'top-right', duration: 5000 })
+        $toast.success('完成。', { duration: 5000 })
 
         switch (settings.success_action) {
           case store.SuccessAction.SHUTDOWN:
