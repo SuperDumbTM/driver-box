@@ -5,6 +5,7 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import * as manager from '@/wailsjs/go/store/DriverManager'
 import { store } from '@/wailsjs/go/models'
 import { ref } from 'vue'
+import CopyIcon from '@/components/icons/CopyIcon.vue'
 
 const driType = ref(store.DriverType.NETWORK)
 const drivers = ref<Array<store.Driver> | null>(null)
@@ -77,7 +78,7 @@ manager.Read().then(d => {
             <td class="px-4 py-2 min-w-28 text-xs break-all">{{ d.path }}</td>
             <td class="px-4 py-2 text-xs">{{ d.flags }}</td>
             <td class="px-4 py-2">
-              <div class="flex gap-x-3">
+              <div class="flex gap-x-1.5">
                 <button
                   class="p-1 text-sm font-medium bg-gray-200 rounded"
                   @click="$refs.inputModal?.show(d)"
@@ -96,6 +97,19 @@ manager.Read().then(d => {
                   "
                 >
                   <TrashIcon></TrashIcon>
+                </button>
+
+                <button
+                  class="p-1 text-sm font-medium bg-gray-200 rounded"
+                  @click="
+                    manager.Add(d).then(() =>
+                      manager.Read().then(d => {
+                        drivers = d
+                      })
+                    )
+                  "
+                >
+                  <CopyIcon></CopyIcon>
                 </button>
               </div>
             </td>
