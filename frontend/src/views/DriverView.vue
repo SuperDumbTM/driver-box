@@ -20,7 +20,7 @@ manager.Read().then(d => {
     <ul class="flex flex-row gap-x-3 list-none text-center">
       <li class="flex-1">
         <a
-          class="block px-4 py-3 text-xs leading-normal font-bold uppercase shadow-lg rounded"
+          class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
           :class="{
             'text-half-baked-600 bg-white': driType !== store.DriverType.NETWORK,
             'text-white bg-half-baked-600': driType === store.DriverType.NETWORK
@@ -32,7 +32,7 @@ manager.Read().then(d => {
       </li>
       <li class="flex-1">
         <a
-          class="block px-4 py-3 text-xs leading-normal font-bold uppercase shadow-lg rounded"
+          class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
           :class="{
             'text-half-baked-600 bg-white': driType !== store.DriverType.DISPLAY,
             'text-white bg-half-baked-600': driType === store.DriverType.DISPLAY
@@ -44,7 +44,7 @@ manager.Read().then(d => {
       </li>
       <li class="flex-1">
         <a
-          class="block px-4 py-3 text-xs leading-normal font-bold uppercase shadow-lg rounded"
+          class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
           :class="{
             'text-half-baked-600 bg-white': driType !== store.DriverType.MISCELLANEOUS,
             'text-white bg-half-baked-600': driType === store.DriverType.MISCELLANEOUS
