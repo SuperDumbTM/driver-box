@@ -6,13 +6,22 @@ import * as manager from '@/wailsjs/go/store/DriverManager'
 import { store } from '@/wailsjs/go/models'
 import { ref } from 'vue'
 import CopyIcon from '@/components/icons/CopyIcon.vue'
+import { useToast } from 'vue-toast-notification'
+
+const $toast = useToast({ position: 'top-right' })
 
 const driType = ref(store.DriverType.NETWORK)
+
 const drivers = ref<Array<store.Driver> | null>(null)
 
-manager.Read().then(d => {
-  drivers.value = d
-})
+manager
+  .Read()
+  .then(d => {
+    drivers.value = d
+  })
+  .catch(() => {
+    $toast.error('無法讀取軀動資料')
+  })
 </script>
 
 <template>
