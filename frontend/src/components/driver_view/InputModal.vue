@@ -4,6 +4,7 @@ import { SelectFile } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import { ref } from 'vue'
 import CrossIcon from '../icons/CrossIcon.vue'
+import { flags } from '@/definitions/flags'
 
 defineProps<{ drivers: Array<store.Driver> }>()
 
@@ -131,7 +132,7 @@ const dri = ref<{
                 <div class="flex">
                   <button
                     type="button"
-                    class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md"
+                    class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 rounded-s-md rounded-e-0 border-gray-300"
                     @click="
                       SelectFile(true).then(path => {
                         dri.path = path
@@ -155,28 +156,36 @@ const dri = ref<{
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">安裝參數</label>
 
-                <div class="grid grid-cols-4 gap-2">
-                  <div class="col-span-1">
-                    <select
-                      name="flags"
-                      class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                <div class="flex">
+                  <select
+                    name="flags"
+                    class="inline-flex items-center w-24 text-sm border border-e-0 rounded-e-0 rounded-s-lg border-apple-green-600 outline-none"
+                    @change="
+                      event => {
+                        dri.flags = (event.target as HTMLSelectElement).value
+                      }
+                    "
+                  >
+                    <option value="">手動輸入</option>
+                    <option
+                      v-for="(flag, name) in flags"
+                      :key="name"
+                      :value="flag.join(',')"
+                      :selected="dri.flags === flag.join()"
                     >
-                      <option>手動輸入</option>
-                      <option>Nvidia</option>
-                      <option>AMD</option>
-                      <option>Intel Chipset</option>
-                    </select>
-                  </div>
-                  <div class="col-span-3">
-                    <input
-                      type="text"
-                      name="flags"
-                      v-model="dri.flags"
-                      class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                      autocomplete="off"
-                    />
-                  </div>
+                      {{ name }}
+                    </option>
+                  </select>
+                  <input
+                    type="text"
+                    name="flags"
+                    v-model="dri.flags"
+                    class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 border rounded-none rounded-e-lg shadow-sm"
+                    autocomplete="off"
+                  />
                 </div>
+
+                <p class="mt-1 text-xs font-light text-apple-green-800">以逗號分隔多個參數</p>
               </div>
 
               <div>
@@ -199,7 +208,7 @@ const dri = ref<{
                   autocomplete="off"
                   required
                 />
-                <p class="mt-1 text-xs text-apple-green-800">
+                <p class="mt-1 text-xs font-light text-apple-green-800">
                   安裝軀動的時間少於所輸入的時間，將會被視作安裝失敗。
                 </p>
               </div>
@@ -213,9 +222,10 @@ const dri = ref<{
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
                   autocomplete="off"
                 />
-                <p class="mt-1 text-xs text-apple-green-800">
+                <p class="mt-1 text-xs font-light text-apple-green-800">
                   安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。
                 </p>
+                <p class="mt-1 text-xs font-light text-apple-green-800">以逗號分隔多個代碼</p>
               </div>
 
               <button
