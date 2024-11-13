@@ -60,6 +60,15 @@ const commandQueue = computed(() =>
   commands.value.filter(cmd => cmd.status === 'pending').slice(0, isParallel ? undefined : 1)
 )
 
+window.onbeforeunload = (event: Event) => {
+  commands.value
+    .filter(c => c.status == 'pending' || c.status == 'running')
+    .forEach(cmd => {
+      handleAbort(cmd)
+    })
+  event.preventDefault()
+}
+
 runtime.EventsOn(
   'execute:exited',
   async (result: {
@@ -134,6 +143,7 @@ async function dispatchCommand() {
 }
 
 function handleAbort(command: (typeof commands.value)[0]) {
+  console.log(command.name)
   if (command.procId !== undefined && command.procId !== '') {
     command.status = 'aborting'
     executor

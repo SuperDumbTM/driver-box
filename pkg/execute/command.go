@@ -2,6 +2,7 @@ package execute
 
 import (
 	"bytes"
+	"os"
 	"os/exec"
 	"time"
 )
@@ -29,7 +30,7 @@ func (t *Command) Start() {
 }
 
 func (t Command) Stop() error {
-	return t.cmd.Process.Kill()
+	return t.cmd.Process.Signal(os.Kill)
 }
 
 func (t Command) Lapse() float32 {
