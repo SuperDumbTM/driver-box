@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { store } from '@/wailsjs/go/models'
-import { computed, ref } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 
 const props = defineProps<{ options?: Array<store.Driver> }>()
 
 const value = defineModel<Array<string>>({ default: [] })
 
 const visible = ref(false)
+
+const selectUl = useTemplateRef('select-box')
 
 const search = ref('')
 
@@ -32,6 +34,21 @@ const showOptions = computed(() => {
     return props.options?.filter(dri => dri.name.includes(search.value))
   }
 })
+
+const handleClickOutside = (event: Event) => {
+  if (visible.value === false) {
+    return
+  }
+
+  if (!selectUl.value?.parentNode?.contains((event.target as HTMLElement)?.parentNode)) {
+    visible.value = false
+    document.removeEventListener('click', handleClickOutside)
+  }
+}
+
+function addClickOutsideHandler() {
+  document.addEventListener('click', handleClickOutside)
+}
 </script>
 
 <template>
@@ -39,14 +56,19 @@ const showOptions = computed(() => {
     <button
       type="button"
       class="w-20 me-1 px-2 py-1.5 text-white text-sm font-semibold rounded border-none bg-half-baked-600 hover:bg-half-baked-500"
-      @click="visible = !visible"
+      @click="
+        () => {
+          visible = !visible
+          addClickOutsideHandler()
+        }
+      "
     >
       選擇 ({{ value.length }})
     </button>
 
     <button
       type="button"
-      class="mx-1 px-2 py-1.5 text-white text-sm rounded border-none bg-apple-green-700 hover:bg-apple-green-600"
+      class="mx-1 px-2 py-1 text-white text-xs rounded border-none bg-apple-green-700 hover:bg-apple-green-600"
       @click="
         () => {
           value = props.options?.map(dri => dri.id) ?? []
@@ -58,7 +80,7 @@ const showOptions = computed(() => {
 
     <button
       type="button"
-      class="mx-1 px-2 py-1.5 text-white text-sm rounded border-none bg-red-400 hover:bg-red-300"
+      class="mx-1 px-2 py-1 text-white text-xs rounded border-none bg-red-400 hover:bg-red-300"
       @click="
         () => {
           value = []
@@ -69,6 +91,7 @@ const showOptions = computed(() => {
     </button>
 
     <ul
+      ref="select-box"
       class="absolute top-0 left-20 block min-w-full w-max max-h-52 p-1.5 z-20 overflow-auto bg-white shadow-2xl rounded-lg"
       :class="{ hidden: !visible }"
     >
