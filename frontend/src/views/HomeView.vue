@@ -54,15 +54,18 @@ Promise.all([
 async function handleSubmit(event: SubmitEvent) {
   const inputs = new FormData(event.target as HTMLFormElement)
   const commands: Array<{
+    id: string
     name: string
     program: string
     options: Array<string>
     minExeTime: number
     allowRtCodes: Array<number>
+    incompatibles: Array<string>
   }> = []
 
   if (settings.value.set_password) {
     commands.push({
+      id: 'set_password',
       name: '設定密碼',
       program: 'powershell',
       options: [
@@ -74,19 +77,22 @@ async function handleSubmit(event: SubmitEvent) {
           : '(new-object System.Security.SecureString)'
       ],
       minExeTime: 1,
-      allowRtCodes: [0]
+      allowRtCodes: [0],
+      incompatibles: []
     })
   }
 
   if (settings.value.create_partition) {
     commands.push({
+      id: 'create_partition',
       name: '建立磁碟分區及掛載檔案系統',
       program: 'powershell',
       options: [
         'Get-Disk | Where-Object PartitionStyle -Eq "RAW" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume'
       ],
       minExeTime: 1,
-      allowRtCodes: [0]
+      allowRtCodes: [0],
+      incompatibles: []
     })
   }
 
@@ -98,11 +104,13 @@ async function handleSubmit(event: SubmitEvent) {
     )
     .forEach(dri => {
       commands.push({
+        id: dri.id,
         name: dri.name,
         program: dri.path,
         options: dri.flags,
         minExeTime: dri.minExeTime,
-        allowRtCodes: dri.allowRtCodes
+        allowRtCodes: dri.allowRtCodes,
+        incompatibles: dri.incompatibles
       })
     })
 

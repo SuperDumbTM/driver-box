@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import CrossIcon from '@/components/icons/CrossIcon.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import * as runtime from '@/wailsjs/runtime/runtime'
@@ -7,13 +7,13 @@ import * as runtime from '@/wailsjs/runtime/runtime'
 defineExpose({
   show: async (
     isParallel_: boolean,
-    cmds: Array<Omit<(typeof commands.value)[0], 'id' | 'status' | 'result'>>
+    cmds: Array<Omit<(typeof commands.value)[0], 'prodId' | 'status' | 'result'>>
   ) => {
     show.value = true
     isParallel = isParallel_
 
     commands.value = cmds.map(vals => ({ ...vals, status: 'pending' }))
-    dispatchCommand()
+    await dispatchCommand()
   },
   hide: () => {
     show.value = false
@@ -28,7 +28,8 @@ const show = ref(false)
 
 const commands = ref<
   Array<{
-    id?: string
+    id: string
+    procId?: string
     name: string
     status:
       | 'pending'
@@ -43,9 +44,14 @@ const commands = ref<
     options: Array<string>
     minExeTime: number
     allowRtCodes: Array<number>
+    incompatibles: Array<string>
     result?: { lapse: number; exitCode: number; stdout: string; stderr: string }
   }>
 >([])
+
+const commandQueue = computed(() =>
+  commands.value.filter(cmd => cmd.status === 'pending').slice(0, isParallel ? undefined : 1)
+)
 
 runtime.EventsOn(
   'execute:exited',
@@ -56,7 +62,7 @@ runtime.EventsOn(
     stdout: string
     stderr: string
   }) => {
-    const command = commands.value.find(c => c.id === result.id)!
+    const command = commands.value.find(c => c.procId === result.id)!
     command.result = result
 
     if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
@@ -67,41 +73,44 @@ runtime.EventsOn(
       command.status = 'completed'
     }
 
-    dispatchCommand()
+    await dispatchCommand()
     if (commands.value.every(cmd => cmd.status === 'completed')) {
       emit('completed')
     }
   }
 )
 
-function dispatchCommand() {
-  commands.value
-    .filter(cmd => cmd.status === 'pending')
-    .slice(0, isParallel ? undefined : 1)
-    .map(cmd => {
-      executor
-        .Run(cmd.program, cmd.options)
-        .then(id => {
-          cmd.id = id
-          cmd.status = 'running'
-        })
-        .catch(() => {
-          cmd.status = 'broken'
-          cmd.result = {
-            lapse: -1,
-            exitCode: -1,
-            stdout: '',
-            stderr: ''
-          }
-        })
-    })
+async function dispatchCommand() {
+  for (const cmd of commandQueue.value) {
+    if (
+      !cmd.incompatibles.every(id =>
+        commands.value.filter(c => c.status === 'running').every(c => c.id != id)
+      )
+    ) {
+      return
+    }
+
+    try {
+      const id = await executor.Run(cmd.program, cmd.options)
+      cmd.procId = id
+      cmd.status = 'running'
+    } catch {
+      cmd.status = 'broken'
+      cmd.result = {
+        lapse: -1,
+        exitCode: -1,
+        stdout: '',
+        stderr: ''
+      }
+    }
+  }
 }
 
 function handleAbort(command: (typeof commands.value)[0]) {
-  if (command.id !== undefined && command.id !== '') {
+  if (command.procId !== undefined && command.procId !== '') {
     command.status = 'aborting'
     executor
-      .Abort(command.id)
+      .Abort(command.procId)
       .then(() => {
         command.status = 'aborted'
       })
