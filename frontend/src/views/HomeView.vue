@@ -10,6 +10,8 @@ import { useToast } from 'vue-toast-notification'
 
 const statusModal = useTemplateRef('statusModal')
 
+const form = useTemplateRef('form')
+
 const drivers = ref<Array<store.Driver>>([])
 
 const settings = ref<store.AppSetting>({
@@ -30,6 +32,7 @@ const hwinfos = ref<{
 } | null>(null)
 
 manager.Read().then(d => (drivers.value = d))
+
 app_manager.Read().then(s => (settings.value = s))
 
 Promise.all([
@@ -51,8 +54,13 @@ Promise.all([
   )
 })
 
-async function handleSubmit(event: SubmitEvent) {
-  const inputs = new FormData(event.target as HTMLFormElement)
+async function handleSubmit() {
+  if (!form.value) {
+    useToast().error('無法出得輸入', { position: 'top-right' })
+    return
+  }
+
+  const inputs = new FormData(form.value)
   const commands: Array<{
     id: string
     name: string
@@ -192,174 +200,181 @@ async function handleSubmit(event: SubmitEvent) {
 
     <hr class="my-3" />
 
-    <form
-      @submit.prevent="
-        (event: Event) => {
-          handleSubmit(event as SubmitEvent)
-        }
-      "
-    >
-      <div class="flex gap-x-3 h-28">
-        <div class="flex flex-col flex-1 gap-y-3 justify-around">
-          <div class="relative w-full">
-            <select
-              name="network"
-              class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+    <form class="flex gap-x-3 h-28" ref="form">
+      <div class="flex flex-col flex-1 gap-y-3 justify-around">
+        <div class="relative w-full">
+          <select
+            name="network"
+            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+          >
+            <option>請選擇</option>
+            <option
+              v-for="d in drivers.filter(d => d.type == store.DriverType.NETWORK)"
+              :key="d.id"
+              :value="d.id"
             >
-              <option>請選擇</option>
-              <option
-                v-for="d in drivers.filter(d => d.type == store.DriverType.NETWORK)"
-                :key="d.id"
-                :value="d.id"
-              >
-                {{ d.name }}
-              </option>
-            </select>
-            <label
-              class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
-            >
-              網絡介面卡
-            </label>
-          </div>
-
-          <div class="relative w-full">
-            <select
-              name="display"
-              class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
-            >
-              <option>請選擇</option>
-              <option
-                v-for="d in drivers.filter(d => d.type == store.DriverType.DISPLAY)"
-                :key="d.id"
-                :value="d.id"
-              >
-                {{ d.name }}
-              </option>
-            </select>
-            <label
-              class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
-            >
-              顯示卡
-            </label>
-          </div>
+              {{ d.name }}
+            </option>
+          </select>
+          <label
+            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
+          >
+            網絡介面卡
+          </label>
         </div>
 
-        <div class="flex flex-1">
-          <div class="relative w-full h-full mb-3">
-            <div class="h-full overflow-y-scroll ps-2 pt-3 rounded border">
-              <template
-                v-for="d in drivers.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
-                :key="d.id"
-              >
-                <!-- <label class="ms-2 text-sm text-gray-900"> -->
-                <label class="flex items-center w-full my-1 select-none cursor-pointer">
-                  <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
-                  {{ d.name }}
-                </label>
-              </template>
-            </div>
-            <label
-              class="absolute left-3 top-0 w-10 origin-[0_0] -translate-y-[0.55rem] bg-white text-primary scale-[0.9] text-center text-neutral-500 truncate pointer-events-none"
+        <div class="relative w-full">
+          <select
+            name="display"
+            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+          >
+            <option>請選擇</option>
+            <option
+              v-for="d in drivers.filter(d => d.type == store.DriverType.DISPLAY)"
+              :key="d.id"
+              :value="d.id"
             >
-              其他
-            </label>
-          </div>
+              {{ d.name }}
+            </option>
+          </select>
+          <label
+            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
+          >
+            顯示卡
+          </label>
         </div>
       </div>
 
-      <hr class="my-3" />
-
-      <div class="flex gap-x-6">
-        <div class="flex flex-col">
-          <fieldset>
-            <p class="font-bold">額外工作</p>
-
-            <div class="flex gap-x-3">
-              <div class="flex items-center mb-4">
-                <label class="flex item-center w-full select-none cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="create_partition"
-                    v-model="settings.create_partition"
-                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  建立磁區
-                </label>
-              </div>
-
-              <div class="flex items-center mb-4">
-                <label class="flex item-center w-full select-none cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="set_password"
-                    v-model="settings.set_password"
-                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  設定密碼
-                </label>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <p class="font-bold">安裝設定</p>
-
-            <div class="flex gap-x-3">
-              <div class="flex items-center mb-4">
-                <!-- <label class="ms-2 text-sm"> -->
-                <label class="flex item-center w-full select-none cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="parallel_install"
-                    v-model="settings.parallel_install"
-                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  同步安裝
-                </label>
-              </div>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="flex flex-col grow justify-between">
-          <fieldset class="w-full">
-            <label class="block mb-1 text-sm font-bold text-gray-900">關機設定</label>
-            <select
-              name="success_action"
-              v-model="settings.success_action"
-              class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
+      <div class="flex flex-1">
+        <div class="relative w-full h-full mb-3">
+          <div class="h-full overflow-y-scroll ps-2 pt-3 rounded border">
+            <template
+              v-for="d in drivers.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
+              :key="d.id"
             >
-              <option :value="store.SuccessAction.NOTHING">沒有動作</option>
-              <option :value="store.SuccessAction.SHUTDOWN">關機</option>
-              <option :value="store.SuccessAction.REBOOT">重新開機</option>
-              <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
-            </select>
-          </fieldset>
-
-          <div class="flex flex-row gap-x-2 justify-end items-center">
-            <button
-              type="button"
-              class="h-8 px-3 text-white text-sm bg-rose-700 hover:bg-rose-600 rounded"
-            >
-              重置輸入
-            </button>
-            <button
-              type="submit"
-              class="h-8 px-3 text-white text-sm focus:outline-none bg-half-baked-600 hover:bg-half-baked-500 rounded"
-            >
-              執行
-            </button>
+              <!-- <label class="ms-2 text-sm text-gray-900"> -->
+              <label class="flex items-center w-full my-1 select-none cursor-pointer">
+                <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
+                {{ d.name }}
+              </label>
+            </template>
           </div>
+          <label
+            class="absolute left-3 top-0 w-10 origin-[0_0] -translate-y-[0.55rem] bg-white text-primary scale-[0.9] text-center text-neutral-500 truncate pointer-events-none"
+          >
+            其他
+          </label>
         </div>
       </div>
     </form>
+
+    <hr class="my-3" />
+
+    <div class="flex gap-x-6">
+      <div class="flex flex-col">
+        <fieldset>
+          <p class="font-bold">額外工作</p>
+
+          <div class="flex gap-x-3">
+            <div class="flex items-center mb-4">
+              <label class="flex item-center w-full select-none cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="create_partition"
+                  v-model="settings.create_partition"
+                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                建立磁區
+              </label>
+            </div>
+
+            <div class="flex items-center mb-4">
+              <label class="flex item-center w-full select-none cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="set_password"
+                  v-model="settings.set_password"
+                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                設定密碼
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <p class="font-bold">安裝設定</p>
+
+          <div class="flex gap-x-3">
+            <div class="flex items-center mb-4">
+              <!-- <label class="ms-2 text-sm"> -->
+              <label class="flex item-center w-full select-none cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="parallel_install"
+                  v-model="settings.parallel_install"
+                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                同步安裝
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="flex flex-col grow justify-between">
+        <fieldset class="w-full">
+          <label class="block mb-1 text-sm font-bold text-gray-900">關機設定</label>
+          <select
+            name="success_action"
+            v-model="settings.success_action"
+            class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
+          >
+            <option :value="store.SuccessAction.NOTHING">沒有動作</option>
+            <option :value="store.SuccessAction.SHUTDOWN">關機</option>
+            <option :value="store.SuccessAction.REBOOT">重新開機</option>
+            <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
+          </select>
+        </fieldset>
+
+        <div class="flex flex-row gap-x-2 justify-end items-center">
+          <button
+            type="button"
+            class="h-8 px-3 text-white text-sm bg-rose-700 hover:bg-rose-600 rounded"
+            @click="
+              () => {
+                $refs.form.reset()
+                app_manager.Read().then(s => (settings = s))
+              }
+            "
+          >
+            重置輸入
+          </button>
+          <button
+            class="h-8 px-3 text-white text-sm focus:outline-none bg-half-baked-600 hover:bg-half-baked-500 rounded"
+            @click="handleSubmit"
+          >
+            執行
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <CommandStatueModal
     ref="statusModal"
     @completed="
       () => {
-        RunCommand('powershell', ['$Env:UserName'])
+        $toast.success('完成。', { position: 'top-right', duration: 5000 })
+
+        switch (settings.success_action) {
+          case store.SuccessAction.SHUTDOWN:
+            RunCommand('cmd', ['/C', 'shutdown /s /t 5'])
+          case store.SuccessAction.REBOOT:
+            RunCommand('cmd', ['/C', 'shutdown /r /t 5'])
+          case store.SuccessAction.FIRMWARE:
+            RunCommand('cmd', ['/C', 'shutdown /r /fw /t 5'])
+        }
       }
     "
   ></CommandStatueModal>
