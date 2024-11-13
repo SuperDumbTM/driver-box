@@ -29,6 +29,10 @@ func main() {
 				panic(err)
 			}
 		}
+
+		for _, name := range [3]string{"network", "display", "miscellaneous"} {
+			os.MkdirAll(filepath.Join(dirConf, name), os.ModePerm)
+		}
 	}
 
 	app := &App{}
