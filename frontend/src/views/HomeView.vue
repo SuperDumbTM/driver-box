@@ -4,7 +4,7 @@ import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import { store, sysinfo } from '@/wailsjs/go/models'
 import { ref, useTemplateRef } from 'vue'
 import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
-import CommandStatueModal from '@/components/home_view/CommandStatueModal.vue'
+import CommandStatueModal from '@/components/home_view/CommandStatusModal.vue'
 import { RunCommand } from '@/wailsjs/go/main/App'
 import { useToast } from 'vue-toast-notification'
 
