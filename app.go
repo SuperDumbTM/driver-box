@@ -22,7 +22,7 @@ func (m *App) SetContext(ctx context.Context) {
 }
 
 func (a *App) SelectFile(relative bool) (string, error) {
-	if path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{}); err != nil {
+	if path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{}); err != nil || path == "" {
 		return "", err
 	} else if relative {
 		if basePath, err := os.Executable(); err != nil {
