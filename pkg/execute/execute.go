@@ -74,6 +74,7 @@ func (ce *CommandExecutor) dispatch(id string, command *Command) CommandResult {
 		command.cmd.ProcessState.ExitCode(),
 		command.stdout.String(),
 		command.stderr.String(),
+		command.err.Error(),
 	}
 
 	runtime.EventsEmit(ce.ctx, "execute:exited", result)

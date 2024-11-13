@@ -12,6 +12,7 @@ type CommandResult struct {
 	ExitCode int     `json:"exitCode"`
 	Stdout   string  `json:"stdout"`
 	Stderr   string  `json:"stderr"`
+	Error    string  `json:"error"`
 }
 
 type Command struct {

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import CrossIcon from '@/components/icons/CrossIcon.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import * as runtime from '@/wailsjs/runtime/runtime'
+import { useToast } from 'vue-toast-notification'
 
 defineExpose({
   show: async (
@@ -45,7 +46,13 @@ const commands = ref<
     minExeTime: number
     allowRtCodes: Array<number>
     incompatibles: Array<string>
-    result?: { lapse: number; exitCode: number; stdout: string; stderr: string }
+    result?: {
+      lapse: number
+      exitCode: number
+      stdout: string
+      stderr: string
+      error: string | null
+    }
   }>
 >([])
 
@@ -61,9 +68,24 @@ runtime.EventsOn(
     exitCode: number
     stdout: string
     stderr: string
+    error: string | null
   }) => {
     const command = commands.value.find(c => c.procId === result.id)!
     command.result = result
+
+    if (result.error && !result.error.includes('exit status')) {
+      if (result.error.includes('The system cannot find the file specified.')) {
+        useToast().error(`[${command.name}] 檔案／路徑不存在`, {
+          position: 'top-left',
+          duration: 7000
+        })
+      } else {
+        useToast().error(`[${command.name}] ${result.error.split(':').slice(1).join(':').trim()}`, {
+          position: 'top-left',
+          duration: 7000
+        })
+      }
+    }
 
     if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
       command.status = 'failed'
@@ -72,6 +94,9 @@ runtime.EventsOn(
     } else {
       command.status = 'completed'
     }
+
+    // add delay to wait for other immediate returning commands
+    await new Promise(resolve => setTimeout(resolve, 300))
 
     await dispatchCommand()
     if (commands.value.every(cmd => cmd.status === 'completed')) {
@@ -87,20 +112,22 @@ async function dispatchCommand() {
         commands.value.filter(c => c.status === 'running').every(c => c.id != id)
       )
     ) {
-      return
+      continue
     }
 
     try {
+      console.log(`dispatched: ${cmd.name}`)
       const id = await executor.Run(cmd.program, cmd.options)
       cmd.procId = id
       cmd.status = 'running'
-    } catch {
+    } catch (error) {
       cmd.status = 'broken'
       cmd.result = {
         lapse: -1,
         exitCode: -1,
         stdout: '',
-        stderr: ''
+        stderr: '',
+        error: (error as Error).toString()
       }
     }
   }
@@ -114,13 +141,14 @@ function handleAbort(command: (typeof commands.value)[0]) {
       .then(() => {
         command.status = 'aborted'
       })
-      .catch(() => {
+      .catch(error => {
         command.status = 'broken'
         command.result = {
           lapse: -1,
           exitCode: -1,
           stdout: '',
-          stderr: ''
+          stderr: '',
+          error: error.toString()
         }
       })
   } else {
@@ -226,9 +254,11 @@ function handleAbort(command: (typeof commands.value)[0]) {
                   </template>
 
                   <template v-else>
-                    <span class="mx-1 px-1.5 bg-apple-green-600 rounded">完成</span>
+                    <div class="shrink-0 w-[4.1rem]">
+                      <span class="mx-1 px-1.5 bg-apple-green-600 rounded">完成</span>
+                    </div>
 
-                    <div class="text-xs text-gray-400 break-all line-clamp-2">
+                    <div class="text-xs text-gray-300 break-all line-clamp-2">
                       執行時間：{{ Math.round(command.result?.lapse ?? -1) }}秒
                     </div>
                   </template>
