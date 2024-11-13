@@ -103,6 +103,22 @@ function addClickOutsideHandler() {
         />
       </li>
 
+      <li class="py-2.5 px-4 text-sm" v-show="search === ''">
+        <label class="flex item-center w-full select-none cursor-pointer">
+          <input type="checkbox" value="set_password" v-model="value" class="me-1.5" />
+          <span class="mx-1 px-1.5 py-0.5 text-xs bg-orange-200 rounded">預設</span>
+          設定密碼
+        </label>
+      </li>
+
+      <li class="py-2.5 px-4 text-sm" v-show="search === ''">
+        <label class="flex item-center w-full select-none cursor-pointer">
+          <input type="checkbox" value="create_partition" v-model="value" class="me-1.5" />
+          <span class="mx-1 px-1.5 py-0.5 text-xs bg-orange-200 rounded">預設</span>
+          建立磁區
+        </label>
+      </li>
+
       <template v-for="dri in showOptions" :key="dri.id">
         <li class="py-2.5 px-4 text-sm">
           <label class="flex item-center w-full select-none cursor-pointer">
