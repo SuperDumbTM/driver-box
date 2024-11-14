@@ -28,6 +28,8 @@ let isParallel = false
 
 const lock = new AsyncLock()
 
+const $toast = useToast({ position: 'top-left', duration: 7000 })
+
 const show = ref(false)
 
 const commands = ref<
@@ -75,15 +77,9 @@ runtime.EventsOn(
 
     if (result.error && !result.error.includes('exit status')) {
       if (result.error.includes('The system cannot find the file specified.')) {
-        useToast().error(`[${command.name}] 檔案／路徑不存在`, {
-          position: 'top-left',
-          duration: 7000
-        })
+        $toast.error(`[${command.name}] 檔案／路徑不存在`)
       } else {
-        useToast().error(`[${command.name}] ${result.error.split(':').slice(1).join(':').trim()}`, {
-          position: 'top-left',
-          duration: 7000
-        })
+        $toast.error(`[${command.name}] ${result.error.split(':').slice(1).join(':').trim()}`)
       }
     }
 
@@ -98,8 +94,12 @@ runtime.EventsOn(
     }
 
     dispatchCommand().then(() => {
-      if (commands.value.every(cmd => cmd.status === 'completed')) {
+      if (commands.value.every(c => c.status === 'completed')) {
         emit('completed')
+      }
+
+      if (commands.value.every(c => !c.status.includes('ing'))) {
+        $toast.info('完成', { position: 'bottom-right' })
       }
     })
   }
@@ -108,12 +108,12 @@ runtime.EventsOn(
 async function dispatchCommand() {
   await lock.acquire('dispatch', async () => {
     const queue = commands.value
-      .filter(cmd => cmd.status === 'pending')
+      .filter(c => c.status === 'pending')
       .slice(0, isParallel ? undefined : 1)
 
-    for (const cmd of queue) {
+    for (const command of queue) {
       if (
-        !cmd.incompatibles.every(id =>
+        !command.incompatibles.every(id =>
           commands.value.filter(c => c.status === 'running').every(c => c.id != id)
         )
       ) {
@@ -121,12 +121,12 @@ async function dispatchCommand() {
       }
 
       try {
-        const id = await executor.Run(cmd.program, cmd.options)
-        cmd.procId = id
-        cmd.status = 'running'
+        const id = await executor.Run(command.program, command.options)
+        command.procId = id
+        command.status = 'running'
       } catch (error) {
-        cmd.status = 'broken'
-        cmd.result = {
+        command.status = 'broken'
+        command.result = {
           lapse: -1,
           exitCode: -1,
           stdout: '',
