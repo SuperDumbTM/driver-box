@@ -69,7 +69,7 @@ const dri = ref<{
               @click="
                 () => {
                   show = false
-                  dri = {}
+                  dri = { minExeTime: 5 }
                 }
               "
             >
