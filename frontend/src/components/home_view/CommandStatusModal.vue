@@ -155,7 +155,6 @@ function handleAbort(command: (typeof commands.value)[0]) {
         command.status = 'aborted'
       })
       .catch(error => {
-        console.log(error)
         command.status = 'broken'
         command.result = {
           lapse: -1,
@@ -241,7 +240,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
                   </template>
 
                   <template v-else-if="command.status == 'aborted'">
-                    <span class="mx-1 px-1.5 bg-gray-400 text-white rounded">已取消</span>
+                    <span class="mx-1 px-1.5 bg-yellow-400 rounded">已取消</span>
                   </template>
 
                   <template v-else-if="command.status == 'speeded' || command.status == 'failed'">
