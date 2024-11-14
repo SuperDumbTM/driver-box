@@ -59,15 +59,6 @@ const commands = ref<
   }>
 >([])
 
-window.onbeforeunload = (event: Event) => {
-  commands.value
-    .filter(c => c.status == 'pending' || c.status == 'running')
-    .forEach(cmd => {
-      handleAbort(cmd)
-    })
-  event.preventDefault()
-}
-
 runtime.EventsOn(
   'execute:exited',
   async (result: {
