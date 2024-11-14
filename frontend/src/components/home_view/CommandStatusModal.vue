@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import CrossIcon from '@/components/icons/CrossIcon.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import * as runtime from '@/wailsjs/runtime/runtime'
 import { useToast } from 'vue-toast-notification'
+import AsyncLock from 'async-lock'
 
 defineExpose({
   show: async (
@@ -14,7 +15,7 @@ defineExpose({
     isParallel = isParallel_
 
     commands.value = cmds.map(vals => ({ ...vals, status: 'pending' }))
-    await dispatchCommand()
+    dispatchCommand()
   },
   hide: () => {
     show.value = false
@@ -23,7 +24,9 @@ defineExpose({
 
 const emit = defineEmits<{ completed: [] }>()
 
-let isParallel: boolean = false
+let isParallel = false
+
+const lock = new AsyncLock()
 
 const show = ref(false)
 
@@ -56,10 +59,6 @@ const commands = ref<
   }>
 >([])
 
-const commandQueue = computed(() =>
-  commands.value.filter(cmd => cmd.status === 'pending').slice(0, isParallel ? undefined : 1)
-)
-
 window.onbeforeunload = (event: Event) => {
   commands.value
     .filter(c => c.status == 'pending' || c.status == 'running')
@@ -81,6 +80,8 @@ runtime.EventsOn(
   }) => {
     const command = commands.value.find(c => c.procId === result.id)!
     command.result = result
+
+    console.log(command.name, result)
 
     if (result.error && !result.error.includes('exit status')) {
       if (result.error.includes('The system cannot find the file specified.')) {
@@ -104,42 +105,45 @@ runtime.EventsOn(
       command.status = 'completed'
     }
 
-    // add delay to wait for other immediate returning commands
-    await new Promise(resolve => setTimeout(resolve, 300))
-
-    await dispatchCommand()
-    if (commands.value.every(cmd => cmd.status === 'completed')) {
-      emit('completed')
-    }
+    dispatchCommand().then(() => {
+      if (commands.value.every(cmd => cmd.status === 'completed')) {
+        emit('completed')
+      }
+    })
   }
 )
 
 async function dispatchCommand() {
-  for (const cmd of commandQueue.value) {
-    if (
-      !cmd.incompatibles.every(id =>
-        commands.value.filter(c => c.status === 'running').every(c => c.id != id)
-      )
-    ) {
-      continue
-    }
+  await lock.acquire('dispatch', async () => {
+    const queue = commands.value
+      .filter(cmd => cmd.status === 'pending')
+      .slice(0, isParallel ? undefined : 1)
 
-    try {
-      console.log(`dispatched: ${cmd.name}`)
-      const id = await executor.Run(cmd.program, cmd.options)
-      cmd.procId = id
-      cmd.status = 'running'
-    } catch (error) {
-      cmd.status = 'broken'
-      cmd.result = {
-        lapse: -1,
-        exitCode: -1,
-        stdout: '',
-        stderr: '',
-        error: (error as Error).toString()
+    for (const cmd of queue) {
+      if (
+        !cmd.incompatibles.every(id =>
+          commands.value.filter(c => c.status === 'running').every(c => c.id != id)
+        )
+      ) {
+        continue
+      }
+
+      try {
+        const id = await executor.Run(cmd.program, cmd.options)
+        cmd.procId = id
+        cmd.status = 'running'
+      } catch (error) {
+        cmd.status = 'broken'
+        cmd.result = {
+          lapse: -1,
+          exitCode: -1,
+          stdout: '',
+          stderr: '',
+          error: (error as Error).toString()
+        }
       }
     }
-  }
+  })
 }
 
 function handleAbort(command: (typeof commands.value)[0]) {
