@@ -14,7 +14,7 @@ import (
 
 type CommandExecutor struct {
 	ctx      context.Context
-	commands *xsync.MapOf[string, Command]
+	commands *xsync.MapOf[string, *Command]
 }
 
 func (ce *CommandExecutor) SetContext(ctx context.Context) {
@@ -23,7 +23,7 @@ func (ce *CommandExecutor) SetContext(ctx context.Context) {
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
 	if ce.commands == nil {
-		ce.commands = xsync.NewMapOf[string, Command]()
+		ce.commands = xsync.NewMapOf[string, *Command]()
 	}
 
 	cmdId := ""
@@ -46,7 +46,7 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 	command.cmd.Stdout = &command.stdout
 	command.cmd.Stderr = &command.stderr
 
-	ce.commands.Store(cmdId, command)
+	ce.commands.Store(cmdId, &command)
 
 	go ce.dispatch(cmdId, &command)
 
@@ -58,13 +58,13 @@ func (ce *CommandExecutor) Abort(id string) error {
 		return errors.New("execute: id not found")
 	} else {
 		if err := task.Stop(); err != nil {
-			return errors.New("execute: abort failed")
+			return errors.Join(errors.New("execute: abort failed"), err)
 		}
 		return nil
 	}
 }
 
-func (ce *CommandExecutor) dispatch(id string, command *Command) CommandResult {
+func (ce *CommandExecutor) dispatch(id string, command *Command) {
 	command.startTime = time.Now()
 	command.err = command.cmd.Run()
 
@@ -77,6 +77,7 @@ func (ce *CommandExecutor) dispatch(id string, command *Command) CommandResult {
 		command.err.Error(),
 	}
 
-	runtime.EventsEmit(ce.ctx, "execute:exited", result)
-	return result
+	if !command.aborted {
+		runtime.EventsEmit(ce.ctx, "execute:exited", result)
+	}
 }

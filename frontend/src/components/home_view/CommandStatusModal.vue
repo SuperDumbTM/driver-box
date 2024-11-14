@@ -147,7 +147,6 @@ async function dispatchCommand() {
 }
 
 function handleAbort(command: (typeof commands.value)[0]) {
-  console.log(command.name)
   if (command.procId !== undefined && command.procId !== '') {
     command.status = 'aborting'
     executor
@@ -156,6 +155,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
         command.status = 'aborted'
       })
       .catch(error => {
+        console.log(error)
         command.status = 'broken'
         command.result = {
           lapse: -1,
@@ -264,7 +264,12 @@ function handleAbort(command: (typeof commands.value)[0]) {
                       <span class="mx-1 px-1.5 bg-red-700 text-white rounded">錯誤</span>
                     </div>
 
-                    <div class="text-sm break-all line-clamp-2">程式出錯，未能執行</div>
+                    <div class="text-sm break-all line-clamp-2">
+                      {{
+                        command.result?.error?.split(':').slice(1).join(':').trim() ??
+                        '程式出錯，未能執行'
+                      }}
+                    </div>
                   </template>
 
                   <template v-else>
