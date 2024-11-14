@@ -76,7 +76,10 @@ runtime.EventsOn(
     command.result = result
 
     if (result.error && !result.error.includes('exit status')) {
-      if (result.error.includes('The system cannot find the file specified.')) {
+      if (
+        result.error.includes('The system cannot find the file specified.') ||
+        result.error.includes('The system cannot find the path specified.')
+      ) {
         $toast.error(`[${command.name}] 檔案／路徑不存在`)
       } else {
         $toast.error(`[${command.name}] ${result.error.split(':').slice(1).join(':').trim()}`)
