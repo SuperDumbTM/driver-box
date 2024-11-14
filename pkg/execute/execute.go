@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"os/exec"
-	"time"
 
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -26,31 +25,16 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 		ce.commands = xsync.NewMapOf[string, *commandWrapper]()
 	}
 
-	cmdId := ""
-	for cmdId == "" {
-		b := make([]byte, 4)
-		if _, err := rand.Read(b); err != nil {
-			continue
-		}
-
-		id := hex.EncodeToString(b)
-		if _, ok := ce.commands.Load(id); ok {
-			continue
-		}
-		cmdId = id
-	}
-
-	command := commandWrapper{
-		cmd: exec.Command(program, options...),
-	}
+	command := commandWrapper{cmd: exec.Command(program, options...)}
 	command.cmd.Stdout = &command.stdout
 	command.cmd.Stderr = &command.stderr
 
-	ce.commands.Store(cmdId, &command)
+	id := ce.generateId()
+	ce.commands.Store(id, &command)
 
-	go ce.dispatch(cmdId, &command)
+	go ce.dispatch(id)
 
-	return cmdId
+	return id
 }
 
 func (ce *CommandExecutor) Abort(id string) error {
@@ -64,17 +48,37 @@ func (ce *CommandExecutor) Abort(id string) error {
 	}
 }
 
-func (ce *CommandExecutor) dispatch(id string, command *commandWrapper) {
-	command.startTime = time.Now()
-	err := command.cmd.Run()
+func (ce *CommandExecutor) dispatch(id string) {
+	if command, ok := ce.commands.Load(id); !ok {
+		panic("execute: id not found")
+	} else {
+		err := command.Run()
+		runtime.EventsEmit(ce.ctx, "execute:exited", CommandResult{
+			id,
+			command.Lapse(),
+			command.cmd.ProcessState.ExitCode(),
+			command.stdout.String(),
+			command.stderr.String(),
+			err.Error(),
+			command.aborted,
+		})
+	}
+}
 
-	runtime.EventsEmit(ce.ctx, "execute:exited", CommandResult{
-		id,
-		command.Lapse(),
-		command.cmd.ProcessState.ExitCode(),
-		command.stdout.String(),
-		command.stderr.String(),
-		err.Error(),
-		command.aborted,
-	})
+func (ce CommandExecutor) generateId() string {
+	id := ""
+	for id == "" {
+		b := make([]byte, 4)
+		if _, err := rand.Read(b); err != nil {
+			continue
+		}
+
+		tmpId := hex.EncodeToString(b)
+		if _, ok := ce.commands.Load(tmpId); ok {
+			continue
+		}
+
+		id = tmpId
+	}
+	return id
 }

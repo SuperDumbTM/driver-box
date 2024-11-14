@@ -32,6 +32,11 @@ func (t *commandWrapper) Start() error {
 	return t.cmd.Start()
 }
 
+func (t *commandWrapper) Run() error {
+	t.startTime = time.Now()
+	return t.cmd.Run()
+}
+
 func (t *commandWrapper) Stop() error {
 	if t.cmd.Process == nil {
 		panic("execute: called Stop before command started")
