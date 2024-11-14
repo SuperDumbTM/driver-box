@@ -68,11 +68,10 @@ runtime.EventsOn(
     stdout: string
     stderr: string
     error: string | null
+    aborted: boolean
   }) => {
     const command = commands.value.find(c => c.procId === result.id)!
     command.result = result
-
-    console.log(command.name, result)
 
     if (result.error && !result.error.includes('exit status')) {
       if (result.error.includes('The system cannot find the file specified.')) {
@@ -88,7 +87,9 @@ runtime.EventsOn(
       }
     }
 
-    if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
+    if (result.aborted) {
+      command.status = 'aborted'
+    } else if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
       command.status = 'failed'
     } else if (result.lapse < command.minExeTime) {
       command.status = 'speeded'

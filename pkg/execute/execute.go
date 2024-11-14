@@ -68,16 +68,13 @@ func (ce *CommandExecutor) dispatch(id string, command *Command) {
 	command.startTime = time.Now()
 	command.err = command.cmd.Run()
 
-	result := CommandResult{
+	runtime.EventsEmit(ce.ctx, "execute:exited", CommandResult{
 		id,
 		command.Lapse(),
 		command.cmd.ProcessState.ExitCode(),
 		command.stdout.String(),
 		command.stderr.String(),
 		command.err.Error(),
-	}
-
-	if !command.aborted {
-		runtime.EventsEmit(ce.ctx, "execute:exited", result)
-	}
+		command.aborted,
+	})
 }

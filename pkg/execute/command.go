@@ -16,6 +16,7 @@ type CommandResult struct {
 	Stdout   string  `json:"stdout"`
 	Stderr   string  `json:"stderr"`
 	Error    string  `json:"error"`
+	Aborted  bool    `json:"aborted"`
 }
 
 type Command struct {
