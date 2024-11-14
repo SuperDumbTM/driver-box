@@ -18,6 +18,11 @@ type DriverManager struct {
 func (m *DriverManager) Read() ([]Driver, error) {
 	if !m.loaded {
 		var drivers []Driver
+
+		if _, err := os.Stat(m.Path); err != nil {
+			os.WriteFile(m.Path, []byte("[]"), os.ModePerm)
+		}
+
 		bytes, err := os.ReadFile(m.Path)
 		if err != nil {
 			return nil, err

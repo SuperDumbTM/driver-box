@@ -14,13 +14,18 @@ type AppSettingManager struct {
 func (s *AppSettingManager) Read() (AppSetting, error) {
 	if !s.loaded {
 		var setting AppSetting
+
+		if _, err := os.Stat(s.Path); err != nil {
+			s.Update(AppSetting{SuccessAction: Nothing})
+		}
+
 		bytes, err := os.ReadFile(s.Path)
 		if err != nil {
-			setting = AppSetting{SuccessAction: Nothing}
+			return AppSetting{}, err
 		}
 
 		if err := json.Unmarshal(bytes, &setting); err != nil {
-			setting = AppSetting{SuccessAction: Nothing}
+			return AppSetting{}, err
 		}
 
 		if setting.SuccessAction == "" {

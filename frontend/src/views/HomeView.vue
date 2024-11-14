@@ -37,14 +37,14 @@ manager
   .Read()
   .then(d => (drivers.value = d))
   .catch(() => {
-    $toast.error('無法讀取軀動資料')
+    $toast.error('無法讀取軀動資料，重新設定或可解決問題。')
   })
 
 app_manager
   .Read()
   .then(s => (settings.value = s))
   .catch(() => {
-    $toast.error('無法讀預設選項資料')
+    $toast.error('無法讀預設選項資料，重新設定或可解決問題。')
   })
 
 Promise.all([
