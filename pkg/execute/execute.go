@@ -66,7 +66,7 @@ func (ce *CommandExecutor) Abort(id string) error {
 
 func (ce *CommandExecutor) dispatch(id string, command *Command) {
 	command.startTime = time.Now()
-	command.err = command.cmd.Run()
+	err := command.cmd.Run()
 
 	runtime.EventsEmit(ce.ctx, "execute:exited", CommandResult{
 		id,
@@ -74,7 +74,7 @@ func (ce *CommandExecutor) dispatch(id string, command *Command) {
 		command.cmd.ProcessState.ExitCode(),
 		command.stdout.String(),
 		command.stderr.String(),
-		command.err.Error(),
+		err.Error(),
 		command.aborted,
 	})
 }

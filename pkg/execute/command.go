@@ -24,13 +24,12 @@ type Command struct {
 	startTime time.Time
 	stdout    bytes.Buffer
 	stderr    bytes.Buffer
-	err       error
 	aborted   bool
 }
 
-func (t *Command) Start() {
+func (t *Command) Start() error {
 	t.startTime = time.Now()
-	t.err = t.cmd.Start()
+	return t.cmd.Start()
 }
 
 func (t *Command) Stop() error {
