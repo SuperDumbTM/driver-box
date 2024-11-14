@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"os/exec"
 
 	"github.com/puzpuzpuz/xsync/v3"
@@ -59,7 +60,7 @@ func (ce *CommandExecutor) dispatch(id string) {
 			command.cmd.ProcessState.ExitCode(),
 			command.stdout.String(),
 			command.stderr.String(),
-			err.Error(),
+			fmt.Sprint(err),
 			command.aborted,
 		})
 	}
