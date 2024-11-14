@@ -14,7 +14,7 @@ import (
 
 type CommandExecutor struct {
 	ctx      context.Context
-	commands *xsync.MapOf[string, *Command]
+	commands *xsync.MapOf[string, *commandWrapper]
 }
 
 func (ce *CommandExecutor) SetContext(ctx context.Context) {
@@ -23,7 +23,7 @@ func (ce *CommandExecutor) SetContext(ctx context.Context) {
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
 	if ce.commands == nil {
-		ce.commands = xsync.NewMapOf[string, *Command]()
+		ce.commands = xsync.NewMapOf[string, *commandWrapper]()
 	}
 
 	cmdId := ""
@@ -40,7 +40,7 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 		cmdId = id
 	}
 
-	command := Command{
+	command := commandWrapper{
 		cmd: exec.Command(program, options...),
 	}
 	command.cmd.Stdout = &command.stdout
@@ -64,7 +64,7 @@ func (ce *CommandExecutor) Abort(id string) error {
 	}
 }
 
-func (ce *CommandExecutor) dispatch(id string, command *Command) {
+func (ce *CommandExecutor) dispatch(id string, command *commandWrapper) {
 	command.startTime = time.Now()
 	err := command.cmd.Run()
 

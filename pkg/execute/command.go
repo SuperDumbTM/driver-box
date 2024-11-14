@@ -19,7 +19,7 @@ type CommandResult struct {
 	Aborted  bool    `json:"aborted"`
 }
 
-type Command struct {
+type commandWrapper struct {
 	cmd       *exec.Cmd
 	startTime time.Time
 	stdout    bytes.Buffer
@@ -27,12 +27,12 @@ type Command struct {
 	aborted   bool
 }
 
-func (t *Command) Start() error {
+func (t *commandWrapper) Start() error {
 	t.startTime = time.Now()
 	return t.cmd.Start()
 }
 
-func (t *Command) Stop() error {
+func (t *commandWrapper) Stop() error {
 	if t.cmd.Process == nil {
 		panic("execute: called Stop before command started")
 	}
@@ -59,10 +59,9 @@ func (t *Command) Stop() error {
 
 		return errorChain
 	}
-
 }
 
-func (t Command) Lapse() float32 {
+func (t commandWrapper) Lapse() float32 {
 	if t.startTime.Year() == 1 {
 		return -1.0
 	}
