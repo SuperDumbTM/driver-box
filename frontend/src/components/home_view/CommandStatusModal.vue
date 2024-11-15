@@ -117,8 +117,7 @@ async function dispatchCommand() {
       }
 
       try {
-        const id = await executor.Run(command.program, command.options)
-        command.procId = id
+        command.procId = await executor.Run(command.program, command.options)
         command.status = 'running'
       } catch (error) {
         command.status = 'broken'
