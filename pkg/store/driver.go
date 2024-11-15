@@ -95,6 +95,18 @@ func (m *DriverManager) Remove(driver Driver) error {
 		return err
 	} else {
 		m.drivers = append(m.drivers[:index], m.drivers[index+1:]...)
+
+		for i := range m.drivers {
+			var incompatibles []string
+			for _, id := range m.drivers[i].Incompatibles {
+				if id == driver.Id {
+					continue
+				}
+				incompatibles = append(incompatibles, id)
+			}
+			m.drivers[i].Incompatibles = incompatibles
+		}
+
 		return m.write()
 	}
 }
