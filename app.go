@@ -36,7 +36,12 @@ func (a *App) SelectFile(relative bool) (string, error) {
 
 }
 
-func (a *App) RunCommand(program string, options []string) (string, error) {
+func (a App) RunCommand(program string, options []string) (string, error) {
 	output, err := exec.Command(program, options...).Output()
 	return string(output), err
+}
+
+func (a App) PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err != nil
 }
