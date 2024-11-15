@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"os/exec"
 
 	"github.com/puzpuzpuz/xsync/v3"
@@ -53,14 +52,18 @@ func (ce *CommandExecutor) dispatch(id string) {
 	if command, ok := ce.commands.Load(id); !ok {
 		panic("execute: id not found")
 	} else {
-		err := command.Run()
+		var errMsg string
+		if err := command.Run(); err != nil {
+			errMsg = err.Error()
+		}
+
 		runtime.EventsEmit(ce.ctx, "execute:exited", id, CommandResult{
 			id,
 			command.Lapse(),
 			command.cmd.ProcessState.ExitCode(),
 			command.stdout.String(),
 			command.stderr.String(),
-			fmt.Sprint(err),
+			errMsg,
 			command.aborted,
 		})
 	}
