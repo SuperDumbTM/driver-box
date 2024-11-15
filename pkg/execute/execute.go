@@ -54,7 +54,7 @@ func (ce *CommandExecutor) dispatch(id string) {
 		panic("execute: id not found")
 	} else {
 		err := command.Run()
-		runtime.EventsEmit(ce.ctx, "execute:exited", CommandResult{
+		runtime.EventsEmit(ce.ctx, "execute:exited", id, CommandResult{
 			id,
 			command.Lapse(),
 			command.cmd.ProcessState.ExitCode(),

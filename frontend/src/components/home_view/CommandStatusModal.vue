@@ -56,26 +56,19 @@ const commands = ref<
       exitCode: number
       stdout: string
       stderr: string
-      error: string | null
+      error: string
+      aborted: boolean
     }
   }>
 >([])
 
 runtime.EventsOn(
   'execute:exited',
-  async (result: {
-    id: string
-    lapse: number
-    exitCode: number
-    stdout: string
-    stderr: string
-    error: string | null
-    aborted: boolean
-  }) => {
-    const command = commands.value.find(c => c.procId === result.id)!
+  async (id: string, result: NonNullable<(typeof commands.value)[0]['result']>) => {
+    const command = commands.value.find(c => c.procId === id)!
     command.result = result
 
-    if (result.error && !result.error.includes('exit status')) {
+    if (result.error !== '' && !result.error.includes('exit status')) {
       if (
         result.error.includes('The system cannot find the file specified.') ||
         result.error.includes('The system cannot find the path specified.')
@@ -134,7 +127,8 @@ async function dispatchCommand() {
           exitCode: -1,
           stdout: '',
           stderr: '',
-          error: (error as Error).toString()
+          error: (error as Error).toString(),
+          aborted: false
         }
       }
     }
@@ -156,7 +150,8 @@ function handleAbort(command: (typeof commands.value)[0]) {
           exitCode: -1,
           stdout: '',
           stderr: '',
-          error: error.toString()
+          error: error.toString(),
+          aborted: false
         }
       })
   } else {
