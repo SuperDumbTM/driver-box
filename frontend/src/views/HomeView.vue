@@ -210,10 +210,8 @@ async function handleSubmit() {
       </template>
     </div>
 
-    <hr class="my-3" />
-
-    <form class="flex gap-x-3 h-28" ref="form">
-      <div class="flex flex-col flex-1 gap-y-3 justify-around">
+    <form class="flex gap-x-3 h-28 mt-3" ref="form">
+      <div class="flex flex-col flex-1 gap-y-3 justify-around text-sm">
         <div class="relative w-full">
           <select
             name="network"
@@ -265,14 +263,14 @@ async function handleSubmit() {
               :key="d.id"
             >
               <!-- <label class="ms-2 text-sm text-gray-900"> -->
-              <label class="flex items-center w-full my-1 select-none cursor-pointer">
+              <label class="flex items-center w-full select-none cursor-pointer">
                 <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
                 {{ d.name }}
               </label>
             </template>
           </div>
           <label
-            class="absolute left-3 top-0 w-10 origin-[0_0] -translate-y-[0.55rem] bg-white text-primary scale-[0.9] text-center text-neutral-500 truncate pointer-events-none"
+            class="absolute left-3 top-0 w-10 origin-[0_0] -translate-y-[0.55rem] bg-white text-primary scale-[0.9] text-xs text-center text-neutral-500 truncate pointer-events-none"
           >
             其他
           </label>
@@ -284,10 +282,10 @@ async function handleSubmit() {
 
     <div class="flex gap-x-6">
       <div class="flex flex-col">
-        <fieldset>
-          <p class="font-bold">額外工作</p>
+        <p class="font-bold">額外工作及安裝設定</p>
 
-          <div class="flex gap-x-3">
+        <div class="flex flex-col">
+          <div class="flex gap-x-4">
             <div class="flex items-center mb-4">
               <label class="flex item-center w-full select-none cursor-pointer">
                 <input
@@ -300,42 +298,48 @@ async function handleSubmit() {
               </label>
             </div>
 
-            <div class="flex items-center mb-4">
-              <label class="flex item-center w-full select-none cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="set_password"
-                  v-model="settings.set_password"
-                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                設定密碼
-              </label>
+            <div class="flex gap-x-3">
+              <div class="flex items-center mb-4">
+                <!-- <label class="ms-2 text-sm"> -->
+                <label class="flex item-center w-full select-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="parallel_install"
+                    v-model="settings.parallel_install"
+                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  同步安裝
+                </label>
+              </div>
             </div>
           </div>
-        </fieldset>
 
-        <fieldset>
-          <p class="font-bold">安裝設定</p>
+          <div class="flex items-center gap-x-2">
+            <label class="flex item-center select-none cursor-pointer">
+              <input
+                type="checkbox"
+                name="set_password"
+                v-model="settings.set_password"
+                class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              設定密碼
+            </label>
 
-          <div class="flex gap-x-3">
-            <div class="flex items-center mb-4">
-              <!-- <label class="ms-2 text-sm"> -->
-              <label class="flex item-center w-full select-none cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="parallel_install"
-                  v-model="settings.parallel_install"
-                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                同步安裝
-              </label>
+            <div class="flex shrink">
+              <input
+                type="text"
+                name="password"
+                v-model="settings.password"
+                class="max-w-28 p-1.5 text-xs border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                :disabled="!settings.set_password"
+              />
             </div>
           </div>
-        </fieldset>
+        </div>
       </div>
 
       <div class="flex flex-col grow justify-between">
-        <fieldset class="w-full">
+        <fieldset>
           <label class="block mb-1 text-sm font-bold text-gray-900">關機設定</label>
           <select
             name="success_action"
