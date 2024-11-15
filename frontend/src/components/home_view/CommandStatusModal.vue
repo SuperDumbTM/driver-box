@@ -70,6 +70,7 @@ runtime.EventsOn(
 
     if (result.error !== '' && !result.error.includes('exit status')) {
       if (
+        result.error.includes('file does not exist') ||
         result.error.includes('The system cannot find the file specified.') ||
         result.error.includes('The system cannot find the path specified.')
       ) {
