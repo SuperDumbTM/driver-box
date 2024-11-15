@@ -235,22 +235,25 @@ function handleAbort(command: (typeof commands.value)[0]) {
 
                   <template v-else-if="command.status == 'speeded' || command.status == 'failed'">
                     <div class="shrink-0 w-[4.1rem]">
-                      <span class="mx-1 px-1.5 bg-red-300 rounded">失敗</span>
+                      <span class="align-middle mx-1 px-1.5 bg-red-300 rounded">失敗</span>
                     </div>
 
                     <div class="text-sm break-all line-clamp-2">
-                      <template v-if="command.status == 'failed'">
-                        狀態碼：{{ command.result?.exitCode }}
-                      </template>
-                      <template v-else>
-                        執行時間過短（{{ Math.round(command.result?.lapse ?? -1) }}秒）
-                      </template>
+                      狀態碼：{{ command.result?.exitCode }}
+
+                      <p v-if="command.status == 'speeded'" class="text-xs text-orange-300">
+                        執行時間過短（{{
+                          `${(command.result?.lapse ?? -1).toFixed(1)}/${command.minExeTime}`
+                        }}秒）
+                      </p>
                     </div>
                   </template>
 
                   <template v-else-if="command.status == 'broken'">
                     <div class="shrink-0 w-[4.1rem]">
-                      <span class="mx-1 px-1.5 bg-red-700 text-white rounded">錯誤</span>
+                      <span class="align-middle mx-1 px-1.5 bg-red-700 text-white rounded">
+                        錯誤
+                      </span>
                     </div>
 
                     <div class="text-sm break-all line-clamp-2">
