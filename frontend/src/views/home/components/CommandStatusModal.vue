@@ -243,7 +243,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
                         狀態碼：{{ command.result?.exitCode }}
                       </template>
                       <template v-else>
-                        執行時間過快（{{ Math.round(command.result?.lapse ?? -1) }}秒）
+                        執行時間過短（{{ Math.round(command.result?.lapse ?? -1) }}秒）
                       </template>
                     </div>
                   </template>
