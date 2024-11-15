@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import InputModal from '@/components/driver_view/InputModal.vue'
+import CopyIcon from '@/components/icons/CopyIcon.vue'
 import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
-import * as manager from '@/wailsjs/go/store/DriverManager'
+import InputModal from '@/views/driver/components/InputModal.vue'
 import { store } from '@/wailsjs/go/models'
+import * as manager from '@/wailsjs/go/store/DriverManager'
 import { ref } from 'vue'
-import CopyIcon from '@/components/icons/CopyIcon.vue'
 import { useToast } from 'vue-toast-notification'
 
 const $toast = useToast({ position: 'top-right' })

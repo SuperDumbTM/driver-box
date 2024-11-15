@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/home/HomeView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -12,12 +12,12 @@ const router = createRouter({
     {
       path: '/drivers',
       name: 'driver',
-      component: () => import('../views/DriverView.vue')
+      component: () => import('../views/driver/DriverView.vue')
     },
     {
       path: '/settings',
       name: 'setting',
-      component: () => import('../views/AppSettingView.vue')
+      component: () => import('../views/app_setting/AppSettingView.vue')
     }
   ]
 })

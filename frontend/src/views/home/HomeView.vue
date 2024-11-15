@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import * as manager from '@/wailsjs/go/store/DriverManager'
-import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
-import { store, sysinfo } from '@/wailsjs/go/models'
-import { ref, useTemplateRef } from 'vue'
-import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
-import CommandStatueModal from '@/components/home_view/CommandStatusModal.vue'
+import CommandStatueModal from '@/views/home/components/CommandStatusModal.vue'
 import { RunCommand } from '@/wailsjs/go/main/App'
+import { store, sysinfo } from '@/wailsjs/go/models'
+import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
+import * as manager from '@/wailsjs/go/store/DriverManager'
+import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
+import { ref, useTemplateRef } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 const statusModal = useTemplateRef('statusModal')

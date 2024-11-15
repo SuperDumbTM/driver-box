@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import IncompatibleDriverSelector from '@/components/driver_view/IncompatibleDriverSelector.vue'
+import CrossIcon from '@/components/icons/CrossIcon.vue'
+import { flags } from '@/definitions/flags'
 import { SelectFile } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import { ref } from 'vue'
-import CrossIcon from '../icons/CrossIcon.vue'
-import { flags } from '@/definitions/flags'
+import IncompatibleDriverSelector from './IncompatibleDriverSelector.vue'
 
 defineProps<{ drivers: Array<store.Driver> }>()
 

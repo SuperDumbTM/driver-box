@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import CrossIcon from '@/components/icons/CrossIcon.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import * as runtime from '@/wailsjs/runtime/runtime'
-import { useToast } from 'vue-toast-notification'
 import AsyncLock from 'async-lock'
+import { ref } from 'vue'
+import { useToast } from 'vue-toast-notification'
 
 defineExpose({
   show: async (
