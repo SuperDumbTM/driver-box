@@ -97,7 +97,7 @@ async function handleSubmit() {
           : '(new-object System.Security.SecureString)'
       ],
       minExeTime: 1,
-      allowRtCodes: [0],
+      allowRtCodes: [0, 1],
       incompatibles: []
     })
   }
@@ -111,7 +111,7 @@ async function handleSubmit() {
         'Get-Disk | Where-Object PartitionStyle -Eq "RAW" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume'
       ],
       minExeTime: 1,
-      allowRtCodes: [0],
+      allowRtCodes: [0, 1],
       incompatibles: []
     })
   }
