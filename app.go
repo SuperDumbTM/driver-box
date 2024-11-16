@@ -13,6 +13,11 @@ type App struct {
 	ctx context.Context
 }
 
+type CommandResult struct {
+	Stdout   string `json:"stdout"`
+	ExitCode int    `json:"exitCode"`
+}
+
 func NewApp() *App {
 	return &App{}
 }
@@ -36,9 +41,14 @@ func (a *App) SelectFile(relative bool) (string, error) {
 
 }
 
-func (a App) RunCommand(program string, options []string) (string, error) {
-	output, err := exec.Command(program, options...).Output()
-	return string(output), err
+func (a *App) RunCommand(program string, options []string) (CommandResult, error) {
+	if stdout, err := exec.Command(program, options...).CombinedOutput(); err == nil {
+		return CommandResult{string(stdout), 0}, err
+	} else if exterr, ok := err.(*exec.ExitError); ok {
+		return CommandResult{string(stdout), exterr.ExitCode()}, nil
+	} else {
+		return CommandResult{string(stdout), -1}, err
+	}
 }
 
 func (a App) PathExists(path string) bool {

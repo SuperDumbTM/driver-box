@@ -90,7 +90,7 @@ async function handleSubmit() {
       program: 'powershell',
       options: [
         'Set-LocalUser',
-        (await RunCommand('powershell', ['$Env:UserName'])).trim(),
+        (await RunCommand('powershell', ['$Env:UserName'])).stdout.trim(),
         '-Password',
         settings.value.parallel_install.toString().length > 0
           ? `ConverTo-SecureString ${settings.value.parallel_install} -AsPlainText -Force")`
