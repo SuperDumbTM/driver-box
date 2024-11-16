@@ -18,13 +18,10 @@ type CommandExecutor struct {
 
 func (ce *CommandExecutor) SetContext(ctx context.Context) {
 	ce.ctx = ctx
+	ce.commands = xsync.NewMapOf[string, *commandWrapper]()
 }
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
-	if ce.commands == nil {
-		ce.commands = xsync.NewMapOf[string, *commandWrapper]()
-	}
-
 	command := commandWrapper{cmd: exec.Command(program, options...)}
 	command.cmd.Stdout = &command.stdout
 	command.cmd.Stderr = &command.stderr
