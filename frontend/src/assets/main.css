@@ -1,5 +1,14 @@
 @import './base.css';
 
+@font-face {
+  font-family: 'Noto Sans TC';
+  src: url('./fonts/NotoSansTC-VariableFont_wght.ttf');
+}
+
+body {
+  font-family: 'Noto Sans TC';
+}
+
 input[type='checkbox'] {
   accent-color: theme('colors.powder-blue.700');
 }
