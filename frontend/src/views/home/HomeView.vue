@@ -389,7 +389,11 @@ async function handleSubmit() {
           case store.SuccessAction.REBOOT:
             executor.RunAndOutput('cmd', ['/C', 'shutdown /r /t 5'])
           case store.SuccessAction.FIRMWARE:
-            executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5'])
+            executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5']).then(result => {
+              if (result.exitCode != 0) {
+                executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5'])
+              }
+            })
         }
       }
     "
