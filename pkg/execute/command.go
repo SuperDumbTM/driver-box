@@ -10,7 +10,6 @@ import (
 )
 
 type CommandResult struct {
-	Id       string  `json:"id"`
 	Lapse    float32 `json:"lapse"`
 	ExitCode int     `json:"exitCode"`
 	Stdout   string  `json:"stdout"`
@@ -71,4 +70,11 @@ func (t commandWrapper) Lapse() float32 {
 		return -1.0
 	}
 	return float32(time.Since(t.startTime).Milliseconds()) / 1000
+}
+
+func newCommandWrapper(program string, options []string) *commandWrapper {
+	wrapper := commandWrapper{cmd: exec.Command(program, options...)}
+	wrapper.cmd.Stdout = &wrapper.stdout
+	wrapper.cmd.Stderr = &wrapper.stderr
+	return &wrapper
 }

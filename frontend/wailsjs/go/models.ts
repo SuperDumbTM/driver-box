@@ -1,8 +1,12 @@
-export namespace main {
+export namespace execute {
 	
 	export class CommandResult {
-	    stdout: string;
+	    lapse: number;
 	    exitCode: number;
+	    stdout: string;
+	    stderr: string;
+	    error: string;
+	    aborted: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new CommandResult(source);
@@ -10,8 +14,12 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.stdout = source["stdout"];
+	        this.lapse = source["lapse"];
 	        this.exitCode = source["exitCode"];
+	        this.stdout = source["stdout"];
+	        this.stderr = source["stderr"];
+	        this.error = source["error"];
+	        this.aborted = source["aborted"];
 	    }
 	}
 

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -11,11 +10,6 @@ import (
 
 type App struct {
 	ctx context.Context
-}
-
-type CommandResult struct {
-	Stdout   string `json:"stdout"`
-	ExitCode int    `json:"exitCode"`
 }
 
 func NewApp() *App {
@@ -39,16 +33,6 @@ func (a *App) SelectFile(relative bool) (string, error) {
 		return path, nil
 	}
 
-}
-
-func (a *App) RunCommand(program string, options []string) (CommandResult, error) {
-	if stdout, err := exec.Command(program, options...).CombinedOutput(); err == nil {
-		return CommandResult{string(stdout), 0}, err
-	} else if exterr, ok := err.(*exec.ExitError); ok {
-		return CommandResult{string(stdout), exterr.ExitCode()}, nil
-	} else {
-		return CommandResult{string(stdout), -1}, err
-	}
 }
 
 func (a App) PathExists(path string) bool {

@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"os/exec"
 
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -22,16 +21,32 @@ func (ce *CommandExecutor) SetContext(ctx context.Context) {
 }
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
-	command := commandWrapper{cmd: exec.Command(program, options...)}
-	command.cmd.Stdout = &command.stdout
-	command.cmd.Stderr = &command.stderr
-
 	id := ce.generateId()
-	ce.commands.Store(id, &command)
+	ce.commands.Store(id, newCommandWrapper(program, options))
 
 	go ce.dispatch(id)
 
 	return id
+}
+
+func (ce *CommandExecutor) RunAndOutput(program string, options []string) CommandResult {
+	var (
+		errMsg  string
+		command = newCommandWrapper(program, options)
+	)
+
+	if err := command.Run(); err != nil {
+		errMsg = err.Error()
+	}
+
+	return CommandResult{
+		command.Lapse(),
+		command.cmd.ProcessState.ExitCode(),
+		command.stdout.String(),
+		command.stderr.String(),
+		errMsg,
+		command.aborted,
+	}
 }
 
 func (ce *CommandExecutor) Abort(id string) error {
@@ -55,7 +70,6 @@ func (ce *CommandExecutor) dispatch(id string) {
 		}
 
 		runtime.EventsEmit(ce.ctx, "execute:exited", id, CommandResult{
-			id,
 			command.Lapse(),
 			command.cmd.ProcessState.ExitCode(),
 			command.stdout.String(),

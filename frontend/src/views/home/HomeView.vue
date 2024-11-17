@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CommandStatueModal from '@/views/home/components/CommandStatusModal.vue'
-import { RunCommand } from '@/wailsjs/go/main/App'
+import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import { store, sysinfo } from '@/wailsjs/go/models'
 import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import * as manager from '@/wailsjs/go/store/DriverManager'
@@ -90,7 +90,7 @@ async function handleSubmit() {
       program: 'powershell',
       options: [
         'Set-LocalUser',
-        (await RunCommand('powershell', ['$Env:UserName'])).stdout.trim(),
+        (await executor.RunAndOutput('powershell', ['$Env:UserName'])).stdout.trim(),
         '-Password',
         settings.value.parallel_install.toString().length > 0
           ? `ConverTo-SecureString ${settings.value.parallel_install} -AsPlainText -Force")`
@@ -385,11 +385,11 @@ async function handleSubmit() {
 
         switch (settings.success_action) {
           case store.SuccessAction.SHUTDOWN:
-            RunCommand('cmd', ['/C', 'shutdown /s /t 5'])
+            executor.RunAndOutput('cmd', ['/C', 'shutdown /s /t 5'])
           case store.SuccessAction.REBOOT:
-            RunCommand('cmd', ['/C', 'shutdown /r /t 5'])
+            executor.RunAndOutput('cmd', ['/C', 'shutdown /r /t 5'])
           case store.SuccessAction.FIRMWARE:
-            RunCommand('cmd', ['/C', 'shutdown /r /fw /t 5'])
+            executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5'])
         }
       }
     "
