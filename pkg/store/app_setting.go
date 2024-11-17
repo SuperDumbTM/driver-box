@@ -49,11 +49,13 @@ func (s *AppSettingManager) Update(setting AppSetting) error {
 }
 
 type AppSetting struct {
-	CreatePartition bool          `json:"create_partition"`
-	SetPassword     bool          `json:"set_password"`
-	Password        string        `json:"password"`
-	ParallelInstall bool          `json:"parallel_install"`
-	SuccessAction   SuccessAction `json:"success_action"`
+	CreatePartition    bool          `json:"create_partition"`
+	SetPassword        bool          `json:"set_password"`
+	Password           string        `json:"password"`
+	ParallelInstall    bool          `json:"parallel_install"`
+	SuccessAction      SuccessAction `json:"success_action"`
+	FilterMiniportNic  bool          `json:"filter_miniport_nic"`
+	FilterMicrosoftNic bool          `json:"filter_microsoft_nic"`
 }
 
 type SuccessAction string

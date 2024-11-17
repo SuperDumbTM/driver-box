@@ -44,6 +44,8 @@ export namespace store {
 	    password: string;
 	    parallel_install: boolean;
 	    success_action: SuccessAction;
+	    filter_miniport_nic: boolean;
+	    filter_microsoft_nic: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new AppSetting(source);
@@ -56,6 +58,8 @@ export namespace store {
 	        this.password = source["password"];
 	        this.parallel_install = source["parallel_install"];
 	        this.success_action = source["success_action"];
+	        this.filter_miniport_nic = source["filter_miniport_nic"];
+	        this.filter_microsoft_nic = source["filter_microsoft_nic"];
 	    }
 	}
 	export class Driver {

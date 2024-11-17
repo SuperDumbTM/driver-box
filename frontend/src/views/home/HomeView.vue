@@ -21,7 +21,9 @@ const settings = ref<store.AppSetting>({
   set_password: false,
   password: '',
   parallel_install: false,
-  success_action: store.SuccessAction.NOTHING
+  success_action: store.SuccessAction.NOTHING,
+  filter_miniport_nic: true,
+  filter_microsoft_nic: true
 })
 
 const hwinfos = ref<{
@@ -188,13 +190,27 @@ async function handleSubmit() {
         <div>
           <h2 class="text-sm font-bold">網絡介面卡</h2>
 
-          <p v-for="(dp, i) in hwinfos.nic" :key="i" class="text-sm">
+          <p
+            v-for="(dp, i) in hwinfos.nic
+              .filter(
+                n =>
+                  !settings.filter_miniport_nic ||
+                  (settings.filter_miniport_nic && !n.Name.includes('Miniport'))
+              )
+              .filter(
+                n =>
+                  !settings.filter_microsoft_nic ||
+                  (settings.filter_microsoft_nic && !n.Name.includes('Microsoft'))
+              )"
+            :key="i"
+            class="text-sm"
+          >
             {{ dp.Name }}
           </p>
         </div>
 
         <div>
-          <h2 class="font-bold">儲存裝置</h2>
+          <h2 class="text-sm font-bold">儲存裝置</h2>
 
           <p v-for="(dp, i) in hwinfos.disk" :key="i" class="text-sm">
             {{ `${dp.Model} (${Math.round(dp.Size / Math.pow(1024, 3))}GB)` }}

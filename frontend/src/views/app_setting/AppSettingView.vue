@@ -8,7 +8,9 @@ const settings = ref<store.AppSetting>({
   set_password: false,
   password: '',
   parallel_install: false,
-  success_action: store.SuccessAction.NOTHING
+  success_action: store.SuccessAction.NOTHING,
+  filter_miniport_nic: true,
+  filter_microsoft_nic: true
 })
 
 app_manager.Read().then(s => {
@@ -97,6 +99,38 @@ app_manager.Read().then(s => {
             <option :value="store.SuccessAction.REBOOT">重新開機</option>
             <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
           </select>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-lg font-bold mb-2">硬件資訊</p>
+
+      <div class="flex flex-col gap-y-3">
+        <div class="flex items-center">
+          <label class="flex item-center w-full select-none cursor-pointer">
+            <input
+              type="checkbox"
+              name="filter_miniport_nic"
+              v-model="settings.filter_miniport_nic"
+              class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            過濾 Miniport 網卡
+          </label>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-y-3">
+        <div class="flex items-center">
+          <label class="flex item-center w-full select-none cursor-pointer">
+            <input
+              type="checkbox"
+              name="filter_microsoft_nic"
+              v-model="settings.filter_microsoft_nic"
+              class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            過濾 Microsoft 網卡
+          </label>
         </div>
       </div>
     </div>
