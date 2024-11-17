@@ -402,14 +402,17 @@ async function handleSubmit() {
         switch (settings.success_action) {
           case store.SuccessAction.SHUTDOWN:
             executor.RunAndOutput('cmd', ['/C', 'shutdown /s /t 5'])
+            break
           case store.SuccessAction.REBOOT:
             executor.RunAndOutput('cmd', ['/C', 'shutdown /r /t 5'])
+            break
           case store.SuccessAction.FIRMWARE:
             executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5']).then(result => {
               if (result.exitCode != 0) {
                 executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5'])
               }
             })
+            break
         }
       }
     "
