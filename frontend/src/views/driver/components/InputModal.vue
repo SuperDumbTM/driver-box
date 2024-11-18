@@ -55,7 +55,7 @@ const dri = ref<{
       class="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full"
       v-show="show"
     >
-      <div class="max-w-md max-h-full p-4">
+      <div class="w-[80vw] max-w-[650px] max-h-full p-4">
         <!-- Modal content -->
         <div class="bg-white rounded-lg shadow">
           <!-- Modal header -->
@@ -78,7 +78,7 @@ const dri = ref<{
           </div>
 
           <!-- Modal body -->
-          <div class="max-h-[70vh] overflow-y-auto py-2 px-4">
+          <div class="max-h-[70vh] overflow-auto py-2 px-4">
             <form
               class="flex flex-col gap-y-3"
               @submit.prevent="

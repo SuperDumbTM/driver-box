@@ -92,7 +92,7 @@ function addClickOutsideHandler() {
 
     <ul
       ref="select-box"
-      class="absolute top-0 left-20 block min-w-full w-max max-h-52 p-1.5 z-20 overflow-auto bg-white shadow-2xl rounded-lg"
+      class="absolute top-0 left-20 block w-60 max-h-52 p-1.5 z-20 overflow-auto bg-white shadow-2xl rounded-lg"
       :class="{ hidden: !visible }"
     >
       <li class="mb-2">
@@ -121,12 +121,17 @@ function addClickOutsideHandler() {
 
       <template v-for="dri in showOptions" :key="dri.id">
         <li class="py-2.5 px-4 text-sm">
-          <label class="flex item-center w-full select-none cursor-pointer">
+          <label class="flex items-center w-full select-none cursor-pointer">
             <input type="checkbox" :value="dri.id" v-model="value" class="me-1.5" />
-            <span class="mx-1 px-1.5 py-0.5 text-xs rounded" :class="badgeStyle[dri.type]?.classes">
+            <span
+              class="content-center mx-1 px-1.5 h-5 text-xs text-nowrap rounded"
+              :class="badgeStyle[dri.type]?.classes"
+            >
               {{ badgeStyle[dri.type]?.text }}
             </span>
-            {{ dri.name }}
+            <span class="line-clamp-3">
+              {{ dri.name }}
+            </span>
           </label>
         </li>
       </template>
