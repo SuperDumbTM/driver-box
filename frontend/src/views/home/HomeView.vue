@@ -91,15 +91,17 @@ async function handleSubmit() {
       name: '設定密碼',
       program: 'powershell',
       options: [
-        'Set-LocalUser',
-        (await executor.RunAndOutput('powershell', ['$Env:UserName'])).stdout.trim(),
-        '-Password',
-        settings.value.parallel_install.toString().length > 0
-          ? `ConverTo-SecureString ${settings.value.parallel_install} -AsPlainText -Force")`
-          : '(new-object System.Security.SecureString)'
+        '-WindowStyle',
+        'Hidden',
+        '-Command',
+        `Set-LocalUser -Name $Env:UserName -Password ${
+          settings.value.password == ''
+            ? '(new-object System.Security.SecureString)'
+            : `(ConvertTo-SecureString ${settings.value.password} -AsPlainText -Force)`
+        }`
       ],
-      minExeTime: 0,
-      allowRtCodes: [0, 1],
+      minExeTime: 0.5,
+      allowRtCodes: [0],
       incompatibles: []
     })
   }
@@ -110,10 +112,13 @@ async function handleSubmit() {
       name: '建立磁碟分區及掛載檔案系統',
       program: 'powershell',
       options: [
+        '-WindowStyle',
+        'Hidden',
+        '-Command',
         'Get-Disk | Where-Object PartitionStyle -Eq "RAW" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume'
       ],
-      minExeTime: 0,
-      allowRtCodes: [0, 1],
+      minExeTime: 1,
+      allowRtCodes: [0],
       incompatibles: []
     })
   }

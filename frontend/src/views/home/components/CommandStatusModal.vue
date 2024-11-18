@@ -65,6 +65,7 @@ const commands = ref<
 runtime.EventsOn(
   'execute:exited',
   async (id: string, result: NonNullable<(typeof commands.value)[0]['result']>) => {
+    console.log(result)
     const command = commands.value.find(c => c.procId === id)!
     command.result = result
 
