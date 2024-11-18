@@ -94,9 +94,8 @@ runtime.EventsOn(
     dispatchCommand().then(() => {
       if (commands.value.every(c => c.status === 'completed')) {
         emit('completed')
-      }
-
-      if (commands.value.every(c => !c.status.includes('ing'))) {
+        $toast.success('完成', { position: 'bottom-right' })
+      } else if (commands.value.every(c => !c.status.includes('ing'))) {
         $toast.info('完成', { position: 'bottom-right' })
       }
     })
