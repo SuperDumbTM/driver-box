@@ -402,8 +402,6 @@ async function handleSubmit() {
     ref="statusModal"
     @completed="
       () => {
-        $toast.success('完成。', { duration: 5000 })
-
         switch (settings.success_action) {
           case store.SuccessAction.SHUTDOWN:
             executor.RunAndOutput('cmd', ['/C', 'shutdown /s /t 5'])
