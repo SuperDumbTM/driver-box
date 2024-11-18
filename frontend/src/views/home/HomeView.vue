@@ -174,7 +174,7 @@ async function handleSubmit() {
 
           <p v-for="(mem, i) in hwinfos.memory" :key="i" class="text-sm">
             {{
-              `${mem.Manufacturer} ${mem.PartNumber}  ${mem.Capacity / Math.pow(1024, 3)}GB ${mem.Speed}MHz`
+              `${mem.Manufacturer} ${mem.PartNumber.trim()} ${mem.Capacity / Math.pow(1024, 3)}GB ${mem.Speed}MHz`
             }}
           </p>
         </div>
