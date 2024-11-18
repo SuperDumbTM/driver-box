@@ -70,7 +70,7 @@ Promise.all([
 
 async function handleSubmit() {
   if (!form.value) {
-    $toast.error('無法出得輸入')
+    $toast.error('程式出錯，無法取得輸入')
     return
   }
 
