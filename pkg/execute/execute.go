@@ -12,17 +12,17 @@ import (
 
 type CommandExecutor struct {
 	ctx      context.Context
-	commands *xsync.MapOf[string, *commandWrapper]
+	commands *xsync.MapOf[string, *command]
 }
 
 func (ce *CommandExecutor) SetContext(ctx context.Context) {
 	ce.ctx = ctx
-	ce.commands = xsync.NewMapOf[string, *commandWrapper]()
+	ce.commands = xsync.NewMapOf[string, *command]()
 }
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
 	id := ce.generateId()
-	ce.commands.Store(id, newCommandWrapper(program, options))
+	ce.commands.Store(id, newCommand(program, options))
 
 	go ce.dispatch(id)
 
@@ -32,7 +32,7 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 func (ce *CommandExecutor) RunAndOutput(program string, options []string) CommandResult {
 	var (
 		errMsg  string
-		command = newCommandWrapper(program, options)
+		command = newCommand(program, options)
 	)
 
 	if err := command.Run(); err != nil {
