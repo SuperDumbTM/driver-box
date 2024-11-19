@@ -303,7 +303,7 @@ async function handleSubmit() {
 
     <div class="flex gap-x-6">
       <div class="flex flex-col">
-        <p class="font-bold">額外工作及安裝設定</p>
+        <p class="font-semibold">額外工作及安裝設定</p>
 
         <div class="flex flex-col">
           <div class="flex gap-x-4">
@@ -361,7 +361,7 @@ async function handleSubmit() {
 
       <div class="flex flex-col grow justify-between">
         <fieldset>
-          <label class="block mb-1 text-sm font-bold text-gray-900">關機設定</label>
+          <label class="block mb-1 text-sm text-gray-900">關機設定</label>
           <select
             name="success_action"
             v-model="settings.success_action"

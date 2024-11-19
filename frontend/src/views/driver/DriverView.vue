@@ -84,7 +84,7 @@ manager
             <th scope="row" class="px-4 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
               {{ d.name }}
             </th>
-            <td class="px-4 py-2 min-w-28 text-xs break-all">{{ d.path }}</td>
+            <td class="px-4 py-2 min-w-28 text-xs font-light break-all">{{ d.path }}</td>
             <td class="px-4 py-2 text-xs">{{ d.flags }}</td>
             <td class="px-4 py-2">
               <div class="flex gap-x-1.5">
