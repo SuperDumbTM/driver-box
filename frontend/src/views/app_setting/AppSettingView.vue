@@ -30,7 +30,12 @@ app_manager.Read().then(s => {
     "
   >
     <div>
-      <p class="text-lg font-bold mb-2">額外工作</p>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">預設安裝選項</p>
+      <hr />
+    </div>
+
+    <div>
+      <p class="font-bold mb-2">額外工作</p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
@@ -72,7 +77,7 @@ app_manager.Read().then(s => {
     </div>
 
     <div>
-      <p class="text-lg font-bold mb-2">安裝設定</p>
+      <p class="font-bold mb-2">安裝設定</p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
@@ -88,7 +93,7 @@ app_manager.Read().then(s => {
         </div>
 
         <div>
-          <label class="block mb-2 text-sm font-medium text-gray-900"> 關機設定 </label>
+          <label class="block mb-2 text-gray-900"> 關機設定 </label>
           <select
             name="success_action"
             v-model="settings.success_action"
@@ -104,7 +109,12 @@ app_manager.Read().then(s => {
     </div>
 
     <div>
-      <p class="text-lg font-bold mb-2">硬件資訊</p>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">顯示設定</p>
+      <hr />
+    </div>
+
+    <div>
+      <p class="font-bold mb-2">硬件資訊</p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
