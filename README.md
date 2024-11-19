@@ -14,6 +14,7 @@
 </div>
 
 
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -35,34 +36,6 @@
 
 
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>目錄</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">Project 簡介</a>
-      <ul>
-        <li><a href="#built-with">利用工具</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">開始使用</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
-
-
 <!-- ABOUT THE PROJECT -->
 ## Project 簡介
 
@@ -75,9 +48,7 @@
 
 <p align="right">(<a href="#readme-top">回到最頂</a>)</p>
 
-
-
-### 第三方軟件使用
+### 第三方工具使用
 
 * [<img src="https://img.shields.io/badge/bootstrap%20icons-7532fa?style=for-the-badge&logo=bootstrap&logoColor=white">](https://icons.getbootstrap.com/)
 * [<img src="https://img.shields.io/badge/go-01add8?style=for-the-badge&logo=go&logoColor=white">](https://go.dev/)
@@ -130,39 +101,58 @@
 
 ### 加入、編輯軀動程式
 
-<img src="https://github.com/user-attachments/assets/14ab9d9c-1d68-4fde-9fb3-926ae21108b1" width="40%">
+<img src="https://github.com/user-attachments/assets/0f1b8490-10a2-447e-a148-1af3e8f14c23" width="50%">
 
-1. 軀動分類<br>
-    只有 `miscellaneous` 分類是「多選」<br>
-    `display`, `network` 是單選。每次安裝只能從分類中選擇安裝其中一個軀動程式。
-2. 軀動路徑<br>
-    軀動程式的安裝程序執行檔（例如 `setup.exe`, `xxxx.exe`）
-    > driver\display\nvidia 531.29 WHQL\setup.exe
-    >
-    > driver\network\intel 26.2.0.1\APPS\SETUP\SETUPBD\Winx64\SetupBD.exe
+#### 軀動路徑
+軀動程式的路徑。
 
-    在新增軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式的 `drivers/<分類>/` 資料夾內，以便管理及轉移（例如複製程式、設定至 USB）<br>
-3. 安裝參數<br>
-    用作指示軀動程式以「unattended」、「silent」模式安裝，及任何安裝設定。
-   
-    <img src="https://github.com/user-attachments/assets/90160433-5982-4462-a1ca-bb042f45c460" width="30%">
+> driver\display\nvidia 531.29 WHQL\setup.exe
+>
+> driver\network\intel 26.2.0.1\APPS\SETUP\SETUPBD\Winx64\SetupBD.exe
+
+在新增軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式的 `drivers/<分類>/` 資料夾內，以便管理及轉移（例如複製程式到 USB 上）
+
+#### 安裝參數
+用作指示軀動程式以「unattended」、「silent」模式安裝，及任何安裝設定。
+
+須以 `<1>,<2>,...` 格式輸入（以逗號分隔）。
+> -s,-norestart
+
+此程式已提供常見軀動的安裝參數。<br>
+<img src="https://github.com/user-attachments/assets/90160433-5982-4462-a1ca-bb042f45c460" width="30%">
+
+| 選項           	| 適用的程式                                                                                                                                                       	|
+|----------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| Intel LAN      	| [Intel® Ethernet Adapter Complete Driver Pack](https://www.intel.com/content/www/us/en/download/15084/intel-ethernet-adapter-complete-driver-pack.html)          	|
+| Realtek LAN    	| [Realtek PCIe FE / GBE / 2.5G / 5G Ethernet Family Controller Software](https://www.realtek.com/Download/List?cate_id=584)                                       	|
+| Nvidia Display 	| [GeForce Game Ready Driver/Nvidia Studio Driver](https://www.nvidia.com/en-us/drivers/)                                                                          	|
+| AMD Display    	| [AMD Software: Adrenalin Edition](https://www.amd.com/en/support/download/drivers.html)                                                                          	|
+| Intel Display  	| [Intel® Arc™ & Iris® Xe Graphics/7th-10th Gen Processor Graphics](https://www.intel.com/content/www/us/en/support/articles/000090440/graphics.html)              	|
+| Intel WiFi     	| [Intel® Wireless Wi-Fi Drivers](https://www.intel.com/content/www/us/en/download/19351/intel-wireless-wi-fi-drivers-for-windows-10-and-windows-11.html)          	|
+| Intel BT       	| [Intel® Wireless Bluetooth® Drivers](https://www.intel.com/content/www/us/en/download/18649/intel-wireless-bluetooth-drivers-for-windows-10-and-windows-11.html) 	|
+| Intel Chipset  	| [Chipset INF Utility](https://www.intel.com/content/www/us/en/support/products/1145/software/chipset-software/intel-chipset-software-installation-utility.html)  	|
+| AMD Chipset    	| [AMD Chipset Drivers](https://www.amd.com/en/support/download/drivers.html)                                                                                      	|
     
-    此程式已提供常見軀動的安裝參數。<br>
-    如自行輸入，須以 `<1>,<2>,...` 格式輸入（以逗號分隔）。
-    > -s,-norestart
+不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋
+> realtek audio silent install
     
-    不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋
-    > realtek audio silent install
-    
-    或利用 [Silent Install Builder](https://www.silentinstall.org/) 等類似的軟件自行製作
-4. 不能同時安裝<br>
-    勺選後，在使用「同步安裝」模式時，有關的軀動程式將不會在同一時間執行。
+或利用 [Silent Install Builder](https://www.silentinstall.org/) 等類似的軟件自行製作
+
+#### 不能同時安裝
+勺選後，在使用「同步安裝」模式時，有關的軀動程式將不會在同一時間執行。
 
 ### 安裝
 
-1. 關機設定<br>
-   關機設定只會在所以工作執行成功及軀動安裝成功後才會執行。
+<img src="https://github.com/user-attachments/assets/f0d7cf67-42b0-42f3-a647-404d7b54e50a" width="50%">
 
+<p style='color: gray'>*在所有工作執行完成前，執行狀態視窗不能夠被關閉。</p>
+
+#### 關機設定
+關機設定只會在所有工作執行成功及軀動安裝成功後才會執行。
+
+#### 取消執行
+只有處於「等待中」或「執行中」的工作才能取消執行。<br>
+按下相關工作的「取消」按鈕即可。但注意，程式並不保證相關工作能夠被終止執行。
 
 <p align="right">(<a href="#readme-top">回到最頂</a>)</p>
 
