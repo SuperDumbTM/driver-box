@@ -43,8 +43,10 @@
   <img src="https://github.com/user-attachments/assets/93f63be9-7a42-4c6a-984c-f9f197913675" width="70%">
 <p align="right">
 
-此程式旨在加快安裝大量硬件軀動的時間。用家可以將不同類型的軀動程式加入到本程式中。
-之後每次只需選擇合適的軀動程式即可。
+driver-box 旨在加快安裝大量硬件軀動的時間。用家可以將不同類型的軀動程式加入到本程式中。之後每次只需選擇合適的軀動程式即可。<br>
+除了安裝軀動程式，你亦可以利用 driver-box 來安裝其他程式或執行指令。
+
+設計上，driver-box 是利用程式／指令執行完成後的狀態碼來判斷是否成功執行。一些程式會回應表示執行成功的狀態碼（例如 `0`），但實際上並非執行成功。
 
 <p align="right">(<a href="#readme-top">回到最頂</a>)</p>
 
@@ -104,21 +106,20 @@
 <img src="https://github.com/user-attachments/assets/0f1b8490-10a2-447e-a148-1af3e8f14c23" width="50%">
 
 #### 軀動路徑
-軀動程式的路徑。
-
+軀動程式的路徑。<br>
 > driver\display\nvidia 531.29 WHQL\setup.exe
 >
 > driver\network\intel 26.2.0.1\APPS\SETUP\SETUPBD\Winx64\SetupBD.exe
 
-在新增軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式的 `drivers/<分類>/` 資料夾內，以便管理及轉移（例如複製程式到 USB 上）
+在加入軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式的 `drivers/<分類>/` 資料夾內，以便管理及轉移（例如複製程式到 USB 上）
 
-#### 安裝參數
-用作指示軀動程式以「unattended」、「silent」模式安裝，及任何安裝設定。
+#### 執行參數
+[執行參數](https://en.wikipedia.org/wiki/Command-line_interface#Arguments)一般用於命令列介面（Command Line）上，以修改程式執行設定或輸入資料至程式中。
 
-須以 `<1>,<2>,...` 格式輸入（以逗號分隔）。
-> -s,-norestart
+不少安裝程序都會支援以自動模式安裝（silent install），用戶無需進行任何輸入，相關程式便會自行安裝。<br>
+我們十分建議輸入相關的執行參數，令加入的軀動能以自動模式安裝。
 
-此程式已提供常見軀動的安裝參數。<br>
+driver-box 已提供常見軀動的安裝參數。<br>
 <img src="https://github.com/user-attachments/assets/90160433-5982-4462-a1ca-bb042f45c460" width="30%">
 
 | 選項           	| 適用的程式                                                                                                                                                       	|
@@ -135,7 +136,7 @@
     
 不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋
 > realtek audio silent install
-    
+
 或利用 [Silent Install Builder](https://www.silentinstall.org/) 等類似的軟件自行製作
 
 #### 不能同時安裝
