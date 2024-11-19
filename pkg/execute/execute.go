@@ -54,7 +54,7 @@ func (ce *CommandExecutor) Abort(id string) error {
 		return errors.New("execute: id not found")
 	} else {
 		if err := task.Stop(); err != nil {
-			return errors.Join(errors.New("execute: abort failed"), err)
+			return errors.Join(err, errors.New("execute: abort failed"))
 		}
 		return nil
 	}
