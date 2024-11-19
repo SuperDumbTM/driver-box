@@ -65,7 +65,6 @@ const commands = ref<
 runtime.EventsOn(
   'execute:exited',
   async (id: string, result: NonNullable<(typeof commands.value)[0]['result']>) => {
-    console.log(result)
     const command = commands.value.find(c => c.procId === id)!
     command.result = result
 
@@ -138,22 +137,30 @@ async function dispatchCommand() {
 function handleAbort(command: (typeof commands.value)[0]) {
   if (command.procId !== undefined && command.procId !== '') {
     command.status = 'aborting'
-    executor
-      .Abort(command.procId)
-      .then(() => {
-        command.status = 'aborted'
-      })
-      .catch(error => {
-        command.status = 'broken'
-        command.result = {
-          lapse: -1,
-          exitCode: -1,
-          stdout: '',
-          stderr: '',
-          error: error.toString(),
-          aborted: false
-        }
-      })
+
+    // `aborted` status will be updated at `execute:exited` event handler
+    executor.Abort(command.procId).catch(error => {
+      error
+        .toString()
+        .split('\n')
+        .forEach((err: string) => {
+          if (err.includes('abort failed')) {
+            $toast.error(`[${command.name}] 無法取消`)
+          } else {
+            $toast.error(`[${command.name}] ${err}`)
+          }
+        })
+
+      command.status = 'broken'
+      command.result = {
+        lapse: -1,
+        exitCode: -1,
+        stdout: '',
+        stderr: '',
+        error: error.toString(),
+        aborted: false
+      }
+    })
   } else {
     command.status = 'aborted'
   }
