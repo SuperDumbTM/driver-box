@@ -68,18 +68,6 @@ runtime.EventsOn(
     const command = commands.value.find(c => c.procId === id)!
     command.result = result
 
-    if (result.error !== '' && !result.error.includes('exit status')) {
-      if (
-        result.error.includes('file does not exist') ||
-        result.error.includes('The system cannot find the file specified.') ||
-        result.error.includes('The system cannot find the path specified.')
-      ) {
-        $toast.error(`[${command.name}] 檔案／路徑不存在`)
-      } else {
-        $toast.error(`[${command.name}] ${result.error.split(':').slice(1).join(':').trim()}`)
-      }
-    }
-
     if (result.aborted) {
       command.status = 'aborted'
     } else if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
@@ -245,13 +233,33 @@ function handleAbort(command: (typeof commands.value)[0]) {
                       <span class="align-middle mx-1 px-1.5 bg-red-300 rounded">失敗</span>
                     </div>
 
-                    <div class="text-sm break-all line-clamp-2">
+                    <div class="text-sm break-all line-clamp-3">
                       狀態碼：{{ command.result?.exitCode }}
 
                       <p v-if="command.status == 'speeded'" class="text-xs text-orange-300">
                         執行時間過短（{{
                           `${(command.result?.lapse ?? -1).toFixed(1)}/${command.minExeTime}`
                         }}秒）
+                      </p>
+                      <p
+                        v-else-if="
+                          command.result &&
+                          command.result.error !== '' &&
+                          !command.result.error.includes('exit status')
+                        "
+                        class="text-xs text-red-400"
+                      >
+                        {{
+                          command.result.error.includes('file does not exist') ||
+                          command.result.error.includes(
+                            'The system cannot find the file specified.'
+                          ) ||
+                          command.result.error.includes(
+                            'The system cannot find the path specified.'
+                          )
+                            ? '檔案／路徑不存在'
+                            : command.result.error.split(':').slice(1).join(':').trim()
+                        }}
                       </p>
                     </div>
                   </template>
