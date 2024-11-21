@@ -12,17 +12,26 @@ import (
 
 type CommandExecutor struct {
 	ctx      context.Context
-	commands *xsync.MapOf[string, *command]
+	commands *xsync.MapOf[string, *Command]
+}
+
+type CommandResult struct {
+	Lapse    float32 `json:"lapse"`
+	ExitCode int     `json:"exitCode"`
+	Stdout   string  `json:"stdout"`
+	Stderr   string  `json:"stderr"`
+	Error    string  `json:"error"`
+	Aborted  bool    `json:"aborted"`
 }
 
 func (ce *CommandExecutor) SetContext(ctx context.Context) {
 	ce.ctx = ctx
-	ce.commands = xsync.NewMapOf[string, *command]()
+	ce.commands = xsync.NewMapOf[string, *Command]()
 }
 
 func (ce *CommandExecutor) Run(program string, options []string) string {
 	id := ce.generateId()
-	ce.commands.Store(id, newCommand(program, options))
+	ce.commands.Store(id, NewCommand(program, options))
 
 	go ce.dispatch(id)
 
@@ -32,7 +41,7 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 func (ce *CommandExecutor) RunAndOutput(program string, options []string) CommandResult {
 	var (
 		errMsg  string
-		command = newCommand(program, options)
+		command = NewCommand(program, options)
 	)
 
 	if err := command.Run(); err != nil {
@@ -45,7 +54,7 @@ func (ce *CommandExecutor) RunAndOutput(program string, options []string) Comman
 		command.stdout.String(),
 		command.stderr.String(),
 		errMsg,
-		command.aborted,
+		command.stopped,
 	}
 }
 
@@ -75,7 +84,7 @@ func (ce *CommandExecutor) dispatch(id string) {
 			command.stdout.String(),
 			command.stderr.String(),
 			errMsg,
-			command.aborted,
+			command.stopped,
 		})
 	}
 }

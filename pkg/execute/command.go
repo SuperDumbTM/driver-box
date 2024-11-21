@@ -9,34 +9,36 @@ import (
 	"github.com/shirou/gopsutil/v3/process"
 )
 
-type CommandResult struct {
-	Lapse    float32 `json:"lapse"`
-	ExitCode int     `json:"exitCode"`
-	Stdout   string  `json:"stdout"`
-	Stderr   string  `json:"stderr"`
-	Error    string  `json:"error"`
-	Aborted  bool    `json:"aborted"`
-}
-
-type command struct {
+type Command struct {
 	cmd       *exec.Cmd
 	startTime time.Time
 	stdout    bytes.Buffer
 	stderr    bytes.Buffer
-	aborted   bool
+	stopped   bool
 }
 
-func (t *command) Start() error {
+func NewCommand(program string, options []string) *Command {
+	wrapper := Command{cmd: exec.Command(program, options...)}
+	wrapper.cmd.Stdout = &wrapper.stdout
+	wrapper.cmd.Stderr = &wrapper.stderr
+	return &wrapper
+}
+
+func (t *Command) Start() error {
 	t.startTime = time.Now()
 	return t.cmd.Start()
 }
 
-func (t *command) Run() error {
+func (t *Command) Wait() error {
+	return t.cmd.Wait()
+}
+
+func (t *Command) Run() error {
 	t.startTime = time.Now()
 	return t.cmd.Run()
 }
 
-func (t *command) Stop() error {
+func (t *Command) Stop() error {
 	if t.cmd.Process == nil {
 		panic("execute: called Stop before command started")
 	}
@@ -59,22 +61,16 @@ func (t *command) Stop() error {
 		if err := proc.Kill(); err != nil {
 			errorChain = errors.Join(errorChain, err)
 		}
-		t.aborted = errorChain == nil
+
+		t.stopped = errorChain == nil
 
 		return errorChain
 	}
 }
 
-func (t command) Lapse() float32 {
+func (t Command) Lapse() float32 {
 	if t.startTime.Year() == 1 {
 		return -1.0
 	}
 	return float32(time.Since(t.startTime).Milliseconds()) / 1000
-}
-
-func newCommand(program string, options []string) *command {
-	wrapper := command{cmd: exec.Command(program, options...)}
-	wrapper.cmd.Stdout = &wrapper.stdout
-	wrapper.cmd.Stderr = &wrapper.stderr
-	return &wrapper
 }
