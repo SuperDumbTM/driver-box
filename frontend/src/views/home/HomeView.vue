@@ -236,7 +236,7 @@ async function handleSubmit() {
         <div class="relative w-full">
           <select
             name="network"
-            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-900"
           >
             <option>請選擇</option>
             <option
@@ -257,7 +257,7 @@ async function handleSubmit() {
         <div class="relative w-full">
           <select
             name="display"
-            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border-2 border-gray-200 rounded-lg focus:border-powder-blue-900"
+            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-900"
           >
             <option>請選擇</option>
             <option
