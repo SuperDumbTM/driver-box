@@ -148,7 +148,7 @@ app_manager.Read().then(s => {
     <div>
       <button
         type="submit"
-        class="h-8 mt-3 px-3 text-white text-sm focus:outline-none bg-half-baked-600 hover:bg-half-baked-500 rounded"
+        class="h-8 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
       >
         儲存
       </button>

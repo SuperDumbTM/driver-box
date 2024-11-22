@@ -388,7 +388,7 @@ async function handleSubmit() {
             重置輸入
           </button>
           <button
-            class="h-8 px-3 text-white text-sm focus:outline-none bg-half-baked-600 hover:bg-half-baked-500 rounded"
+            class="h-8 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
             @click="handleSubmit"
           >
             執行
