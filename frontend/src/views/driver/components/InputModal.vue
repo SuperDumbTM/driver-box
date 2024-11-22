@@ -253,7 +253,8 @@ const dri = ref<{
   opacity: 0;
 }
 
-label:has(+ input:required, + select:required):after {
+label:has(+ input:required, + select:required):after,
+label:has(+ div > input:required):after {
   content: ' *';
   color: red;
 }
