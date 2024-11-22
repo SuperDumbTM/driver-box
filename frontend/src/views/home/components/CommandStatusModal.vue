@@ -90,12 +90,12 @@ runtime.EventsOn(
 )
 
 async function dispatchCommand() {
-  await lock.acquire('dispatch', async () => {
-    const queue = commands.value
+  lock.acquire('executor', async () => {
+    const pendings = commands.value
       .filter(c => c.status === 'pending')
       .slice(0, isParallel ? undefined : 1)
 
-    for (const command of queue) {
+    for (const command of pendings) {
       if (
         !command.incompatibles.every(id =>
           commands.value.filter(c => c.status === 'running').every(c => c.id != id)
@@ -104,54 +104,69 @@ async function dispatchCommand() {
         continue
       }
 
-      try {
-        command.procId = await executor.Run(command.program, command.options)
-        command.status = 'running'
-      } catch (error) {
+      await executor
+        .Run(command.program, command.options)
+        .then(processId => {
+          command.status = 'running'
+          command.procId = processId
+        })
+        .catch(error => {
+          command.status = 'broken'
+          command.result = {
+            lapse: -1,
+            exitCode: -1,
+            stdout: '',
+            stderr: '',
+            error: (error as Error).toString(),
+            aborted: false
+          }
+        })
+    }
+  })
+}
+
+function handleAbort(command: (typeof commands.value)[0]) {
+  return lock
+    .acquire('executor', () => {
+      if (command.status == 'pending' || command.status == 'running') {
+        command.status =
+          command.procId == undefined || command.procId == '' ? 'aborted' : 'aborting'
+      }
+    })
+    .then(() => {
+      if (command.status != 'aborting') {
+        return
+      }
+
+      // `aborted` status will be updated at `execute:exited` event handler
+      executor.Abort(command.procId!).catch(error => {
+        if (error.includes('process does not exist')) {
+          $toast.warning(`[${command.name}] 無法取消，可能已經完成執行。`)
+          return
+        }
+
+        error
+          .toString()
+          .split('\n')
+          .forEach((err: string) => {
+            if (err.includes('abort failed')) {
+              $toast.error(`[${command.name}] 無法取消`)
+            } else {
+              $toast.error(`[${command.name}] ${err}`)
+            }
+          })
+
         command.status = 'broken'
         command.result = {
           lapse: -1,
           exitCode: -1,
           stdout: '',
           stderr: '',
-          error: (error as Error).toString(),
+          error: error.toString(),
           aborted: false
         }
-      }
-    }
-  })
-}
-
-function handleAbort(command: (typeof commands.value)[0]) {
-  if (command.procId !== undefined && command.procId !== '') {
-    command.status = 'aborting'
-
-    // `aborted` status will be updated at `execute:exited` event handler
-    executor.Abort(command.procId).catch(error => {
-      error
-        .toString()
-        .split('\n')
-        .forEach((err: string) => {
-          if (err.includes('abort failed')) {
-            $toast.error(`[${command.name}] 無法取消`)
-          } else {
-            $toast.error(`[${command.name}] ${err}`)
-          }
-        })
-
-      command.status = 'broken'
-      command.result = {
-        lapse: -1,
-        exitCode: -1,
-        stdout: '',
-        stderr: '',
-        error: error.toString(),
-        aborted: false
-      }
+      })
     })
-  } else {
-    command.status = 'aborted'
-  }
 }
 </script>
 
