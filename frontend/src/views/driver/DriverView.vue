@@ -14,10 +14,20 @@ const driType = ref(store.DriverType.NETWORK)
 
 const drivers = ref<Array<store.Driver> | null>(null)
 
+const notExistDrivers = ref<Array<string>>([])
+
 manager
   .Read()
   .then(d => {
     drivers.value = d
+
+    d.forEach(driver => {
+      manager.PathExist(driver.id).then(found => {
+        if (!found) {
+          notExistDrivers.value.push(driver.id)
+        }
+      })
+    })
   })
   .catch(() => {
     $toast.error('無法讀取軀動資料')
@@ -76,15 +86,16 @@ manager
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="d in drivers?.filter(d => d.type == driType)"
-            :key="d.id"
-            class="bg-white border-b"
-          >
+          <tr v-for="d in drivers?.filter(d => d.type == driType)" :key="d.id" class="border-b">
             <th scope="row" class="px-4 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
               {{ d.name }}
             </th>
-            <td class="px-4 py-2 min-w-28 text-xs font-light break-all">{{ d.path }}</td>
+            <td
+              class="px-4 py-2 min-w-28 text-xs break-all"
+              :class="[notExistDrivers.includes(d.id) ? 'text-rose-500 font-medium' : 'font-light']"
+            >
+              {{ d.path }}
+            </td>
             <td class="px-4 py-2 text-xs">{{ d.flags }}</td>
             <td class="px-4 py-2">
               <div class="flex gap-x-1.5">

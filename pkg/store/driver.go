@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"os/exec"
 	"slices"
 )
 
@@ -108,6 +109,15 @@ func (m *DriverManager) Remove(driver Driver) error {
 		}
 
 		return m.write()
+	}
+}
+
+func (m DriverManager) PathExist(id string) (bool, error) {
+	if index, err := m.IndexOf(id); err != nil {
+		return false, err
+	} else {
+		_, err = exec.LookPath(m.drivers[index].Path)
+		return err == nil, nil
 	}
 }
 

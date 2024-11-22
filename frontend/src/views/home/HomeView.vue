@@ -16,6 +16,8 @@ const $toast = useToast({ position: 'top-right' })
 
 const drivers = ref<Array<store.Driver>>([])
 
+const notExistDrivers = ref<Array<string>>([])
+
 const settings = ref<store.AppSetting>({
   create_partition: false,
   set_password: false,
@@ -37,7 +39,17 @@ const hwinfos = ref<{
 
 manager
   .Read()
-  .then(d => (drivers.value = d))
+  .then(d => {
+    drivers.value = d
+
+    d.forEach(driver => {
+      manager.PathExist(driver.id).then(found => {
+        if (!found) {
+          notExistDrivers.value.push(driver.id)
+        }
+      })
+    })
+  })
   .catch(() => {
     $toast.error('無法讀取軀動資料，重新設定或可解決問題。')
   })
@@ -244,7 +256,7 @@ async function handleSubmit() {
               :key="d.id"
               :value="d.id"
             >
-              {{ d.name }}
+              {{ d.name }} {{ notExistDrivers.includes(d.id) ? '⚠︎' : '' }}
             </option>
           </select>
           <label
@@ -265,7 +277,7 @@ async function handleSubmit() {
               :key="d.id"
               :value="d.id"
             >
-              {{ d.name }}
+              {{ d.name }} {{ notExistDrivers.includes(d.id) ? '⚠︎' : '' }}
             </option>
           </select>
           <label
@@ -286,7 +298,7 @@ async function handleSubmit() {
               <!-- <label class="ms-2 text-sm text-gray-900"> -->
               <label class="flex items-center w-full select-none cursor-pointer">
                 <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
-                {{ d.name }}
+                {{ d.name }} {{ notExistDrivers.includes(d.id) ? '⚠︎' : '' }}
               </label>
             </template>
           </div>

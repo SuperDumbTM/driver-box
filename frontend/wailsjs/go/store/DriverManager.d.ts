@@ -8,6 +8,8 @@ export function Get(arg1:string):Promise<store.Driver>;
 
 export function IndexOf(arg1:string):Promise<number>;
 
+export function PathExist(arg1:string):Promise<boolean>;
+
 export function Read():Promise<Array<store.Driver>>;
 
 export function Remove(arg1:store.Driver):Promise<void>;
