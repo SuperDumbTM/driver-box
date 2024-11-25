@@ -8,29 +8,37 @@ import (
 	"embed"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
-	// setup /conf directorys
-	var dirConf string
-	if exePath, err := os.Executable(); err != nil {
+	var (
+		/* Path to the configuration directory */
+		dirConf string
+		/* Path to the WebView2 executable */
+		pathWV2 string
+	)
+
+	if pathExe, err := os.Executable(); err != nil {
 		panic(err)
 	} else {
-		dirConf = filepath.Join(filepath.Dir(exePath), "conf")
+		// setup /conf directorys
+		dirConf = filepath.Join(filepath.Dir(pathExe), "conf")
 		if _, err := os.Stat(dirConf); err != nil {
 			if err := os.MkdirAll(dirConf, os.ModePerm); err != nil {
 				panic(err)
 			}
 		}
 
-		dirDir := filepath.Join(filepath.Dir(exePath), "drivers")
+		dirDir := filepath.Join(filepath.Dir(pathExe), "drivers")
 		if _, err := os.Stat(dirDir); err != nil {
 			if err := os.MkdirAll(dirDir, os.ModePerm); err != nil {
 				panic(err)
@@ -39,6 +47,17 @@ func main() {
 
 		for _, name := range [3]string{"network", "display", "miscellaneous"} {
 			os.MkdirAll(filepath.Join(dirDir, name), os.ModePerm)
+		}
+
+		// WebView2 binary lookup
+		if runtime.GOARCH == "amd64" {
+			pathWV2 = filepath.Join(filepath.Dir(pathExe), "bin", "WebView2_x64.cab")
+		} else {
+			pathWV2 = filepath.Join(filepath.Dir(pathExe), "bin", "WebView2_x32.cab")
+		}
+
+		if _, err := os.Stat(pathWV2); err != nil {
+			pathWV2 = ""
 		}
 	}
 
@@ -82,6 +101,9 @@ func main() {
 				{store.Shutdown, "SHUTDOWN"},
 				{store.Firmware, "FIRMWARE"},
 			},
+		},
+		Windows: &windows.Options{
+			WebviewBrowserPath: pathWV2,
 		},
 	})
 
