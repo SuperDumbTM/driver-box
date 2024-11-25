@@ -9,5 +9,6 @@
   "author": {
     "name": "SuperDumbTM",
     "email": "eltonlochunkit@gmail.com"
-  }
+  },
+  "debounceMS": 1500
 }
