@@ -154,7 +154,7 @@ manager
               {{ d.name }}
             </th>
             <td
-              class="px-4 py-2 min-w-28 text-xs break-all"
+              class="px-4 py-2 min-w-28 text-xs break-all font-mono"
               :class="[notExistDrivers.includes(d.id) ? 'text-rose-500 font-medium' : 'font-light']"
             >
               {{ d.path }}
