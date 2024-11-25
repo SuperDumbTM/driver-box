@@ -3,6 +3,11 @@ export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      animation: {
+        'blink-0': 'blink-0 1s step-start 0s infinite',
+        'blink-50': 'blink-50 1s step-start 0s infinite',
+        'blink-75': 'blink-75 1s step-start 0s infinite'
+      },
       // palette: https://colorhunt.co/palette/dff2ebb9e5e87ab2d34a628a
       colors: {
         'apple-green': {
@@ -60,6 +65,17 @@ export default {
           800: '#0F141C',
           900: '#000000',
           950: '#000000'
+        }
+      },
+      keyframes: {
+        'blink-0': {
+          '50%': { opacity: 0.0 }
+        },
+        'blink-50': {
+          '50%': { opacity: 0.5 }
+        },
+        'blink-75': {
+          '50%': { opacity: 0.75 }
         }
       }
     }

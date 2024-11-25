@@ -5,16 +5,22 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import InputModal from '@/views/driver/components/InputModal.vue'
 import { store } from '@/wailsjs/go/models'
 import * as manager from '@/wailsjs/go/store/DriverManager'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 const $toast = useToast({ position: 'top-right' })
 
 const driType = ref(store.DriverType.NETWORK)
 
-const drivers = ref<Array<store.Driver> | null>(null)
+const drivers = ref<Array<store.Driver>>([])
 
 const notExistDrivers = ref<Array<string>>([])
+
+const reordering = ref(false)
+
+const driverOfType = computed(() => {
+  return drivers.value?.filter(d => d.type == driType.value)
+})
 
 manager
   .Read()
@@ -85,8 +91,65 @@ manager
             <th scope="col" class="px-4 py-4 text-nowrap">動作</th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="d in drivers?.filter(d => d.type == driType)" :key="d.id" class="border-b">
+        <tbody draggable="false">
+          <tr
+            v-for="(d, i) in driverOfType"
+            :key="d.id"
+            class="even:bg-half-baked-100"
+            :draggable="reordering"
+            @dragstart="
+              event => {
+                if (!reordering) {
+                  return event.preventDefault()
+                }
+
+                event.dataTransfer!.setData('id', d.id)
+                event.dataTransfer!.setData('position', i.toString())
+              }
+            "
+            @dragover.prevent="
+              event => {
+                ;(event.target as HTMLTableCellElement)
+                  .closest('tr')!
+                  .classList.add('border-b', 'border-b-half-baked-700')
+              }
+            "
+            @dragenter.prevent
+            @dragleave="
+              event => {
+                ;(event.target as HTMLTableCellElement)
+                  .closest('tr')!
+                  .classList.remove('border-b', 'border-b-half-baked-700')
+              }
+            "
+            @drop="
+              async event => {
+                ;(event.target as HTMLTableCellElement)
+                  .closest('tr')!
+                  .classList.remove(
+                    'border-b',
+                    'border-b-half-baked-700',
+                    'border-t',
+                    'border-t-half-baked-700'
+                  )
+
+                // async functuion will cause event.dataTransfer lost data
+                const sourceId = event.dataTransfer!.getData('id')
+                const sourcePosition = event.dataTransfer!.getData('position')
+
+                manager.IndexOf(d.id).then(targetIndex => {
+                  if (parseInt(sourcePosition) <= i) {
+                    // aligning MoveBehind's logic and UI draging's logic
+                    targetIndex -= 1
+                  }
+
+                  manager.MoveBehind(sourceId, targetIndex).then(result => {
+                    drivers = result
+                  })
+                })
+              }
+            "
+          >
             <th scope="row" class="px-4 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
               {{ d.name }}
             </th>
@@ -138,11 +201,26 @@ manager
       </table>
     </div>
 
-    <div class="flex justify-end">
+    <div class="flex justify-end gap-x-3">
+      <button
+        v-show="driverOfType.length > 1"
+        type="button"
+        class="h-8 px-3 text-white text-sm focus:outline-none rounded"
+        :class="[
+          reordering
+            ? 'bg-apple-green-800 hover:bg-apple-green-700  animate-blink-75'
+            : 'bg-[#D9BD68] hover:bg-[#E5D195]'
+        ]"
+        @click="reordering = !reordering"
+      >
+        {{ reordering ? '檢視' : '排序' }}
+      </button>
+
       <button
         type="button"
-        class="h-8 px-3 text-white text-sm focus:outline-none bg-powder-blue-800 hover:bg-powder-blue-600 rounded"
+        class="h-8 px-3 text-white text-sm focus:outline-none enabled:bg-powder-blue-800 disabled:bg-powder-blue-500 enabled:hover:bg-powder-blue-700 rounded"
         @click="$refs.inputModal?.show({ type: driType })"
+        :disabled="reordering"
       >
         新增
       </button>

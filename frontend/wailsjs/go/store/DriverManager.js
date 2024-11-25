@@ -14,6 +14,10 @@ export function IndexOf(arg1) {
   return window['go']['store']['DriverManager']['IndexOf'](arg1);
 }
 
+export function MoveBehind(arg1, arg2) {
+  return window['go']['store']['DriverManager']['MoveBehind'](arg1, arg2);
+}
+
 export function PathExist(arg1) {
   return window['go']['store']['DriverManager']['PathExist'](arg1);
 }

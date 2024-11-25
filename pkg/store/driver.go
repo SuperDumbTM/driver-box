@@ -47,7 +47,7 @@ func (m DriverManager) write() error {
 }
 
 func (m DriverManager) IndexOf(id string) (int, error) {
-	var index = slices.IndexFunc(m.drivers, func(s Driver) bool {
+	index := slices.IndexFunc(m.drivers, func(s Driver) bool {
 		return s.Id == id
 	})
 
@@ -119,6 +119,33 @@ func (m DriverManager) PathExist(id string) (bool, error) {
 		_, err = exec.LookPath(m.drivers[index].Path)
 		return err == nil, nil
 	}
+}
+
+func (m *DriverManager) MoveBehind(id string, index int) ([]Driver, error) {
+	if srcIndex, err := m.IndexOf(id); err != nil {
+		return m.drivers, err
+	} else {
+		if index < -1 || index >= len(m.drivers)-1 {
+			return m.drivers, errors.New("store: target index out of bound")
+		}
+
+		if len(m.drivers) == 1 || srcIndex-index == 1 {
+			return m.drivers, nil
+		}
+
+		if srcIndex <= index {
+			for i := srcIndex; i < index+1; i++ {
+				m.drivers[i], m.drivers[i+1] = m.drivers[i+1], m.drivers[i]
+			}
+		} else {
+			for i := srcIndex; i > index+1; i-- {
+				m.drivers[i-1], m.drivers[i] = m.drivers[i], m.drivers[i-1]
+			}
+		}
+
+		return m.drivers, m.write()
+	}
+
 }
 
 type DriverType string
