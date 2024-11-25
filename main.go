@@ -8,7 +8,6 @@ import (
 	"embed"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -50,12 +49,7 @@ func main() {
 		}
 
 		// WebView2 binary lookup
-		if runtime.GOARCH == "amd64" {
-			pathWV2 = filepath.Join(filepath.Dir(pathExe), "bin", "WebView2_x64.cab")
-		} else {
-			pathWV2 = filepath.Join(filepath.Dir(pathExe), "bin", "WebView2_x32.cab")
-		}
-
+		pathWV2 = filepath.Join(filepath.Dir(pathExe), "bin", "WebView2")
 		if _, err := os.Stat(pathWV2); err != nil {
 			pathWV2 = ""
 		}
