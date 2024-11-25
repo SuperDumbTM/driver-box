@@ -27,16 +27,16 @@ export namespace execute {
 
 export namespace store {
 	
-	export enum DriverType {
-	    NETWORK = "network",
-	    DISPLAY = "display",
-	    MISCELLANEOUS = "miscellaneous",
-	}
 	export enum SuccessAction {
 	    NOTHING = "nothing",
 	    REBOOT = "reboot",
 	    SHUTDOWN = "shutdown",
 	    FIRMWARE = "firmware",
+	}
+	export enum DriverType {
+	    NETWORK = "network",
+	    DISPLAY = "display",
+	    MISCELLANEOUS = "miscellaneous",
 	}
 	export class AppSetting {
 	    create_partition: boolean;

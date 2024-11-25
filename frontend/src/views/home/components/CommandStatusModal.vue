@@ -262,7 +262,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
                           command.result.error !== '' &&
                           !command.result.error.includes('exit status')
                         "
-                        class="text-xs text-red-400"
+                        class="text-xs text-red-400 font-mono"
                       >
                         {{
                           command.result.error.includes('file does not exist') ||
@@ -286,7 +286,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
                       </span>
                     </div>
 
-                    <div class="text-sm break-all line-clamp-2">
+                    <div class="text-sm break-all line-clamp-2 font-mono">
                       {{
                         command.result?.error?.split(':').slice(1).join(':').trim() ??
                         '程式出錯，未能執行'
