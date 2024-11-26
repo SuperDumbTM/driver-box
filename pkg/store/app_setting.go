@@ -16,7 +16,7 @@ func (s *AppSettingManager) Read() (AppSetting, error) {
 		var setting AppSetting
 
 		if _, err := os.Stat(s.Path); err != nil {
-			s.Update(AppSetting{SuccessAction: Nothing, SuccessActionDelay: 5})
+			s.Update(AppSetting{SuccessAction: Nothing, SuccessActionDelay: 5, Language: "en"})
 		}
 
 		bytes, err := os.ReadFile(s.Path)
@@ -54,6 +54,7 @@ type AppSetting struct {
 	SuccessActionDelay int           `json:"success_action_delay"`
 	FilterMiniportNic  bool          `json:"filter_miniport_nic"`
 	FilterMicrosoftNic bool          `json:"filter_microsoft_nic"`
+	Language           string        `json:"language"`
 }
 
 type SuccessAction string

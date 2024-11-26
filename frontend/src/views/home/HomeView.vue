@@ -26,7 +26,8 @@ const settings = ref<store.AppSetting>({
   success_action: store.SuccessAction.NOTHING,
   success_action_delay: 5,
   filter_miniport_nic: true,
-  filter_microsoft_nic: true
+  filter_microsoft_nic: true,
+  language: 'en'
 })
 
 const hwinfos = ref<{
