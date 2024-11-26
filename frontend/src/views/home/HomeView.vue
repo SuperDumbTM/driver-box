@@ -427,6 +427,8 @@ async function handleSubmit() {
               .RunAndOutput('cmd', ['/C', `shutdown /r /fw /t ${settings.success_action_delay}`])
               .then(result => {
                 if (result.exitCode != 0) {
+                  // sometimes, /fw would resulted in an error: 'The system could not find the environment option that was entered. (203)'
+                  // execute again normally solve the error
                   executor.RunAndOutput('cmd', [
                     '/C',
                     `shutdown /r /fw /t ${settings.success_action_delay}`
