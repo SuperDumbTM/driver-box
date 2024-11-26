@@ -387,7 +387,7 @@ async function handleSubmit() {
           </select>
         </fieldset>
 
-        <div class="flex flex-row gap-x-2 justify-end items-center">
+        <div class="flex flex-row gap-x-2 justify-end items-center mt-[0.4rem]">
           <button
             type="button"
             class="h-8 px-3 text-white text-sm bg-rose-700 hover:bg-rose-600 rounded"
