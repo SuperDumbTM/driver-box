@@ -29,8 +29,9 @@ func (s *AppSettingManager) Read() (AppSetting, error) {
 		}
 
 		s.setting = setting
+		s.loaded = true
 	}
-	s.loaded = true
+
 	return s.setting, nil
 }
 
