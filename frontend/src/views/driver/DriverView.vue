@@ -5,7 +5,7 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import InputModal from '@/views/driver/components/InputModal.vue'
 import { store } from '@/wailsjs/go/models'
 import * as manager from '@/wailsjs/go/store/DriverManager'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 const $toast = useToast({ position: 'top-right' })
@@ -24,20 +24,24 @@ const driverOfType = computed(() => {
 
 manager
   .Read()
-  .then(d => {
-    drivers.value = d
-
-    d.forEach(driver => {
-      manager.PathExist(driver.id).then(found => {
-        if (!found) {
-          notExistDrivers.value.push(driver.id)
-        }
-      })
-    })
-  })
+  .then(d => (drivers.value = d))
   .catch(() => {
     $toast.error('無法讀取軀動資料')
   })
+
+watch(drivers, (newValue, oldValue) => {
+  if (newValue.length == oldValue.length) {
+    return
+  }
+
+  Promise.all(
+    newValue.map(d => manager.PathExist(d.id).then(exist => ({ id: d.id, exist: exist })))
+  ).then(results => {
+    notExistDrivers.value = results
+      .map(result => (result.exist ? undefined : result.id))
+      .filter(v => v !== undefined)
+  })
+})
 </script>
 
 <template>
