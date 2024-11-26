@@ -32,7 +32,9 @@ func (m *DriverManager) Read() ([]Driver, error) {
 		if err := json.Unmarshal(bytes, &drivers); err != nil {
 			return nil, err
 		}
+
 		m.drivers = drivers
+		m.loaded = true
 	}
 	return m.drivers, nil
 }
