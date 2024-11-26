@@ -21,7 +21,7 @@ app_manager.Read().then(s => {
 
 <template>
   <form
-    class="flex flex-col h-full gap-y-3"
+    class="flex flex-col h-full gap-y-3 overflow-y-auto"
     @submit.prevent="
       () => {
         app_manager.Update(settings).then(() => {
