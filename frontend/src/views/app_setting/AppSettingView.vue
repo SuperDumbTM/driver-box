@@ -9,6 +9,7 @@ const settings = ref<store.AppSetting>({
   password: '',
   parallel_install: false,
   success_action: store.SuccessAction.NOTHING,
+  success_action_delay: 5,
   filter_miniport_nic: true,
   filter_microsoft_nic: true
 })
@@ -104,6 +105,30 @@ app_manager.Read().then(s => {
             <option :value="store.SuccessAction.REBOOT">重新開機</option>
             <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
           </select>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">其他</p>
+      <hr />
+    </div>
+
+    <div>
+      <p class="font-bold mb-2">關機選項延遲</p>
+
+      <div class="flex flex-col gap-y-3">
+        <div class="flex items-center">
+          <input
+            type="number"
+            name="success_action_delay"
+            min="0"
+            step="0"
+            v-model="settings.success_action_delay"
+            class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+            required
+          />
+          &nbsp; 秒
         </div>
       </div>
     </div>

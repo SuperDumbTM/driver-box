@@ -27,16 +27,16 @@ export namespace execute {
 
 export namespace store {
 	
+	export enum DriverType {
+	    NETWORK = "network",
+	    DISPLAY = "display",
+	    MISCELLANEOUS = "miscellaneous",
+	}
 	export enum SuccessAction {
 	    NOTHING = "nothing",
 	    REBOOT = "reboot",
 	    SHUTDOWN = "shutdown",
 	    FIRMWARE = "firmware",
-	}
-	export enum DriverType {
-	    NETWORK = "network",
-	    DISPLAY = "display",
-	    MISCELLANEOUS = "miscellaneous",
 	}
 	export class AppSetting {
 	    create_partition: boolean;
@@ -44,6 +44,7 @@ export namespace store {
 	    password: string;
 	    parallel_install: boolean;
 	    success_action: SuccessAction;
+	    success_action_delay: number;
 	    filter_miniport_nic: boolean;
 	    filter_microsoft_nic: boolean;
 	
@@ -58,6 +59,7 @@ export namespace store {
 	        this.password = source["password"];
 	        this.parallel_install = source["parallel_install"];
 	        this.success_action = source["success_action"];
+	        this.success_action_delay = source["success_action_delay"];
 	        this.filter_miniport_nic = source["filter_miniport_nic"];
 	        this.filter_microsoft_nic = source["filter_microsoft_nic"];
 	    }

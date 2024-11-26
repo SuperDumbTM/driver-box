@@ -16,7 +16,7 @@ func (s *AppSettingManager) Read() (AppSetting, error) {
 		var setting AppSetting
 
 		if _, err := os.Stat(s.Path); err != nil {
-			s.Update(AppSetting{SuccessAction: Nothing})
+			s.Update(AppSetting{SuccessAction: Nothing, SuccessActionDelay: 5})
 		}
 
 		bytes, err := os.ReadFile(s.Path)
@@ -26,10 +26,6 @@ func (s *AppSettingManager) Read() (AppSetting, error) {
 
 		if err := json.Unmarshal(bytes, &setting); err != nil {
 			return AppSetting{}, err
-		}
-
-		if setting.SuccessAction == "" {
-			setting.SuccessAction = Nothing
 		}
 
 		s.setting = setting
@@ -54,6 +50,7 @@ type AppSetting struct {
 	Password           string        `json:"password"`
 	ParallelInstall    bool          `json:"parallel_install"`
 	SuccessAction      SuccessAction `json:"success_action"`
+	SuccessActionDelay int           `json:"success_action_delay"`
 	FilterMiniportNic  bool          `json:"filter_miniport_nic"`
 	FilterMicrosoftNic bool          `json:"filter_microsoft_nic"`
 }

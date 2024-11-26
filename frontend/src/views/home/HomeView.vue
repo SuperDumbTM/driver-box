@@ -24,6 +24,7 @@ const settings = ref<store.AppSetting>({
   password: '',
   parallel_install: false,
   success_action: store.SuccessAction.NOTHING,
+  success_action_delay: 5,
   filter_miniport_nic: true,
   filter_microsoft_nic: true
 })
@@ -416,17 +417,22 @@ async function handleSubmit() {
       () => {
         switch (settings.success_action) {
           case store.SuccessAction.SHUTDOWN:
-            executor.RunAndOutput('cmd', ['/C', 'shutdown /s /t 5'])
+            executor.RunAndOutput('cmd', ['/C', `shutdown /s /t ${settings.success_action_delay}`])
             break
           case store.SuccessAction.REBOOT:
-            executor.RunAndOutput('cmd', ['/C', 'shutdown /r /t 5'])
+            executor.RunAndOutput('cmd', ['/C', `shutdown /r /t ${settings.success_action_delay}`])
             break
           case store.SuccessAction.FIRMWARE:
-            executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5']).then(result => {
-              if (result.exitCode != 0) {
-                executor.RunAndOutput('cmd', ['/C', 'shutdown /r /fw /t 5'])
-              }
-            })
+            executor
+              .RunAndOutput('cmd', ['/C', `shutdown /r /fw /t ${settings.success_action_delay}`])
+              .then(result => {
+                if (result.exitCode != 0) {
+                  executor.RunAndOutput('cmd', [
+                    '/C',
+                    `shutdown /r /fw /t ${settings.success_action_delay}`
+                  ])
+                }
+              })
             break
         }
       }
