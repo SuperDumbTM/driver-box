@@ -276,6 +276,9 @@ function handleAbort(command: (typeof commands.value)[0]) {
                             : command.result.error.split(':').slice(1).join(':').trim()
                         }}
                       </p>
+                      <p v-else class="text-xs text-red-400 font-mono">
+                        {{ command.result?.stderr }}
+                      </p>
                     </div>
                   </template>
 
@@ -302,6 +305,23 @@ function handleAbort(command: (typeof commands.value)[0]) {
                     <div class="text-xs text-gray-300 break-all line-clamp-2">
                       執行時間：{{ Math.round(command.result?.lapse ?? -1) }}秒
                     </div>
+                    <!-- <div class="text-xs break-all line-clamp-2">
+                      <p class="text-gray-400">
+                        狀態碼：{{ command.result?.exitCode }}；執行時間：{{
+                          Math.round(command.result?.lapse ?? -1)
+                        }}秒
+                      </p>
+
+                      <p
+                        class="font-mono"
+                        :class="
+                          command.result?.stderr !== '' ? 'text-red-400' : 'text-half-baked-400'
+                        "
+                        :title="command.result?.stderr || command.result?.stdout"
+                      >
+                        {{ command.result?.stderr || command.result?.stdout }}
+                      </p>
+                    </div> -->
                   </template>
                 </div>
               </div>
