@@ -6,7 +6,9 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/saintfish/chardet"
 	"github.com/shirou/gopsutil/v3/process"
+	"golang.org/x/net/html/charset"
 )
 
 type Command struct {
@@ -73,4 +75,33 @@ func (t Command) Lapse() float32 {
 		return -1.0
 	}
 	return float32(time.Since(t.startTime).Milliseconds()) / 1000
+}
+
+func (t Command) DecodeStdout() string {
+	if s, err := t.DecodeStdPipe(t.stdout); err != nil {
+		return t.stdout.String()
+	} else {
+		return s
+	}
+}
+
+func (t Command) DecodeStderr() string {
+	if s, err := t.DecodeStdPipe(t.stderr); err != nil {
+		return t.stdout.String()
+	} else {
+		return s
+	}
+}
+
+func (t Command) DecodeStdPipe(buff bytes.Buffer) (string, error) {
+	detector := chardet.NewTextDetector()
+	if result, err := detector.DetectBest(buff.Bytes()); err == nil {
+		if encoding, _ := charset.Lookup(result.Charset); encoding != nil {
+			return encoding.NewDecoder().String(buff.String())
+		} else {
+			return "", err
+		}
+	} else {
+		return "", err
+	}
 }

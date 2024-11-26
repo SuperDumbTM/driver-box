@@ -81,8 +81,8 @@ func (ce *CommandExecutor) dispatch(id string) {
 		runtime.EventsEmit(ce.ctx, "execute:exited", id, CommandResult{
 			command.Lapse(),
 			command.cmd.ProcessState.ExitCode(),
-			command.stdout.String(),
-			command.stderr.String(),
+			command.DecodeStdout(),
+			command.DecodeStderr(),
 			errMsg,
 			command.stopped,
 		})
