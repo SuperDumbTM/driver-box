@@ -40,7 +40,7 @@ import FileExeIcon from '@/components/icons/FileExeIcon.vue'
       </div>
     </aside>
 
-    <main class="w-full h-full p-4">
+    <main class="w-full h-full p-3">
       <RouterView></RouterView>
     </main>
   </div>
