@@ -58,7 +58,7 @@ function addClickOutsideHandler() {
   <div class="relative w-max">
     <button
       type="button"
-      class="w-20 me-1 px-2 py-1.5 text-white text-sm font-semibold rounded border-none bg-half-baked-600 hover:bg-half-baked-500"
+      class="w-24 me-1 px-2 py-1.5 text-white text-sm font-semibold rounded border-none bg-half-baked-600 hover:bg-half-baked-500"
       @click="
         () => {
           visible = !visible

@@ -6,6 +6,8 @@ import AsyncLock from 'async-lock'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
+import type { Command } from './types'
+import TaskStatus from './TaskStatus.vue'
 
 defineExpose({
   show: async (
@@ -35,62 +37,31 @@ const $toast = useToast({ position: 'top-left', duration: 7000 })
 
 const show = ref(false)
 
-const commands = ref<
-  Array<{
-    id: string
-    procId?: string
-    name: string
-    status:
-      | 'pending'
-      | 'running'
-      | 'aborting'
-      | 'completed'
-      | 'failed'
-      | 'aborted'
-      | 'speeded'
-      | 'broken'
-    program: string
-    options: Array<string>
-    minExeTime: number
-    allowRtCodes: Array<number>
-    incompatibles: Array<string>
-    result?: {
-      lapse: number
-      exitCode: number
-      stdout: string
-      stderr: string
-      error: string
-      aborted: boolean
-    }
-  }>
->([])
+const commands = ref<Array<Command>>([])
 
-runtime.EventsOn(
-  'execute:exited',
-  async (id: string, result: NonNullable<(typeof commands.value)[0]['result']>) => {
-    const command = commands.value.find(c => c.procId === id)!
-    command.result = result
+runtime.EventsOn('execute:exited', async (id: string, result: NonNullable<Command['result']>) => {
+  const command = commands.value.find(c => c.procId === id)!
+  command.result = result
 
-    if (result.aborted) {
-      command.status = 'aborted'
-    } else if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
-      command.status = 'failed'
-    } else if (result.lapse < command.minExeTime) {
-      command.status = 'speeded'
-    } else {
-      command.status = 'completed'
-    }
-
-    dispatchCommand().then(() => {
-      if (commands.value.every(c => c.status === 'completed')) {
-        emit('completed')
-        $toast.success(t('toasts.finished'), { position: 'bottom-right' })
-      } else if (commands.value.every(c => !c.status.includes('ing'))) {
-        $toast.info(t('toasts.finished'), { position: 'bottom-right' })
-      }
-    })
+  if (result.aborted) {
+    command.status = 'aborted'
+  } else if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
+    command.status = 'failed'
+  } else if (result.lapse < command.minExeTime) {
+    command.status = 'speeded'
+  } else {
+    command.status = 'completed'
   }
-)
+
+  dispatchCommand().then(() => {
+    if (commands.value.every(c => c.status === 'completed')) {
+      emit('completed')
+      $toast.success(t('toasts.finished'), { position: 'bottom-right' })
+    } else if (commands.value.every(c => !c.status.includes('ing'))) {
+      $toast.info(t('toasts.finished'), { position: 'bottom-right' })
+    }
+  })
+})
 
 async function dispatchCommand() {
   lock.acquire('executor', async () => {
@@ -128,7 +99,7 @@ async function dispatchCommand() {
   })
 }
 
-function handleAbort(command: (typeof commands.value)[0]) {
+function handleAbort(command: Command) {
   return lock
     .acquire('executor', () => {
       if (command.status == 'pending' || command.status == 'running') {
@@ -210,142 +181,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
           <!-- Modal body -->
           <div class="max-h-[70vh] overflow-y-auto py-2 px-4">
             <template v-for="(command, i) in commands" :key="i">
-              <div class="flex min-h-9 border-t last:border-b border-kashmir-blue-100">
-                <div class="content-center w-2/6 pe-1 text-xs truncate">
-                  {{ command.name }}
-                </div>
-
-                <div class="flex items-center w-4/6 ps-1 py-1">
-                  <template v-if="command.status == 'pending'">
-                    <span class="mx-1 px-1.5 bg-gray-300 rounded">
-                      {{ $t('executeStatues.pending') }}
-                    </span>
-
-                    <button
-                      class="ms-auto mx-1 px-1.5 text-sm bg-kashmir-blue-100 rounded"
-                      @click="() => handleAbort(command)"
-                    >
-                      {{ $t('executeStatues.abort') }}
-                    </button>
-                  </template>
-
-                  <template v-else-if="command.status == 'running'">
-                    <span class="mx-1 px-1.5 bg-half-baked-500 animate-pulse rounded">
-                      {{ $t('executeStatues.running') }}
-                    </span>
-
-                    <button
-                      class="ms-auto mx-1 px-1.5 text-sm bg-kashmir-blue-100 rounded"
-                      @click="() => handleAbort(command)"
-                    >
-                      {{ $t('executeStatues.abort') }}
-                    </button>
-                  </template>
-
-                  <template v-else-if="command.status == 'aborting'">
-                    <span class="mx-1 px-1.5 bg-yellow-400 animate-pulse rounded">
-                      {{ $t('executeStatues.aborting') }}
-                    </span>
-                  </template>
-
-                  <template v-else-if="command.status == 'aborted'">
-                    <span class="mx-1 px-1.5 bg-yellow-400 rounded">
-                      {{ $t('executeStatues.aborted') }}
-                    </span>
-                  </template>
-
-                  <template v-else-if="command.status == 'speeded' || command.status == 'failed'">
-                    <div class="shrink-0 w-[4.1rem]">
-                      <span class="align-middle mx-1 px-1.5 bg-red-300 rounded">
-                        {{ $t('executeStatues.failed') }}
-                      </span>
-                    </div>
-
-                    <div class="text-sm break-all line-clamp-3">
-                      {{ $t('executeStatues.exitCode', { code: command.result?.exitCode }) }}
-
-                      <p v-if="command.status == 'speeded'" class="text-xs text-orange-300">
-                        {{
-                          $t('executeStatues.earlyExit', {
-                            second: `${(command.result?.lapse ?? -1).toFixed(1)}/${command.minExeTime}`
-                          })
-                        }}
-                      </p>
-                      <p
-                        v-else-if="
-                          command.result &&
-                          command.result.error !== '' &&
-                          !command.result.error.includes('exit status')
-                        "
-                        class="text-xs text-red-400 font-mono"
-                      >
-                        {{
-                          command.result.error.includes('file does not exist') ||
-                          command.result.error.includes(
-                            'The system cannot find the file specified.'
-                          ) ||
-                          command.result.error.includes(
-                            'The system cannot find the path specified.'
-                          )
-                            ? $t('executeStatues.fileNotExist')
-                            : command.result.error.split(':').slice(1).join(':').trim()
-                        }}
-                      </p>
-                      <p v-else class="text-xs text-red-400 font-mono">
-                        {{ command.result?.stderr }}
-                      </p>
-                    </div>
-                  </template>
-
-                  <template v-else-if="command.status == 'broken'">
-                    <div class="shrink-0 w-[4.1rem]">
-                      <span class="align-middle mx-1 px-1.5 bg-red-700 text-white rounded">
-                        {{ $t('executeStatues.broken') }}
-                      </span>
-                    </div>
-
-                    <div class="text-sm break-all line-clamp-2 font-mono">
-                      {{
-                        command.result?.error?.split(':').slice(1).join(':').trim() ??
-                        $t('executeStatues.startFailed')
-                      }}
-                    </div>
-                  </template>
-
-                  <template v-else>
-                    <div class="shrink-0 w-[4.1rem]">
-                      <span class="mx-1 px-1.5 font-mono bg-apple-green-600 rounded">
-                        {{ $t('executeStatues.completed') }}
-                      </span>
-                    </div>
-
-                    <div class="text-xs text-gray-300 break-all line-clamp-2">
-                      {{
-                        $t('executeStatues.executeTime', {
-                          second: Math.round(command.result?.lapse ?? -1)
-                        })
-                      }}
-                    </div>
-                    <!-- <div class="text-xs break-all line-clamp-2">
-                      <p class="text-gray-400">
-                        狀態碼：{{ command.result?.exitCode }}；執行時間：{{
-                          Math.round(command.result?.lapse ?? -1)
-                        }}秒
-                      </p>
-
-                      <p
-                        class="font-mono"
-                        :class="
-                          command.result?.stderr !== '' ? 'text-red-400' : 'text-half-baked-400'
-                        "
-                        :title="command.result?.stderr || command.result?.stdout"
-                      >
-                        {{ command.result?.stderr || command.result?.stdout }}
-                      </p>
-                    </div> -->
-                  </template>
-                </div>
-              </div>
+              <TaskStatus :cmd="command" @abort="handleAbort(command)"></TaskStatus>
             </template>
           </div>
         </div>

@@ -33,6 +33,34 @@ app_manager.Read().then(s => {
   >
     <div>
       <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
+        {{ $t('settings.generalSetting') }}
+      </p>
+      <hr />
+    </div>
+
+    <div>
+      <p class="font-bold mb-2">
+        {{ $t('settings.successActionDelay') }}
+      </p>
+
+      <div class="flex flex-col gap-y-3">
+        <div class="flex items-center">
+          <input
+            type="number"
+            name="success_action_delay"
+            min="0"
+            step="0"
+            v-model="settings.success_action_delay"
+            class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+            required
+          />
+          &nbsp; {{ $t('settings.second') }}
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
         {{ $t('settings.defaultInstallSetting') }}
       </p>
       <hr />
@@ -113,34 +141,6 @@ app_manager.Read().then(s => {
               {{ $t(`successActions.${action}`) }}
             </option>
           </select>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
-        {{ $t('settings.generalSetting') }}
-      </p>
-      <hr />
-    </div>
-
-    <div>
-      <p class="font-bold mb-2">
-        {{ $t('settings.successActionDelay') }}
-      </p>
-
-      <div class="flex flex-col gap-y-3">
-        <div class="flex items-center">
-          <input
-            type="number"
-            name="success_action_delay"
-            min="0"
-            step="0"
-            v-model="settings.success_action_delay"
-            class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-            required
-          />
-          &nbsp; {{ $t('settings.second') }}
         </div>
       </div>
     </div>
