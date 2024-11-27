@@ -95,7 +95,9 @@
     "displaySetting": "顯示設定",
     "hardwareInfo": "硬件資訊",
     "filterMiniportNic": "過濾 Miniport 網卡",
-    "filterMicorsoftNic": "過濾 Microsoft 網卡"
+    "filterMicorsoftNic": "過濾 Microsoft 網卡",
+    "softwareSetting": "程式設定",
+    "language": "語言"
   },
   "save": "儲存"
 }

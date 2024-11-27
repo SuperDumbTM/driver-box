@@ -95,7 +95,9 @@
     "displaySetting": "Display Setting",
     "hardwareInfo": "Hardware Info",
     "filterMiniportNic": "Filter Miniport NICs",
-    "filterMicorsoftNic": "Filter Microsoft NICs"
+    "filterMicorsoftNic": "Filter Microsoft NICs",
+    "softwareSetting": "Software Setting",
+    "language": "Language"
   },
   "save": "Save"
 }

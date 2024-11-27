@@ -15,9 +15,7 @@ const settings = ref<store.AppSetting>({
   language: 'en'
 })
 
-app_manager.Read().then(s => {
-  settings.value = s
-})
+app_manager.Read().then(s => (settings.value = s))
 </script>
 
 <template>
@@ -26,6 +24,7 @@ app_manager.Read().then(s => {
     @submit.prevent="
       () => {
         app_manager.Update(settings).then(() => {
+          $i18n.locale = settings.language
           $toast.success($t('toasts.updated'), { duration: 1500, position: 'top-right' })
         })
       }
@@ -36,6 +35,26 @@ app_manager.Read().then(s => {
         {{ $t('settings.generalSetting') }}
       </p>
       <hr />
+    </div>
+
+    <div>
+      <p class="font-bold mb-2">
+        {{ $t('settings.softwareSetting') }}
+      </p>
+
+      <div>
+        <label class="block mb-2 text-gray-900">
+          {{ $t('settings.language') }}
+        </label>
+        <select
+          name="language"
+          v-model="settings.language"
+          class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+        >
+          <option value="en">English</option>
+          <option value="zh_Hant_HK">繁體中文</option>
+        </select>
+      </div>
     </div>
 
     <div>
@@ -186,10 +205,10 @@ app_manager.Read().then(s => {
       </div>
     </div>
 
-    <div>
+    <div class="sticky bottom-0 bg-white shadow-lg shadow-black bg-scroll">
       <button
         type="submit"
-        class="h-8 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
+        class="h-7 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
       >
         {{ $t('save') }}
       </button>
