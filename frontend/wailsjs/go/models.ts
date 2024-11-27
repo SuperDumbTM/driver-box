@@ -47,6 +47,7 @@ export namespace store {
 	    success_action_delay: number;
 	    filter_miniport_nic: boolean;
 	    filter_microsoft_nic: boolean;
+	    language: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new AppSetting(source);
@@ -62,6 +63,7 @@ export namespace store {
 	        this.success_action_delay = source["success_action_delay"];
 	        this.filter_miniport_nic = source["filter_miniport_nic"];
 	        this.filter_microsoft_nic = source["filter_microsoft_nic"];
+	        this.language = source["language"];
 	    }
 	}
 	export class Driver {

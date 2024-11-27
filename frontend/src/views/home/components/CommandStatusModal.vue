@@ -4,6 +4,7 @@ import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import * as runtime from '@/wailsjs/runtime/runtime'
 import AsyncLock from 'async-lock'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
 
 defineExpose({
@@ -25,6 +26,8 @@ defineExpose({
 const emit = defineEmits<{ completed: [] }>()
 
 let isParallel = false
+
+const { t } = useI18n()
 
 const lock = new AsyncLock()
 
@@ -81,9 +84,9 @@ runtime.EventsOn(
     dispatchCommand().then(() => {
       if (commands.value.every(c => c.status === 'completed')) {
         emit('completed')
-        $toast.success('完成', { position: 'bottom-right' })
+        $toast.success(t('toasts.finished'), { position: 'bottom-right' })
       } else if (commands.value.every(c => !c.status.includes('ing'))) {
-        $toast.info('完成', { position: 'bottom-right' })
+        $toast.info(t('toasts.finished'), { position: 'bottom-right' })
       }
     })
   }
@@ -141,7 +144,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
       // `aborted` status will be updated at `execute:exited` event handler
       executor.Abort(command.procId!).catch(error => {
         if (error.includes('process does not exist')) {
-          $toast.warning(`[${command.name}] 無法取消，可能已經完成執行。`)
+          $toast.warning(t('toasts.cancelCompletedFailed', { name: command.name }))
           return
         }
 
@@ -150,7 +153,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
           .split('\n')
           .forEach((err: string) => {
             if (err.includes('abort failed')) {
-              $toast.error(`[${command.name}] 無法取消`)
+              $toast.warning(t('toasts.cancelFailed', { name: command.name }))
             } else {
               $toast.error(`[${command.name}] ${err}`)
             }
@@ -186,7 +189,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
           <!-- Modal header -->
           <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t bg-white">
             <h3 class="font-semibold">
-              {{ '執行狀態' }}
+              {{ $t('executeStatues.title') }}
             </h3>
             <button
               type="button"
@@ -214,47 +217,59 @@ function handleAbort(command: (typeof commands.value)[0]) {
 
                 <div class="flex items-center w-4/6 ps-1 py-1">
                   <template v-if="command.status == 'pending'">
-                    <span class="mx-1 px-1.5 bg-gray-300 rounded">等待中</span>
+                    <span class="mx-1 px-1.5 bg-gray-300 rounded">
+                      {{ $t('executeStatues.pending') }}
+                    </span>
 
                     <button
                       class="ms-auto mx-1 px-1.5 text-sm bg-kashmir-blue-100 rounded"
                       @click="() => handleAbort(command)"
                     >
-                      取消
+                      {{ $t('executeStatues.abort') }}
                     </button>
                   </template>
 
                   <template v-else-if="command.status == 'running'">
-                    <span class="mx-1 px-1.5 bg-half-baked-500 animate-pulse rounded">執行中</span>
+                    <span class="mx-1 px-1.5 bg-half-baked-500 animate-pulse rounded">
+                      {{ $t('executeStatues.running') }}
+                    </span>
 
                     <button
                       class="ms-auto mx-1 px-1.5 text-sm bg-kashmir-blue-100 rounded"
                       @click="() => handleAbort(command)"
                     >
-                      取消
+                      {{ $t('executeStatues.abort') }}
                     </button>
                   </template>
 
                   <template v-else-if="command.status == 'aborting'">
-                    <span class="mx-1 px-1.5 bg-yellow-400 animate-pulse rounded">取消中</span>
+                    <span class="mx-1 px-1.5 bg-yellow-400 animate-pulse rounded">
+                      {{ $t('executeStatues.aborting') }}
+                    </span>
                   </template>
 
                   <template v-else-if="command.status == 'aborted'">
-                    <span class="mx-1 px-1.5 bg-yellow-400 rounded">已取消</span>
+                    <span class="mx-1 px-1.5 bg-yellow-400 rounded">
+                      {{ $t('executeStatues.aborted') }}
+                    </span>
                   </template>
 
                   <template v-else-if="command.status == 'speeded' || command.status == 'failed'">
                     <div class="shrink-0 w-[4.1rem]">
-                      <span class="align-middle mx-1 px-1.5 bg-red-300 rounded">失敗</span>
+                      <span class="align-middle mx-1 px-1.5 bg-red-300 rounded">
+                        {{ $t('executeStatues.failed') }}
+                      </span>
                     </div>
 
                     <div class="text-sm break-all line-clamp-3">
-                      狀態碼：{{ command.result?.exitCode }}
+                      {{ $t('executeStatues.exitCode', { code: command.result?.exitCode }) }}
 
                       <p v-if="command.status == 'speeded'" class="text-xs text-orange-300">
-                        執行時間過短（{{
-                          `${(command.result?.lapse ?? -1).toFixed(1)}/${command.minExeTime}`
-                        }}秒）
+                        {{
+                          $t('executeStatues.earlyExit', {
+                            second: `${(command.result?.lapse ?? -1).toFixed(1)}/${command.minExeTime}`
+                          })
+                        }}
                       </p>
                       <p
                         v-else-if="
@@ -272,7 +287,7 @@ function handleAbort(command: (typeof commands.value)[0]) {
                           command.result.error.includes(
                             'The system cannot find the path specified.'
                           )
-                            ? '檔案／路徑不存在'
+                            ? $t('executeStatues.fileNotExist')
                             : command.result.error.split(':').slice(1).join(':').trim()
                         }}
                       </p>
@@ -285,25 +300,31 @@ function handleAbort(command: (typeof commands.value)[0]) {
                   <template v-else-if="command.status == 'broken'">
                     <div class="shrink-0 w-[4.1rem]">
                       <span class="align-middle mx-1 px-1.5 bg-red-700 text-white rounded">
-                        錯誤
+                        {{ $t('executeStatues.broken') }}
                       </span>
                     </div>
 
                     <div class="text-sm break-all line-clamp-2 font-mono">
                       {{
                         command.result?.error?.split(':').slice(1).join(':').trim() ??
-                        '程式出錯，未能執行'
+                        $t('executeStatues.startFailed')
                       }}
                     </div>
                   </template>
 
                   <template v-else>
                     <div class="shrink-0 w-[4.1rem]">
-                      <span class="mx-1 px-1.5 bg-apple-green-600 rounded">完成</span>
+                      <span class="mx-1 px-1.5 font-mono bg-apple-green-600 rounded">
+                        {{ $t('executeStatues.completed') }}
+                      </span>
                     </div>
 
                     <div class="text-xs text-gray-300 break-all line-clamp-2">
-                      執行時間：{{ Math.round(command.result?.lapse ?? -1) }}秒
+                      {{
+                        $t('executeStatues.executeTime', {
+                          second: Math.round(command.result?.lapse ?? -1)
+                        })
+                      }}
                     </div>
                     <!-- <div class="text-xs break-all line-clamp-2">
                       <p class="text-gray-400">

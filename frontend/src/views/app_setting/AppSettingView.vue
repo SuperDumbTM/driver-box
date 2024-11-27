@@ -26,18 +26,22 @@ app_manager.Read().then(s => {
     @submit.prevent="
       () => {
         app_manager.Update(settings).then(() => {
-          $toast.success('已更新。', { duration: 1500, position: 'top-right' })
+          $toast.success($t('toasts.updated'), { duration: 1500, position: 'top-right' })
         })
       }
     "
   >
     <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">預設安裝選項</p>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
+        {{ $t('settings.defaultInstallSetting') }}
+      </p>
       <hr />
     </div>
 
     <div>
-      <p class="font-bold mb-2">額外工作</p>
+      <p class="font-bold mb-2">
+        {{ $t('settings.task') }}
+      </p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
@@ -48,7 +52,7 @@ app_manager.Read().then(s => {
               v-model="settings.create_partition"
               class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
             />
-            建立磁區
+            {{ $t('installOptions.createPartition') }}
           </label>
         </div>
 
@@ -61,7 +65,7 @@ app_manager.Read().then(s => {
                 v-model="settings.set_password"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              設定密碼
+              {{ $t('installOptions.setPassword') }}
             </label>
           </div>
 
@@ -79,7 +83,9 @@ app_manager.Read().then(s => {
     </div>
 
     <div>
-      <p class="font-bold mb-2">安裝設定</p>
+      <p class="font-bold mb-2">
+        {{ $t('settings.installOption') }}
+      </p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
@@ -90,33 +96,38 @@ app_manager.Read().then(s => {
               v-model="settings.parallel_install"
               class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
             />
-            同步安裝
+            {{ $t('installOptions.parallelInstall') }}
           </label>
         </div>
 
         <div>
-          <label class="block mb-2 text-gray-900"> 關機設定 </label>
+          <label class="block mb-2 text-gray-900">
+            {{ $t('installOptions.successAction') }}
+          </label>
           <select
             name="success_action"
             v-model="settings.success_action"
             class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
           >
-            <option :value="store.SuccessAction.NOTHING">沒有動作</option>
-            <option :value="store.SuccessAction.SHUTDOWN">關機</option>
-            <option :value="store.SuccessAction.REBOOT">重新開機</option>
-            <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
+            <option v-for="action in store.SuccessAction" :key="action" :value="action">
+              {{ $t(`successActions.${action}`) }}
+            </option>
           </select>
         </div>
       </div>
     </div>
 
     <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">其他</p>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
+        {{ $t('settings.generalSetting') }}
+      </p>
       <hr />
     </div>
 
     <div>
-      <p class="font-bold mb-2">關機選項延遲</p>
+      <p class="font-bold mb-2">
+        {{ $t('settings.successActionDelay') }}
+      </p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
@@ -129,18 +140,22 @@ app_manager.Read().then(s => {
             class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
             required
           />
-          &nbsp; 秒
+          &nbsp; {{ $t('settings.second') }}
         </div>
       </div>
     </div>
 
     <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">顯示設定</p>
+      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
+        {{ $t('settings.displaySetting') }}
+      </p>
       <hr />
     </div>
 
     <div>
-      <p class="font-bold mb-2">硬件資訊</p>
+      <p class="font-bold mb-2">
+        {{ $t('settings.hardwareInfo') }}
+      </p>
 
       <div class="flex flex-col gap-y-3">
         <div class="flex items-center">
@@ -151,7 +166,7 @@ app_manager.Read().then(s => {
               v-model="settings.filter_miniport_nic"
               class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
             />
-            過濾 Miniport 網卡
+            {{ $t('settings.filterMiniportNic') }}
           </label>
         </div>
       </div>
@@ -165,7 +180,7 @@ app_manager.Read().then(s => {
               v-model="settings.filter_microsoft_nic"
               class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
             />
-            過濾 Microsoft 網卡
+            {{ $t('settings.filterMicorsoftNic') }}
           </label>
         </div>
       </div>
@@ -176,7 +191,7 @@ app_manager.Read().then(s => {
         type="submit"
         class="h-8 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
       >
-        儲存
+        {{ $t('save') }}
       </button>
     </div>
   </form>

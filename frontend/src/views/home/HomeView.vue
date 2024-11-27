@@ -6,7 +6,10 @@ import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import * as manager from '@/wailsjs/go/store/DriverManager'
 import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
 import { ref, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
+
+const { t } = useI18n()
 
 const statusModal = useTemplateRef('statusModal')
 
@@ -53,14 +56,14 @@ manager
     })
   })
   .catch(() => {
-    $toast.error('無法讀取軀動資料，重新設定或可解決問題。')
+    $toast.error(t('toasts.readDriverFailed'))
   })
 
 app_manager
   .Read()
   .then(s => (settings.value = s))
   .catch(() => {
-    $toast.error('無法讀預設選項資料，重新設定或可解決問題。')
+    $toast.error(t('toasts.readAppSettingFailed'))
   })
 
 Promise.all([
@@ -84,7 +87,7 @@ Promise.all([
 
 async function handleSubmit() {
   if (!form.value) {
-    $toast.error('程式出錯，無法取得輸入')
+    $toast.error(t('toasts.readInputFailed'))
     return
   }
 
@@ -102,7 +105,7 @@ async function handleSubmit() {
   if (settings.value.set_password) {
     commands.push({
       id: 'set_password',
-      name: '設定密碼',
+      name: t('tasks.setPassword'),
       program: 'powershell',
       options: [
         '-WindowStyle',
@@ -123,7 +126,7 @@ async function handleSubmit() {
   if (settings.value.create_partition) {
     commands.push({
       id: 'create_partition',
-      name: '建立磁碟分區及掛載檔案系統',
+      name: t('tasks.createPartitions'),
       program: 'powershell',
       options: [
         '-WindowStyle',
@@ -156,7 +159,7 @@ async function handleSubmit() {
     })
 
   if (commands.length == 0) {
-    $toast.warning('請先選擇軀動或工作')
+    $toast.warning(t('toasts.noInputWarning'))
     return
   }
 
@@ -173,7 +176,7 @@ async function handleSubmit() {
     >
       <template v-if="hwinfos !== null">
         <div>
-          <h2 class="text-sm font-bold">底板</h2>
+          <h2 class="text-sm font-bold">{{ $t('motherboard') }}</h2>
 
           <p v-for="(mb, i) in hwinfos.motherboard" :key="i" class="text-sm">
             {{ `${mb.Manufacturer} ${mb.Product}` }}
@@ -181,7 +184,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">中央處理器</h2>
+          <h2 class="text-sm font-bold">{{ $t('cpu') }}</h2>
 
           <p v-for="(cpu, i) in hwinfos.cpu" :key="i" class="text-sm">
             {{ cpu.Name }}
@@ -189,7 +192,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">記憶體</h2>
+          <h2 class="text-sm font-bold">{{ $t('ram') }}</h2>
 
           <p v-for="(mem, i) in hwinfos.memory" :key="i" class="text-sm">
             {{
@@ -199,7 +202,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">顯示卡</h2>
+          <h2 class="text-sm font-bold">{{ $t('gpu') }}</h2>
 
           <p v-for="(dp, i) in hwinfos.gpu" :key="i" class="text-sm">
             {{ `${dp.Name} (${dp.AdapterRAM / Math.pow(1024, 3)}GB)` }}
@@ -207,7 +210,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">網絡介面卡</h2>
+          <h2 class="text-sm font-bold">{{ $t('nic') }}</h2>
 
           <p
             v-for="(dp, i) in hwinfos.nic
@@ -229,7 +232,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">儲存裝置</h2>
+          <h2 class="text-sm font-bold">{{ $t('storage') }}</h2>
 
           <p v-for="(dp, i) in hwinfos.disk" :key="i" class="text-sm">
             {{ `${dp.Model} (${Math.round(dp.Size / Math.pow(1024, 3))}GB)` }}
@@ -252,7 +255,7 @@ async function handleSubmit() {
             name="network"
             class="block w-full peer ps-3 pe-9 pt-4 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-900"
           >
-            <option>請選擇</option>
+            <option>{{ $t('pleaseSelect') }}</option>
             <option
               v-for="d in drivers.filter(d => d.type == store.DriverType.NETWORK)"
               :key="d.id"
@@ -264,7 +267,7 @@ async function handleSubmit() {
           <label
             class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
           >
-            網絡介面卡
+            {{ $t('driverCategories.network') }}
           </label>
         </div>
 
@@ -273,7 +276,7 @@ async function handleSubmit() {
             name="display"
             class="block w-full peer ps-3 pe-9 pt-4 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-900"
           >
-            <option>請選擇</option>
+            <option>{{ $t('pleaseSelect') }}</option>
             <option
               v-for="d in drivers.filter(d => d.type == store.DriverType.DISPLAY)"
               :key="d.id"
@@ -285,7 +288,7 @@ async function handleSubmit() {
           <label
             class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
           >
-            顯示卡
+            {{ $t('driverCategories.display') }}
           </label>
         </div>
       </div>
@@ -307,7 +310,7 @@ async function handleSubmit() {
           <label
             class="absolute left-3 top-0 w-10 origin-[0_0] -translate-y-[0.55rem] bg-white text-primary scale-[0.9] text-xs text-center text-neutral-500 truncate pointer-events-none"
           >
-            其他
+            {{ $t('driverCategories.miscellaneous') }}
           </label>
         </div>
       </div>
@@ -317,7 +320,7 @@ async function handleSubmit() {
 
     <div class="flex gap-x-6">
       <div class="flex flex-col">
-        <p class="font-semibold">額外工作及安裝設定</p>
+        <p class="font-semibold">{{ $t('installOptions.title') }}</p>
 
         <div class="flex flex-col">
           <div class="flex gap-x-4">
@@ -329,7 +332,7 @@ async function handleSubmit() {
                   v-model="settings.create_partition"
                   class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                建立磁區
+                {{ $t('installOptions.createPartition') }}
               </label>
             </div>
 
@@ -343,7 +346,7 @@ async function handleSubmit() {
                     v-model="settings.parallel_install"
                     class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  同步安裝
+                  {{ $t('installOptions.parallelInstall') }}
                 </label>
               </div>
             </div>
@@ -357,7 +360,7 @@ async function handleSubmit() {
                 v-model="settings.set_password"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              設定密碼
+              {{ $t('installOptions.setPassword') }}
             </label>
 
             <div class="flex shrink">
@@ -375,16 +378,17 @@ async function handleSubmit() {
 
       <div class="flex flex-col grow justify-between">
         <fieldset>
-          <label class="block mb-1 text-sm text-gray-900">關機設定</label>
+          <label class="block mb-1 text-sm text-gray-900">
+            {{ $t('installOptions.successAction') }}
+          </label>
           <select
             name="success_action"
             v-model="settings.success_action"
             class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
           >
-            <option :value="store.SuccessAction.NOTHING">沒有動作</option>
-            <option :value="store.SuccessAction.SHUTDOWN">關機</option>
-            <option :value="store.SuccessAction.REBOOT">重新開機</option>
-            <option :value="store.SuccessAction.FIRMWARE">進入 BIOS/UEFI</option>
+            <option v-for="action in store.SuccessAction" :key="action" :value="action">
+              {{ $t(`successActions.${action}`) }}
+            </option>
           </select>
         </fieldset>
 
@@ -399,13 +403,13 @@ async function handleSubmit() {
               }
             "
           >
-            重置輸入
+            {{ $t('installOptions.reset') }}
           </button>
           <button
             class="h-8 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
             @click="handleSubmit"
           >
-            執行
+            {{ $t('installOptions.execute') }}
           </button>
         </div>
       </div>

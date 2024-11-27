@@ -6,7 +6,10 @@ import InputModal from '@/views/driver/components/InputModal.vue'
 import { store } from '@/wailsjs/go/models'
 import * as manager from '@/wailsjs/go/store/DriverManager'
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
+
+const { t } = useI18n()
 
 const $toast = useToast({ position: 'top-right' })
 
@@ -26,7 +29,7 @@ manager
   .Read()
   .then(d => (drivers.value = d))
   .catch(() => {
-    $toast.error('無法讀取軀動資料')
+    $toast.error(t('toasts.readDriverFailed'))
   })
 
 watch(drivers, (newValue, oldValue) => {
@@ -47,40 +50,16 @@ watch(drivers, (newValue, oldValue) => {
 <template>
   <div class="flex flex-col h-full gap-y-3">
     <ul class="flex flex-row gap-x-3 list-none text-center">
-      <li class="flex-1">
+      <li class="flex-1" v-for="type in store.DriverType" :key="type">
         <a
           class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
           :class="{
-            'text-half-baked-600 bg-white': driType !== store.DriverType.NETWORK,
-            'text-white bg-half-baked-600': driType === store.DriverType.NETWORK
+            'text-half-baked-600 bg-white': driType !== type,
+            'text-white bg-half-baked-600': driType === type
           }"
-          @click="driType = store.DriverType.NETWORK"
+          @click="driType = type"
         >
-          有線網絡介面卡
-        </a>
-      </li>
-      <li class="flex-1">
-        <a
-          class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
-          :class="{
-            'text-half-baked-600 bg-white': driType !== store.DriverType.DISPLAY,
-            'text-white bg-half-baked-600': driType === store.DriverType.DISPLAY
-          }"
-          @click="driType = store.DriverType.DISPLAY"
-        >
-          顯示卡
-        </a>
-      </li>
-      <li class="flex-1">
-        <a
-          class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
-          :class="{
-            'text-half-baked-600 bg-white': driType !== store.DriverType.MISCELLANEOUS,
-            'text-white bg-half-baked-600': driType === store.DriverType.MISCELLANEOUS
-          }"
-          @click="driType = store.DriverType.MISCELLANEOUS"
-        >
-          其他
+          {{ t(`driverCategories.${type}`) }}
         </a>
       </li>
     </ul>
@@ -89,10 +68,18 @@ watch(drivers, (newValue, oldValue) => {
       <table class="table-fixed text-sm text-left text-gray-500">
         <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
-            <th scope="col" class="px-4 py-4 text-nowrap">軀動名稱</th>
-            <th scope="col" class="px-4 py-4 text-nowrap">路徑</th>
-            <th scope="col" class="sm:px-4 py-4 text-nowrap">安裝參數</th>
-            <th scope="col" class="px-4 py-4 text-nowrap">動作</th>
+            <th scope="col" class="px-4 py-4 text-nowrap">
+              {{ $t('driverForms.name') }}
+            </th>
+            <th scope="col" class="px-4 py-4 text-nowrap">
+              {{ $t('driverForms.path') }}
+            </th>
+            <th scope="col" class="sm:px-4 py-4 text-nowrap">
+              {{ $t('driverForms.argument') }}
+            </th>
+            <th scope="col" class="px-4 py-4 text-nowrap">
+              {{ $t('driverForms.action') }}
+            </th>
           </tr>
         </thead>
         <tbody draggable="false">
@@ -217,7 +204,7 @@ watch(drivers, (newValue, oldValue) => {
         ]"
         @click="reordering = !reordering"
       >
-        {{ reordering ? '檢視' : '排序' }}
+        {{ reordering ? $t('driverForms.view') : $t('driverForms.order') }}
       </button>
 
       <button
@@ -226,7 +213,7 @@ watch(drivers, (newValue, oldValue) => {
         @click="$refs.inputModal?.show({ type: driType })"
         :disabled="reordering"
       >
-        新增
+        {{ $t('driverForms.create') }}
       </button>
     </div>
 

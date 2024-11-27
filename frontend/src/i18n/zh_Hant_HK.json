@@ -1,1 +1,101 @@
-{}
+{
+  "toasts": {
+    "readDriverFailed": "無法讀取軀動資料，重新設定或可解決問題。",
+    "readAppSettingFailed": "無法讀預設選項資料，重新設定或可解決問題。",
+    "readInputFailed": "程式出錯，無法取得輸入。",
+    "noInputWarning": "請先選擇軀動或工作。",
+    "finished": "完成",
+    "cancelCompletedFailed": "[{name}] 無法取消，可能已經完成執行。",
+    "cancelFailed": "[{name}] 無法取消。",
+    "updated": "已更新。"
+  },
+  "tasks": {
+    "setPassword": "設定密碼",
+    "createPartition": "建立磁碟分區及掛載檔案系統"
+  },
+  "motherboard": "底板",
+  "cpu": "中央處理器",
+  "ram": "記憶體",
+  "gpu": "顯示卡",
+  "nic": "網絡介面卡",
+  "storage": "儲存裝置",
+  "pleaseSelect": "請選擇",
+  "driverCategories": {
+    "display": "顯示卡",
+    "network": "網絡介面卡",
+    "miscellaneous": "其他"
+  },
+  "installOptions": {
+    "title": "額外工作及安裝設定",
+    "createPartition": "建立磁區",
+    "parallelInstall": "同步安裝",
+    "setPassword": "設定密碼",
+    "successAction": "關機設定",
+    "reset": "重置輸入",
+    "execute": "執行"
+  },
+  "successActions": {
+    "nothing": "沒有動作",
+    "shutdown": "關機",
+    "reboot": "重新開機",
+    "firmware": "進入 BIOS/UEFI"
+  },
+  "executeStatues": {
+    "title": "執行狀態",
+    "pending": "等待中",
+    "running": "執行中",
+    "abort": "取消",
+    "aborting": "取消中",
+    "aborted": "已取消",
+    "speeded": "失敗",
+    "failed": "失敗",
+    "exitCode": "狀態碼：{code}",
+    "earlyExit": "執行時間過短（{second}秒）",
+    "fileNotExist": "檔案／路徑不存在",
+    "broken": "錯誤",
+    "startFailed": "程式出錯，未能執行",
+    "executeTime": "執行時間：{second}秒",
+    "completed": "完成"
+  },
+  "driverForms": {
+    "name": "軀動名稱",
+    "path": "路徑",
+    "argument": "安裝參數",
+    "action": "動作",
+    "view": "檢視",
+    "order": "排序",
+    "create": "新增",
+    "network": "網絡",
+    "display": "顯示",
+    "miscellaneous": "其他",
+    "selectWithCount": "選擇 ({count})",
+    "selectAll": "全選",
+    "selectNothing": "取消選擇",
+    "search": "搜尋...",
+    "default": "預設",
+    "editDriver": "編輯軀動程式",
+    "createDriver": "新增軀動程式",
+    "type": "軀動類別",
+    "selectFile": "選擇檔案",
+    "manualInput": "手動輸入",
+    "commaSeparated": "以逗號分隔多個參數",
+    "incompatibleWith": "不能同時安裝",
+    "minExecuteTime": "執行時間（秒）",
+    "minExecuteTimeHelp": "安裝軀動的時間少於所輸入的時間，將會被視作安裝失敗。",
+    "allowedExitCode": "非錯誤狀態代碼",
+    "allowedExitCodeHelp": "安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。"
+  },
+  "settings": {
+    "defaultInstallSetting": "預設安裝選項",
+    "installOption": "安裝設定",
+    "task": "額外工作",
+    "generalSetting": "一般",
+    "successActionDelay": "關機選項延遲",
+    "second": "秒",
+    "displaySetting": "顯示設定",
+    "hardwareInfo": "硬件資訊",
+    "filterMiniportNic": "過濾 Miniport 網卡",
+    "filterMicorsoftNic": "過濾 Microsoft 網卡"
+  },
+  "save": "儲存"
+}

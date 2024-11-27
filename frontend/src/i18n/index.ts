@@ -1,6 +1,6 @@
-import en from '@/i18n/en.json'
-import zh_Hant_HK from '@/i18n/zh_Hant_HK.json'
 import { createI18n } from 'vue-i18n'
+import en from './en.json'
+import zh_Hant_HK from './zh_Hant_HK.json'
 
 const i18n = createI18n({
   legacy: false,

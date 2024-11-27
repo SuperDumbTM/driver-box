@@ -61,7 +61,7 @@ const dri = ref<{
           <!-- Modal header -->
           <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t bg-white">
             <h3 class="font-semibold">
-              {{ dri ? '編輯軀動程式' : '新增軀動程式' }}
+              {{ dri ? $t('driverForms.editDriver') : $t('driverForms.createDriver') }}
             </h3>
             <button
               type="button"
@@ -101,21 +101,25 @@ const dri = ref<{
               "
             >
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900"> 軀動類別 </label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.type') }}
+                </label>
                 <select
                   name="type"
                   v-model="dri.type"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
                   required
                 >
-                  <option :value="store.DriverType.NETWORK">有線網絡介面卡</option>
-                  <option :value="store.DriverType.DISPLAY">顯示卡</option>
-                  <option :value="store.DriverType.MISCELLANEOUS">其他</option>
+                  <option v-for="type in store.DriverType" :key="type" :value="type">
+                    {{ $t(`driverCategories.${type}`) }}
+                  </option>
                 </select>
               </div>
 
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900"> 軀動名稱 </label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.name') }}
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -127,7 +131,9 @@ const dri = ref<{
               </div>
 
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">軀動路徑</label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.path') }}
+                </label>
 
                 <div class="flex">
                   <button
@@ -139,7 +145,7 @@ const dri = ref<{
                       })
                     "
                   >
-                    選擇檔案
+                    {{ $t('driverForms.selectFile') }}
                   </button>
                   <input
                     type="text"
@@ -154,7 +160,9 @@ const dri = ref<{
               </div>
 
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">安裝參數</label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.argument') }}
+                </label>
 
                 <div class="flex">
                   <select
@@ -166,7 +174,9 @@ const dri = ref<{
                       }
                     "
                   >
-                    <option value="">手動輸入</option>
+                    <option value="">
+                      {{ $t('driverForms.manualInput') }}
+                    </option>
                     <option
                       v-for="(flag, name) in flags"
                       :key="name"
@@ -185,11 +195,15 @@ const dri = ref<{
                   />
                 </div>
 
-                <p class="mt-1 text-xs font-light text-apple-green-800">以逗號分隔多個參數</p>
+                <p class="mt-1 text-xs font-light text-apple-green-800">
+                  {{ $t('driverForms.commaSeparated') }}
+                </p>
               </div>
 
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">不能同時安裝</label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.incompatibleWith') }}
+                </label>
 
                 <IncompatibleDriverSelector
                   :options="drivers.filter(d => d.id !== dri.id)"
@@ -198,7 +212,9 @@ const dri = ref<{
               </div>
 
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">執行時間（秒）</label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.minExecuteTime') }}
+                </label>
                 <input
                   type="number"
                   name="minExeTime"
@@ -209,12 +225,14 @@ const dri = ref<{
                   required
                 />
                 <p class="mt-1 text-xs font-light text-apple-green-800">
-                  安裝軀動的時間少於所輸入的時間，將會被視作安裝失敗。
+                  {{ $t('driverForms.minExecuteTimeHelp') }}
                 </p>
               </div>
 
               <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900">非錯誤狀態代碼</label>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  {{ $t('driverForms.allowedExitCode') }}
+                </label>
                 <input
                   type="text"
                   name="allowRtCodes"
@@ -223,16 +241,18 @@ const dri = ref<{
                   autocomplete="off"
                 />
                 <p class="mt-1 text-xs font-light text-apple-green-800">
-                  安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。
+                  {{ $t('driverForms.allowedExitCodeHelp') }}
                 </p>
-                <p class="mt-1 text-xs font-light text-apple-green-800">以逗號分隔多個代碼</p>
+                <p class="mt-1 text-xs font-light text-apple-green-800">
+                  {{ $t('driverForms.commaSeparated') }}
+                </p>
               </div>
 
               <button
                 type="submit"
                 class="w-full my-1 py-2 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded-lg"
               >
-                儲存
+                {{ $t('save') }}
               </button>
             </form>
           </div>

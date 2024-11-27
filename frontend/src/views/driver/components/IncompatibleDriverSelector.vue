@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { store } from '@/wailsjs/go/models'
 import { computed, ref, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ options?: Array<store.Driver> }>()
 
 const value = defineModel<Array<string>>({ default: [] })
+
+const { t } = useI18n()
 
 const visible = ref(false)
 
@@ -14,15 +17,15 @@ const search = ref('')
 
 const badgeStyle = {
   network: {
-    text: '網絡',
+    text: t('driverForms.network'),
     classes: 'bg-blue-100'
   },
   display: {
-    text: '顯示',
+    text: t('driverForms.display'),
     classes: 'bg-green-100'
   },
   miscellaneous: {
-    text: '其他',
+    text: t('driverForms.miscellaneous'),
     classes: 'bg-gray-100'
   }
 }
@@ -63,7 +66,7 @@ function addClickOutsideHandler() {
         }
       "
     >
-      選擇 ({{ value.length }})
+      {{ $t('driverForms.selectWithCount', { count: value.length }) }}
     </button>
 
     <button
@@ -75,7 +78,7 @@ function addClickOutsideHandler() {
         }
       "
     >
-      全選
+      {{ $t('driverForms.selectAll') }}
     </button>
 
     <button
@@ -87,7 +90,7 @@ function addClickOutsideHandler() {
         }
       "
     >
-      取消選擇
+      {{ $t('driverForms.selectNothing') }}
     </button>
 
     <ul
@@ -98,7 +101,7 @@ function addClickOutsideHandler() {
       <li class="mb-2">
         <input
           v-model="search"
-          placeholder="搜尋..."
+          :placeholder="$t('driverForms.search')"
           class="px-4 py-2 w-full text-black text-sm border-none rounded outline-apple-green-600 bg-gray-50"
         />
       </li>
@@ -106,16 +109,20 @@ function addClickOutsideHandler() {
       <li class="py-2.5 px-4 text-sm" v-show="search === ''">
         <label class="flex item-center w-full select-none cursor-pointer">
           <input type="checkbox" value="set_password" v-model="value" class="me-1.5" />
-          <span class="mx-1 px-1.5 py-0.5 text-xs bg-orange-200 rounded">預設</span>
-          設定密碼
+          <span class="mx-1 px-1.5 py-0.5 text-xs bg-orange-200 rounded">
+            {{ $t('driverForms.default') }}
+          </span>
+          {{ $t('installOptions.setPassword') }}
         </label>
       </li>
 
       <li class="py-2.5 px-4 text-sm" v-show="search === ''">
         <label class="flex item-center w-full select-none cursor-pointer">
           <input type="checkbox" value="create_partition" v-model="value" class="me-1.5" />
-          <span class="mx-1 px-1.5 py-0.5 text-xs bg-orange-200 rounded">預設</span>
-          建立磁區
+          <span class="mx-1 px-1.5 py-0.5 text-xs bg-orange-200 rounded">
+            {{ $t('driverForms.default') }}
+          </span>
+          {{ $t('installOptions.createPartition') }}
         </label>
       </li>
 
