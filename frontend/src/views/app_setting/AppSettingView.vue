@@ -15,6 +15,10 @@ const settings = ref<store.AppSetting>({
   language: 'en'
 })
 
+const settingCategories = ['softwareSetting', 'defaultInstallSetting', 'displaySetting'] as const
+
+const tab = ref<(typeof settingCategories)[number]>(settingCategories[0])
+
 app_manager.Read().then(s => (settings.value = s))
 </script>
 
@@ -31,181 +35,182 @@ app_manager.Read().then(s => (settings.value = s))
     "
   >
     <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
-        {{ $t('settings.generalSetting') }}
-      </p>
-      <hr />
-    </div>
-
-    <div>
-      <p class="font-bold mb-2">
-        {{ $t('settings.softwareSetting') }}
-      </p>
-
-      <div>
-        <label class="block mb-2 text-gray-900">
-          {{ $t('settings.language') }}
-        </label>
-        <select
-          name="language"
-          v-model="settings.language"
-          class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+      <ul class="flex items-center mb-2 border-b-2">
+        <li
+          v-for="category in settingCategories"
+          :key="category"
+          class="px-4 py-2 cursor-pointer select-none"
+          :class="
+            tab == category ? 'font-semibold border-b-2 border-b-kashmir-blue-500  -mb-[2px]' : ''
+          "
+          @click="tab = category"
         >
-          <option value="en">English</option>
-          <option value="zh_Hant_HK">繁體中文</option>
-        </select>
-      </div>
+          {{ $t(`settings.${category}`) }}
+        </li>
+      </ul>
     </div>
 
-    <div>
-      <p class="font-bold mb-2">
-        {{ $t('settings.successActionDelay') }}
-      </p>
+    <div v-show="tab == 'softwareSetting'" class="flex flex-col gap-y-3">
+      <section>
+        <p class="font-bold mb-2">
+          {{ $t('settings.softwareSetting') }}
+        </p>
 
-      <div class="flex flex-col gap-y-3">
-        <div class="flex items-center">
-          <input
-            type="number"
-            name="success_action_delay"
-            min="0"
-            step="0"
-            v-model="settings.success_action_delay"
-            class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-            required
-          />
-          &nbsp; {{ $t('settings.second') }}
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
-        {{ $t('settings.defaultInstallSetting') }}
-      </p>
-      <hr />
-    </div>
-
-    <div>
-      <p class="font-bold mb-2">
-        {{ $t('settings.task') }}
-      </p>
-
-      <div class="flex flex-col gap-y-3">
-        <div class="flex items-center">
-          <label class="flex item-center w-full select-none cursor-pointer">
-            <input
-              type="checkbox"
-              name="create_partition"
-              v-model="settings.create_partition"
-              class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            />
-            {{ $t('installOptions.createPartition') }}
+        <div>
+          <label class="block mb-2 text-gray-900">
+            {{ $t('settings.language') }}
           </label>
+          <select
+            name="language"
+            v-model="settings.language"
+            class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+          >
+            <option value="en">English</option>
+            <option value="zh_Hant_HK">繁體中文</option>
+          </select>
         </div>
+      </section>
 
-        <div class="flex gap-3">
+      <section>
+        <p class="font-bold mb-2">
+          {{ $t('settings.successActionDelay') }}
+        </p>
+
+        <div class="flex flex-col gap-y-3">
+          <div class="flex items-center">
+            <input
+              type="number"
+              name="success_action_delay"
+              min="0"
+              step="0"
+              v-model="settings.success_action_delay"
+              class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+              required
+            />
+            &nbsp; {{ $t('settings.second') }}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div v-show="tab == 'defaultInstallSetting'" class="flex flex-col gap-y-3">
+      <section>
+        <p class="font-bold mb-2">
+          {{ $t('settings.task') }}
+        </p>
+
+        <div class="flex flex-col gap-y-3">
           <div class="flex items-center">
             <label class="flex item-center w-full select-none cursor-pointer">
               <input
                 type="checkbox"
-                name="set_password"
-                v-model="settings.set_password"
+                name="create_partition"
+                v-model="settings.create_partition"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              {{ $t('installOptions.setPassword') }}
+              {{ $t('installOptions.createPartition') }}
             </label>
           </div>
 
-          <div class="flex shrink">
-            <input
-              type="text"
-              name="password"
-              v-model="settings.password"
-              class="w-full min-w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-              :disabled="!settings.set_password"
-            />
+          <div class="flex gap-3">
+            <div class="flex items-center">
+              <label class="flex item-center w-full select-none cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="set_password"
+                  v-model="settings.set_password"
+                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                {{ $t('installOptions.setPassword') }}
+              </label>
+            </div>
+
+            <div class="flex shrink">
+              <input
+                type="text"
+                name="password"
+                v-model="settings.password"
+                class="w-full min-w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                :disabled="!settings.set_password"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section>
+        <p class="font-bold mb-2">
+          {{ $t('settings.installOption') }}
+        </p>
+
+        <div class="flex flex-col gap-y-3">
+          <div class="flex items-center">
+            <label class="flex item-center w-full select-none cursor-pointer">
+              <input
+                type="checkbox"
+                name="parallel_install"
+                v-model="settings.parallel_install"
+                class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              {{ $t('installOptions.parallelInstall') }}
+            </label>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-gray-900">
+              {{ $t('installOptions.successAction') }}
+            </label>
+            <select
+              name="success_action"
+              v-model="settings.success_action"
+              class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+            >
+              <option v-for="action in store.SuccessAction" :key="action" :value="action">
+                {{ $t(`successActions.${action}`) }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div v-show="tab == 'displaySetting'" class="flex flex-col gap-y-3">
+      <section>
+        <p class="font-bold mb-2">
+          {{ $t('settings.hardwareInfo') }}
+        </p>
+
+        <div class="flex flex-col gap-y-3">
+          <div class="flex items-center">
+            <label class="flex item-center w-full select-none cursor-pointer">
+              <input
+                type="checkbox"
+                name="filter_miniport_nic"
+                v-model="settings.filter_miniport_nic"
+                class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              {{ $t('settings.filterMiniportNic') }}
+            </label>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-y-3">
+          <div class="flex items-center">
+            <label class="flex item-center w-full select-none cursor-pointer">
+              <input
+                type="checkbox"
+                name="filter_microsoft_nic"
+                v-model="settings.filter_microsoft_nic"
+                class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              {{ $t('settings.filterMicorsoftNic') }}
+            </label>
+          </div>
+        </div>
+      </section>
     </div>
 
     <div>
-      <p class="font-bold mb-2">
-        {{ $t('settings.installOption') }}
-      </p>
-
-      <div class="flex flex-col gap-y-3">
-        <div class="flex items-center">
-          <label class="flex item-center w-full select-none cursor-pointer">
-            <input
-              type="checkbox"
-              name="parallel_install"
-              v-model="settings.parallel_install"
-              class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            />
-            {{ $t('installOptions.parallelInstall') }}
-          </label>
-        </div>
-
-        <div>
-          <label class="block mb-2 text-gray-900">
-            {{ $t('installOptions.successAction') }}
-          </label>
-          <select
-            name="success_action"
-            v-model="settings.success_action"
-            class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-          >
-            <option v-for="action in store.SuccessAction" :key="action" :value="action">
-              {{ $t(`successActions.${action}`) }}
-            </option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <p class="mb-1 text-lg text-kashmir-blue-400 font-bold">
-        {{ $t('settings.displaySetting') }}
-      </p>
-      <hr />
-    </div>
-
-    <div>
-      <p class="font-bold mb-2">
-        {{ $t('settings.hardwareInfo') }}
-      </p>
-
-      <div class="flex flex-col gap-y-3">
-        <div class="flex items-center">
-          <label class="flex item-center w-full select-none cursor-pointer">
-            <input
-              type="checkbox"
-              name="filter_miniport_nic"
-              v-model="settings.filter_miniport_nic"
-              class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            />
-            {{ $t('settings.filterMiniportNic') }}
-          </label>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-y-3">
-        <div class="flex items-center">
-          <label class="flex item-center w-full select-none cursor-pointer">
-            <input
-              type="checkbox"
-              name="filter_microsoft_nic"
-              v-model="settings.filter_microsoft_nic"
-              class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            />
-            {{ $t('settings.filterMicorsoftNic') }}
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <div class="sticky bottom-0 bg-white shadow-lg shadow-black bg-scroll">
       <button
         type="submit"
         class="h-7 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
