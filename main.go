@@ -59,9 +59,11 @@ func main() {
 	mgt := &execute.CommandExecutor{}
 
 	err := wails.Run(&options.App{
-		Title:  "driver-box",
-		Width:  768,
-		Height: 576,
+		Title:     "driver-box",
+		Width:     768,
+		Height:    576,
+		MinWidth:  640,
+		MinHeight: 480,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
