@@ -81,30 +81,16 @@ const statusClasses: { [key in typeof props.process.status]: string } = {
       </template>
 
       <template v-else-if="props.process.status == 'completed'">
-        <div class="text-xs text-gray-300 break-all line-clamp-2">
-          {{
-            $t('executeStatues.executeTime', {
-              second: Math.round(props.process.result?.lapse ?? -1)
-            })
-          }}
+        <div class="text-xs text-gray-300">
+          <p class="truncate">狀態碼：{{ props.process.result?.exitCode }}</p>
+          <p class="truncate">
+            {{
+              $t('executeStatues.executeTime', {
+                second: Math.round(props.process.result?.lapse ?? -1)
+              })
+            }}
+          </p>
         </div>
-        <!-- <div class="text-xs break-all line-clamp-2">
-          <p class="text-gray-400">
-            狀態碼：{{ props.command.result?.exitCode }}；執行時間：{{
-              Math.round(props.command.result?.lapse ?? -1)
-            }}秒
-          </p>
-
-          <p
-            class="font-mono"
-            :class="
-              props.command.result?.stderr !== '' ? 'text-red-400' : 'text-half-baked-400'
-            "
-            :title="props.command.result?.stderr || props.command.result?.stdout"
-          >
-            {{ props.command.result?.stderr || props.command.result?.stdout }}
-          </p>
-        </div> -->
       </template>
 
       <!-- abort button -->
