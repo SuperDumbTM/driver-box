@@ -82,7 +82,9 @@ const statusClasses: { [key in typeof props.process.status]: string } = {
 
       <template v-else-if="props.process.status == 'completed'">
         <div class="text-xs text-gray-300">
-          <p class="truncate">狀態碼：{{ props.process.result?.exitCode }}</p>
+          <p class="truncate">
+            {{ $t('executeStatues.exitCode', { code: props.process.result?.exitCode }) }}
+          </p>
           <p class="truncate">
             {{
               $t('executeStatues.executeTime', {

@@ -7,7 +7,8 @@
     "finished": "完成",
     "cancelCompletedFailed": "[{name}] 無法取消，可能已經完成執行。",
     "cancelFailed": "[{name}] 無法取消。",
-    "updated": "已更新。"
+    "updated": "已更新。",
+    "addAtLeastOneDriver": "請至少加入一個軀動程式。"
   },
   "tasks": {
     "setPassword": "設定密碼",
@@ -58,7 +59,8 @@
     "completed": "完成"
   },
   "driverForms": {
-    "name": "軀動名稱",
+    "driver": "軀動程式",
+    "name": "名稱",
     "path": "路徑",
     "argument": "安裝參數",
     "action": "動作",
@@ -68,9 +70,8 @@
     "network": "網絡",
     "display": "顯示",
     "miscellaneous": "其他",
-    "selectWithCount": "選擇 ({count})",
-    "selectAll": "全選",
-    "selectNothing": "取消選擇",
+    "selectedWithCount": "已選擇：{count}",
+    "none": "沒有",
     "search": "搜尋...",
     "default": "預設",
     "editDriver": "編輯軀動程式",
@@ -83,7 +84,8 @@
     "minExecuteTime": "執行時間（秒）",
     "minExecuteTimeHelp": "安裝軀動的時間少於所輸入的時間，將會被視作安裝失敗。",
     "allowedExitCode": "非錯誤狀態代碼",
-    "allowedExitCodeHelp": "安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。"
+    "allowedExitCodeHelp": "安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。",
+    "incompatibleForNewHelp": "如果你想將新加入的軀動程式加至其他新加入的軀動程式的「不能同時安裝」中，請先儲存再繼續。"
   },
   "settings": {
     "defaultInstallSetting": "預設安裝選項",
@@ -99,5 +101,6 @@
     "softwareSetting": "程式設定",
     "language": "語言"
   },
-  "save": "儲存"
+  "save": "儲存",
+  "back": "返回"
 }

@@ -243,15 +243,6 @@ const filterGroups = computed(() => {
                   <span class="inline">
                     {{ $t('driverForms.selectedWithCount', { count: dri.incompatibles?.length }) }}
                   </span>
-
-                  <span class="inline">
-                    {{
-                      groups
-                        .filter(d => dri.incompatibles?.includes(d.id))
-                        .map(d => d.name)
-                        .join(', ') || $t('driverForms.none')
-                    }}
-                  </span>
                 </div>
 
                 <input

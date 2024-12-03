@@ -7,7 +7,8 @@
     "finished": "Finished",
     "cancelCompletedFailed": "[{name}] Failed to abort. The execution is probably completed.",
     "cancelFailed": "[{name}] Failed to abort.",
-    "updated": "Updated."
+    "updated": "Updated.",
+    "addAtLeastOneDriver": "Please add at least one driver."
   },
   "task": {
     "setPassword": "Set Password",
@@ -58,6 +59,7 @@
     "completed": "OK"
   },
   "driverForms": {
+    "driver": "Driver",
     "name": "Name",
     "path": "Path",
     "argument": "Install Option",
@@ -68,9 +70,8 @@
     "network": "NETK",
     "display": "DISP",
     "miscellaneous": "MISC",
-    "selectWithCount": "Select ({count})",
-    "selectAll": "All",
-    "selectNothing": "Nothing",
+    "selectedWithCount": "Selected: {count}",
+    "none": "None",
     "search": "Search...",
     "default": "DFLT",
     "editDriver": "Edit Driver",
@@ -83,7 +84,8 @@
     "minExecuteTime": "Execution Time (sec)",
     "minExecuteTimeHelp": "If the execution time is less than the specificied, the execution will be treated as failed.",
     "allowedExitCode": "Allowed Exit Code",
-    "allowedExitCodeHelp": "If the exit code of the execution is in specificied value,  the execution will be treated as successful."
+    "allowedExitCodeHelp": "If the exit code of the execution is in specificied value,  the execution will be treated as successful.",
+    "incompatibleForNewHelp": "If you want to add a newly created driver into \"incompatible with\" of another newly created driver, please save first."
   },
   "settings": {
     "defaultInstallSetting": "Default Install Settings",
@@ -99,5 +101,6 @@
     "softwareSetting": "Software Setting",
     "language": "Language"
   },
-  "save": "Save"
+  "save": "Save",
+  "back": "Back"
 }
