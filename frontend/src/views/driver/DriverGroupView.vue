@@ -87,7 +87,7 @@ watch(driverType, newValue => {
         v-for="(g, i) in groups.filter(g => g.type == driverType)"
         :key="g.id"
         class="driver-card m-1 px-2 py-1 border border-gray-200 rounded-lg shadow"
-        :class="{ 'select-none': reordering }"
+        :class="reordering ? 'select-none cursor-pointer' : ''"
         @dragstart="
           event => {
             if (!reordering) {
