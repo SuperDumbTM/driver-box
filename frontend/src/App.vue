@@ -46,7 +46,7 @@ app_manager.Read().then(s => (locale.value = s.language))
       </div>
     </aside>
 
-    <main class="w-full h-full p-3">
+    <main class="w-full h-full p-3 overflow-x-hidden">
       <RouterView></RouterView>
     </main>
   </div>

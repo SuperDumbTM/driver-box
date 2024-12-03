@@ -3,11 +3,12 @@ import CommandStatueModal from '@/views/home/components/CommandStatusModal.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import { store, sysinfo } from '@/wailsjs/go/models'
 import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
-import * as manager from '@/wailsjs/go/store/DriverManager'
+import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
 import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
 import { ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
+import type { Command } from './components/types'
 
 const { t } = useI18n()
 
@@ -17,7 +18,7 @@ const form = useTemplateRef('form')
 
 const $toast = useToast({ position: 'top-right' })
 
-const drivers = ref<Array<store.Driver>>([])
+const groups = ref<Array<store.DriverGroup>>([])
 
 const notExistDrivers = ref<Array<string>>([])
 
@@ -42,17 +43,21 @@ const hwinfos = ref<{
   disk: Array<sysinfo.Win32_DiskDrive>
 } | null>(null)
 
-manager
+groupManager
   .Read()
-  .then(d => {
-    drivers.value = d
+  .then(g => {
+    groups.value = g
 
-    d.forEach(driver => {
-      manager.PathExist(driver.id).then(found => {
-        if (!found) {
-          notExistDrivers.value.push(driver.id)
-        }
-      })
+    Promise.all(
+      groups.value.flatMap(g =>
+        g.drivers.flatMap(d =>
+          groupManager.PathExist(g.id, d.id).then(exist => ({ id: g.id, exist: exist }))
+        )
+      )
+    ).then(results => {
+      notExistDrivers.value = results
+        .map(result => (result.exist ? undefined : result.id))
+        .filter(v => v !== undefined)
     })
   })
   .catch(() => {
@@ -92,69 +97,70 @@ async function handleSubmit() {
   }
 
   const inputs = new FormData(form.value)
-  const commands: Array<{
-    id: string
-    name: string
-    program: string
-    options: Array<string>
-    minExeTime: number
-    allowRtCodes: Array<number>
-    incompatibles: Array<string>
-  }> = []
+  const commands: Array<Command> = []
 
   if (settings.value.set_password) {
     commands.push({
       id: 'set_password',
-      name: t('tasks.setPassword'),
-      program: 'powershell',
-      options: [
-        '-WindowStyle',
-        'Hidden',
-        '-Command',
-        `Set-LocalUser -Name $Env:UserName -Password ${
-          settings.value.password == ''
-            ? '(new-object System.Security.SecureString)'
-            : `(ConvertTo-SecureString ${settings.value.password} -AsPlainText -Force)`
-        }`
-      ],
-      minExeTime: 0.5,
-      allowRtCodes: [0],
-      incompatibles: []
+      groupName: t('tasks.setPassword'),
+      config: {
+        program: 'powershell',
+        options: [
+          '-WindowStyle',
+          'Hidden',
+          '-Command',
+          `Set-LocalUser -Name $Env:UserName -Password ${
+            settings.value.password == ''
+              ? '(new-object System.Security.SecureString)'
+              : `(ConvertTo-SecureString ${settings.value.password} -AsPlainText -Force)`
+          }`
+        ],
+        minExeTime: 0.5,
+        allowRtCodes: [0],
+        incompatibles: []
+      }
     })
   }
 
   if (settings.value.create_partition) {
     commands.push({
       id: 'create_partition',
-      name: t('tasks.createPartitions'),
-      program: 'powershell',
-      options: [
-        '-WindowStyle',
-        'Hidden',
-        '-Command',
-        'Get-Disk | Where-Object PartitionStyle -Eq "RAW" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume'
-      ],
-      minExeTime: 1,
-      allowRtCodes: [0],
-      incompatibles: []
+      groupName: t('tasks.createPartitions'),
+      config: {
+        program: 'powershell',
+        options: [
+          '-WindowStyle',
+          'Hidden',
+          '-Command',
+          'Get-Disk | Where-Object PartitionStyle -Eq "RAW" | Initialize-Disk -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume'
+        ],
+        minExeTime: 1,
+        allowRtCodes: [0],
+        incompatibles: []
+      }
     })
   }
 
-  drivers.value
-    .filter(dri =>
+  groups.value
+    .filter(group =>
       [inputs.get('network'), inputs.get('display'), ...inputs.getAll('miscellaneous')].includes(
-        dri.id
+        group.id
       )
     )
-    .forEach(dri => {
-      commands.push({
-        id: dri.id,
-        name: dri.name,
-        program: dri.path,
-        options: dri.flags,
-        minExeTime: dri.minExeTime,
-        allowRtCodes: dri.allowRtCodes,
-        incompatibles: dri.incompatibles
+    .forEach(group => {
+      group.drivers.forEach(driver => {
+        commands.push({
+          id: driver.id,
+          name: driver.name,
+          groupName: group.name,
+          config: {
+            program: driver.path,
+            options: driver.flags,
+            minExeTime: driver.minExeTime,
+            allowRtCodes: driver.allowRtCodes,
+            incompatibles: driver.incompatibles
+          }
+        })
       })
     })
 
@@ -257,15 +263,17 @@ async function handleSubmit() {
           >
             <option>{{ $t('pleaseSelect') }}</option>
             <option
-              v-for="d in drivers.filter(d => d.type == store.DriverType.NETWORK)"
+              v-for="d in groups.filter(d => d.type == store.DriverType.NETWORK)"
               :key="d.id"
               :value="d.id"
             >
-              {{ d.name }} {{ notExistDrivers.includes(d.id) ? '⚠︎' : '' }}
+              {{
+                `${d.name}${d.drivers.length > 1 ? '📦' : ''}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}`
+              }}
             </option>
           </select>
           <label
-            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
+            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-2 text-xs truncate text-gray-500 pointer-events-none"
           >
             {{ $t('driverCategories.network') }}
           </label>
@@ -278,15 +286,17 @@ async function handleSubmit() {
           >
             <option>{{ $t('pleaseSelect') }}</option>
             <option
-              v-for="d in drivers.filter(d => d.type == store.DriverType.DISPLAY)"
+              v-for="d in groups.filter(d => d.type == store.DriverType.DISPLAY)"
               :key="d.id"
               :value="d.id"
             >
-              {{ d.name }} {{ notExistDrivers.includes(d.id) ? '⚠︎' : '' }}
+              {{
+                `${d.name}${d.drivers.length > 1 ? '📦' : ''}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}`
+              }}
             </option>
           </select>
           <label
-            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-1.5 text-xs truncate text-gray-500 pointer-events-none"
+            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-2 text-xs truncate text-gray-500 pointer-events-none"
           >
             {{ $t('driverCategories.display') }}
           </label>
@@ -297,13 +307,15 @@ async function handleSubmit() {
         <div class="relative w-full h-full mb-3">
           <div class="h-full overflow-y-scroll ps-2 pt-3 rounded border">
             <template
-              v-for="d in drivers.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
+              v-for="d in groups.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
               :key="d.id"
             >
               <!-- <label class="ms-2 text-sm text-gray-900"> -->
               <label class="flex items-center w-full select-none cursor-pointer">
                 <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
-                {{ d.name }} {{ notExistDrivers.includes(d.id) ? '⚠︎' : '' }}
+                {{
+                  `${d.name}${d.drivers.length > 1 ? '📦' : ''}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}`
+                }}
               </label>
             </template>
           </div>

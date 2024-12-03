@@ -75,7 +75,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 			mgt,
-			&store.DriverManager{Path: filepath.Join(dirConf, "drivers.json")},
+			&store.DriverGroupManager{Path: filepath.Join(dirConf, "groups.json")},
 			&store.AppSettingManager{Path: filepath.Join(dirConf, "setting.json")},
 			&sysinfo.SysInfo{},
 		},

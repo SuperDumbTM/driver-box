@@ -1,7 +1,18 @@
 export type Command = {
   id: string
-  procId?: string
-  name: string
+  name?: string
+  groupName: string
+  config: {
+    program: string
+    options: Array<string>
+    minExeTime: number
+    allowRtCodes: Array<number>
+    incompatibles: Array<string>
+  }
+}
+
+export type Process = {
+  command: Command
   status:
     | 'pending'
     | 'running'
@@ -11,11 +22,7 @@ export type Command = {
     | 'aborted'
     | 'speeded'
     | 'broken'
-  program: string
-  options: Array<string>
-  minExeTime: number
-  allowRtCodes: Array<number>
-  incompatibles: Array<string>
+  procId?: string
   result?: {
     lapse: number
     exitCode: number

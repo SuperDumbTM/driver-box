@@ -6,18 +6,15 @@ import AsyncLock from 'async-lock'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
-import type { Command } from './types'
+import type { Command, Process } from './types'
 import TaskStatus from './TaskStatus.vue'
 
 defineExpose({
-  show: async (
-    isParallel_: boolean,
-    cmds: Array<Omit<(typeof commands.value)[0], 'prodId' | 'status' | 'result'>>
-  ) => {
+  show: async (isParallel_: boolean, cmds: Array<Command>) => {
     show.value = true
     isParallel = isParallel_
 
-    commands.value = cmds.map(vals => ({ ...vals, status: 'pending' }))
+    processes.value = cmds.map(vals => ({ command: { ...vals }, status: 'pending' }))
     dispatchCommand()
   },
   hide: () => {
@@ -37,27 +34,27 @@ const $toast = useToast({ position: 'top-left', duration: 7000 })
 
 const show = ref(false)
 
-const commands = ref<Array<Command>>([])
+const processes = ref<Array<Process>>([])
 
-runtime.EventsOn('execute:exited', async (id: string, result: NonNullable<Command['result']>) => {
-  const command = commands.value.find(c => c.procId === id)!
-  command.result = result
+runtime.EventsOn('execute:exited', async (id: string, result: NonNullable<Process['result']>) => {
+  const process = processes.value.find(c => c.procId === id)!
+  process.result = result
 
   if (result.aborted) {
-    command.status = 'aborted'
-  } else if (![0, ...command.allowRtCodes].includes(result.exitCode)) {
-    command.status = 'failed'
-  } else if (result.lapse < command.minExeTime) {
-    command.status = 'speeded'
+    process.status = 'aborted'
+  } else if (![0, ...process.command.config.allowRtCodes].includes(result.exitCode)) {
+    process.status = 'failed'
+  } else if (result.lapse < process.command.config.minExeTime) {
+    process.status = 'speeded'
   } else {
-    command.status = 'completed'
+    process.status = 'completed'
   }
 
   dispatchCommand().then(() => {
-    if (commands.value.every(c => c.status === 'completed')) {
+    if (processes.value.every(c => c.status === 'completed')) {
       emit('completed')
       $toast.success(t('toasts.finished'), { position: 'bottom-right' })
-    } else if (commands.value.every(c => !c.status.includes('ing'))) {
+    } else if (processes.value.every(c => !c.status.includes('ing'))) {
       $toast.info(t('toasts.finished'), { position: 'bottom-right' })
     }
   })
@@ -65,28 +62,28 @@ runtime.EventsOn('execute:exited', async (id: string, result: NonNullable<Comman
 
 async function dispatchCommand() {
   lock.acquire('executor', async () => {
-    const pendings = commands.value
+    const pendings = processes.value
       .filter(c => c.status === 'pending')
       .slice(0, isParallel ? undefined : 1)
 
-    for (const command of pendings) {
+    for (const process of pendings) {
       if (
-        !command.incompatibles.every(id =>
-          commands.value.filter(c => c.status === 'running').every(c => c.id != id)
+        !process.command.config.incompatibles.every(id =>
+          processes.value.filter(p => p.status === 'running').every(p => p.command.id != id)
         )
       ) {
         continue
       }
 
       await executor
-        .Run(command.program, command.options)
+        .Run(process.command.config.program, process.command.config.options)
         .then(processId => {
-          command.status = 'running'
-          command.procId = processId
+          process.status = 'running'
+          process.procId = processId
         })
         .catch(error => {
-          command.status = 'broken'
-          command.result = {
+          process.status = 'broken'
+          process.result = {
             lapse: -1,
             exitCode: -1,
             stdout: '',
@@ -99,23 +96,23 @@ async function dispatchCommand() {
   })
 }
 
-function handleAbort(command: Command) {
+function handleAbort(process: Process) {
   return lock
     .acquire('executor', () => {
-      if (command.status == 'pending' || command.status == 'running') {
-        command.status =
-          command.procId == undefined || command.procId == '' ? 'aborted' : 'aborting'
+      if (process.status == 'pending' || process.status == 'running') {
+        process.status =
+          process.procId == undefined || process.procId == '' ? 'aborted' : 'aborting'
       }
     })
     .then(() => {
-      if (command.status != 'aborting') {
+      if (process.status != 'aborting') {
         return
       }
 
       // `aborted` status will be updated at `execute:exited` event handler
-      executor.Abort(command.procId!).catch(error => {
+      executor.Abort(process.procId!).catch(error => {
         if (error.includes('process does not exist')) {
-          $toast.warning(t('toasts.cancelCompletedFailed', { name: command.name }))
+          $toast.warning(t('toasts.cancelCompletedFailed', { name: process.command.name }))
           return
         }
 
@@ -124,14 +121,14 @@ function handleAbort(command: Command) {
           .split('\n')
           .forEach((err: string) => {
             if (err.includes('abort failed')) {
-              $toast.warning(t('toasts.cancelFailed', { name: command.name }))
+              $toast.warning(t('toasts.cancelFailed', { name: process.command.name }))
             } else {
-              $toast.error(`[${command.name}] ${err}`)
+              $toast.error(`[${process.command.name}] ${err}`)
             }
           })
 
-        command.status = 'broken'
-        command.result = {
+        process.status = 'broken'
+        process.result = {
           lapse: -1,
           exitCode: -1,
           stdout: '',
@@ -171,7 +168,7 @@ function handleAbort(command: Command) {
                 }
               "
               :disabled="
-                commands.some(cmd => ['pending', 'running', 'aborting'].includes(cmd.status))
+                processes.some(cmd => ['pending', 'running', 'aborting'].includes(cmd.status))
               "
             >
               <CrossIcon></CrossIcon>
@@ -180,8 +177,8 @@ function handleAbort(command: Command) {
 
           <!-- Modal body -->
           <div class="max-h-[70vh] overflow-y-auto py-2 px-4">
-            <template v-for="(command, i) in commands" :key="i">
-              <TaskStatus :cmd="command" @abort="handleAbort(command)"></TaskStatus>
+            <template v-for="(process, i) in processes" :key="i">
+              <TaskStatus :process="process" @abort="handleAbort(process)"></TaskStatus>
             </template>
           </div>
         </div>

@@ -1,8 +1,6 @@
 package store
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"os"
@@ -10,15 +8,15 @@ import (
 	"slices"
 )
 
-type DriverManager struct {
-	Path    string
-	loaded  bool
-	drivers []Driver
+type DriverGroupManager struct {
+	Path   string
+	loaded bool
+	groups []DriverGroup
 }
 
-func (m *DriverManager) Read() ([]Driver, error) {
+func (m *DriverGroupManager) Read() ([]DriverGroup, error) {
 	if !m.loaded {
-		var drivers []Driver
+		var groups []DriverGroup
 
 		if _, err := os.Stat(m.Path); err != nil {
 			os.WriteFile(m.Path, []byte("[]"), os.ModePerm)
@@ -29,18 +27,18 @@ func (m *DriverManager) Read() ([]Driver, error) {
 			return nil, err
 		}
 
-		if err := json.Unmarshal(bytes, &drivers); err != nil {
+		if err := json.Unmarshal(bytes, &groups); err != nil {
 			return nil, err
 		}
 
-		m.drivers = drivers
+		m.groups = groups
 		m.loaded = true
 	}
-	return m.drivers, nil
+	return m.groups, nil
 }
 
-func (m DriverManager) write() error {
-	bytes, err := json.Marshal(m.drivers)
+func (m DriverGroupManager) write() error {
+	bytes, err := json.Marshal(m.groups)
 	if err != nil {
 		return err
 	}
@@ -48,106 +46,131 @@ func (m DriverManager) write() error {
 	return os.WriteFile(m.Path, bytes, os.ModePerm)
 }
 
-func (m DriverManager) IndexOf(id string) (int, error) {
-	index := slices.IndexFunc(m.drivers, func(s Driver) bool {
-		return s.Id == id
+func (m DriverGroupManager) IndexOf(groupId string) (int, error) {
+	index := slices.IndexFunc(m.groups, func(g DriverGroup) bool {
+		return g.Id == groupId
 	})
 
 	if index == -1 {
-		return -1, errors.New("store: no driver with the same ID was found")
+		return -1, errors.New("store: no group with the same ID was found")
 	}
 	return index, nil
 }
 
-func (m *DriverManager) Get(id string) (Driver, error) {
+func (m DriverGroupManager) GroupOf(driverId string) (string, error) {
+	for _, group := range m.groups {
+		for _, driver := range group.Drivers {
+			if driver.Id == driverId {
+				return group.Id, nil
+			}
+		}
+	}
+	return "", errors.New("store: no driver with the same ID was found in any group")
+}
+
+func (m *DriverGroupManager) Get(id string) (DriverGroup, error) {
 	if index, err := m.IndexOf(id); err != nil {
-		return Driver{}, err
+		return DriverGroup{}, err
 	} else {
-		return m.drivers[index], nil
+		return m.groups[index], nil
 	}
 }
 
-func (m *DriverManager) Add(driver Driver) error {
-	driver.Id = ""
-	for driver.Id == "" {
-		b := make([]byte, 4)
-		if _, err := rand.Read(b); err != nil {
-			continue // inf loop?
-		}
-		id := hex.EncodeToString(b)
-		if idx, _ := m.IndexOf(id); idx != -1 {
+func (m *DriverGroupManager) Add(group DriverGroup) error {
+	for group.Id = ""; group.Id == ""; {
+		if id, err := randomString(4); err != nil {
 			continue
+		} else if idx, _ := m.IndexOf(id); idx != -1 {
+			continue
+		} else {
+			group.Id = id
 		}
-		driver.Id = id
 	}
-	m.drivers = append(m.drivers, driver)
+
+	for gidx := range group.Drivers {
+		for group.Drivers[gidx].Id = ""; group.Drivers[gidx].Id == ""; {
+			if id, err := randomString(4); err != nil {
+				continue
+			} else if _, err := m.GroupOf(id); err == nil {
+				continue
+			} else {
+				group.Drivers[gidx].Id = id
+			}
+		}
+	}
+
+	m.groups = append(m.groups, group)
 	return m.write()
 }
 
-func (m *DriverManager) Update(driver Driver) error {
-	if index, err := m.IndexOf(driver.Id); err != nil {
+func (m *DriverGroupManager) Update(group DriverGroup) error {
+	if index, err := m.IndexOf(group.Id); err != nil {
 		return err
 	} else {
-		m.drivers[index] = driver
+		m.groups[index] = group
 		return m.write()
 	}
 }
 
-func (m *DriverManager) Remove(driver Driver) error {
-	if index, err := m.IndexOf(driver.Id); err != nil {
-		return err
-	} else {
-		m.drivers = append(m.drivers[:index], m.drivers[index+1:]...)
-
-		for i := range m.drivers {
-			incompatibles := []string{}
-			for _, id := range m.drivers[i].Incompatibles {
-				if id == driver.Id {
-					continue
-				}
-				incompatibles = append(incompatibles, id)
-			}
-			m.drivers[i].Incompatibles = incompatibles
-		}
-
-		return m.write()
-	}
-}
-
-func (m DriverManager) PathExist(id string) (bool, error) {
+func (m *DriverGroupManager) Remove(id string) error {
 	if index, err := m.IndexOf(id); err != nil {
+		return err
+	} else {
+		// for _, group := range m.groups {
+		// 	for _, driver := range group.Drivers {
+
+		// 	}
+		// }
+		m.groups = append(m.groups[:index], m.groups[index+1:]...)
+		return m.write()
+	}
+}
+
+func (m DriverGroupManager) PathExist(groupId string, driverId string) (bool, error) {
+	if index, err := m.IndexOf(groupId); err != nil {
 		return false, err
 	} else {
-		_, err = exec.LookPath(m.drivers[index].Path)
-		return err == nil, nil
+		for _, driver := range m.groups[index].Drivers {
+			if driver.Id != driverId {
+				continue
+			}
+			_, err = exec.LookPath(driver.Path)
+			return err == nil, nil
+		}
+		return false, errors.New("store: no driver with the same driver_id was found")
 	}
 }
 
-func (m *DriverManager) MoveBehind(id string, index int) ([]Driver, error) {
+func (m *DriverGroupManager) MoveBehind(id string, index int) ([]DriverGroup, error) {
 	if srcIndex, err := m.IndexOf(id); err != nil {
-		return m.drivers, err
+		return m.groups, err
 	} else {
-		if index < -1 || index >= len(m.drivers)-1 {
-			return m.drivers, errors.New("store: target index out of bound")
+		if index < -1 || index >= len(m.groups)-1 {
+			return m.groups, errors.New("store: target index out of bound")
 		}
 
-		if len(m.drivers) == 1 || srcIndex-index == 1 {
-			return m.drivers, nil
+		if len(m.groups) == 1 || srcIndex-index == 1 {
+			return m.groups, nil
 		}
 
 		if srcIndex <= index {
 			for i := srcIndex; i < index+1; i++ {
-				m.drivers[i], m.drivers[i+1] = m.drivers[i+1], m.drivers[i]
+				m.groups[i], m.groups[i+1] = m.groups[i+1], m.groups[i]
 			}
 		} else {
 			for i := srcIndex; i > index+1; i-- {
-				m.drivers[i-1], m.drivers[i] = m.drivers[i], m.drivers[i-1]
+				m.groups[i-1], m.groups[i] = m.groups[i], m.groups[i-1]
 			}
 		}
-
-		return m.drivers, m.write()
+		return m.groups, m.write()
 	}
+}
 
+type DriverGroup struct {
+	Id      string     `json:"id"`
+	Name    string     `json:"name"`
+	Type    DriverType `json:"type"`
+	Drivers []Driver   `json:"drivers"`
 }
 
 type DriverType string
