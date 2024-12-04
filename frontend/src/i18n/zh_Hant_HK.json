@@ -30,7 +30,9 @@
     "order": "排序",
     "path": "路徑",
     "search": "搜尋...",
+    "selectAll": "全選",
     "selectFile": "選擇檔案",
+    "selectNone": "清除選擇",
     "selectedWithCount": "已選擇：{count}",
     "type": "軀動類別",
     "view": "檢視"

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import CheckSquareIcon from '@/components/icons/CheckSquareIcon.vue'
 import CrossIcon from '@/components/icons/CrossIcon.vue'
+import SquareIcon from '@/components/icons/SquareIcon.vue'
 import { flags } from '@/definitions/flags'
 import { SelectFile } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
@@ -245,16 +247,52 @@ const filterGroups = computed(() => {
                   </span>
                 </div>
 
-                <input
-                  v-model="search"
-                  :placeholder="$t('driverForms.search')"
-                  class="mb-2 px-4 py-2 w-full text-black text-sm border-none rounded outline-apple-green-600 bg-gray-50"
-                />
+                <div class="flex mb-2 gap-x-2">
+                  <input
+                    v-model="search"
+                    :placeholder="$t('driverForms.search')"
+                    class="px-3 py-2 w-full text-black text-sm border-none rounded outline-apple-green-600 bg-gray-50"
+                  />
+
+                  <button
+                    type="button"
+                    class="px-3 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded-lg"
+                    :title="$t('driverForms.selectAll')"
+                    @click="
+                      () => {
+                        dri.incompatibles = [
+                          ...props.groups.flatMap(g => g.drivers.flatMap(d => d.id)),
+                          'set_password',
+                          'create_partition'
+                        ]
+                      }
+                    "
+                  >
+                    <CheckSquareIcon></CheckSquareIcon>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="px-3 text-sm font-medium text-white bg-rose-400 hover:bg-rose-300 rounded-lg"
+                    :title="$t('driverForms.selectNone')"
+                    @click="
+                      () => {
+                        dri.incompatibles = []
+                      }
+                    "
+                  >
+                    <SquareIcon></SquareIcon>
+                  </button>
+                </div>
 
                 <ul class="h-48 p-1.5 overflow-auto bg-white border rounded-lg">
                   <li
                     class="py-2.5 px-4 text-sm"
-                    v-show="search === '' || 'password'.includes(search)"
+                    v-show="
+                      search === '' ||
+                      'set password'.includes(search) ||
+                      $t('installOptions.setPassword').includes(search)
+                    "
                   >
                     <label class="flex item-center w-full select-none cursor-pointer">
                       <input
@@ -274,7 +312,11 @@ const filterGroups = computed(() => {
 
                   <li
                     class="py-2.5 px-4 text-sm"
-                    v-show="search === '' || 'partition'.includes(search)"
+                    v-show="
+                      search === '' ||
+                      'create partition'.includes(search) ||
+                      $t('installOptions.createPartition').includes(search)
+                    "
                   >
                     <label class="flex item-center w-full select-none cursor-pointer">
                       <input
@@ -315,7 +357,7 @@ const filterGroups = computed(() => {
 
               <button
                 type="submit"
-                class="w-full my-1 py-2 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded-lg"
+                class="w-full my-1 py-2 text-sm font-medium text-white bg-half-baked-600 hover:bg-half-baked-500 rounded-lg"
               >
                 {{ $t('save') }}
               </button>

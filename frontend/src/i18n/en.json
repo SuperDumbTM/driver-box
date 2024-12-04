@@ -30,6 +30,8 @@
     "order": "Order",
     "path": "Path",
     "search": "Search...",
+    "selectAll": "Sellect All",
+    "selectNone": "Select None",
     "selectFile": "Select",
     "selectedWithCount": "Selected: {count}",
     "type": "Driver Type",
