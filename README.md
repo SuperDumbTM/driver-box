@@ -5,6 +5,7 @@
 <!-- PROJECT SHIELDS -->
 <div align="center">
   
+  [![Tag][tag-shield]][tag-url]
   [![Contributors][contributors-shield]][contributors-url]
   [![Forks][forks-shield]][forks-url]
   [![Stargazers][stars-shield]][stars-url]
@@ -161,6 +162,8 @@ driver-box 已提供常見軀動的安裝參數。<br>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[tag-url]: https://github.com/SuperDumbTM/driver-box/releases
+[tag-shield]: https://img.shields.io/github/v/tag/SuperDumbTM/driver-box?style=for-the-badge&label=LATEST&color=%23B1B1B1
 [contributors-shield]: https://img.shields.io/github/contributors/SuperDumbTM/driver-box.svg?style=for-the-badge
 [contributors-url]: https://github.com/SuperDumbTM/driver-box/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/SuperDumbTM/driver-box.svg?style=for-the-badge
