@@ -267,9 +267,7 @@ async function handleSubmit() {
               :key="d.id"
               :value="d.id"
             >
-              {{
-                `${d.name}${d.drivers.length > 1 ? '📦' : ''}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}`
-              }}
+              {{ `${d.name}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}` }}
             </option>
           </select>
           <label
@@ -290,9 +288,7 @@ async function handleSubmit() {
               :key="d.id"
               :value="d.id"
             >
-              {{
-                `${d.name}${d.drivers.length > 1 ? '📦' : ''}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}`
-              }}
+              {{ `${d.name}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}` }}
             </option>
           </select>
           <label
@@ -313,9 +309,7 @@ async function handleSubmit() {
               <!-- <label class="ms-2 text-sm text-gray-900"> -->
               <label class="flex items-center w-full select-none cursor-pointer">
                 <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
-                {{
-                  `${d.name}${d.drivers.length > 1 ? '📦' : ''}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}`
-                }}
+                {{ `${d.name}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}` }}
               </label>
             </template>
           </div>
