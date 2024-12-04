@@ -66,7 +66,7 @@ const statusClasses: { [key in typeof props.process.status]: string } = {
             }}
           </p>
           <p v-else class="text-xs text-red-400 font-mono">
-            {{ props.process.result?.stderr }}
+            {{ props.process.result?.stderr || props.process.result?.stdout }}
           </p>
         </div>
       </template>
