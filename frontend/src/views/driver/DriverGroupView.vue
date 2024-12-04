@@ -184,7 +184,9 @@ watch(driverType, newValue => {
           <div class="col-span-2 lg:col-span-3 font-medium">{{ $t('driverForms.name') }}</div>
           <div class="col-span-5 lg:col-span-5 font-medium">{{ $t('driverForms.path') }}</div>
           <div class="col-span-3 lg:col-span-3 font-medium">{{ $t('driverForms.argument') }}</div>
-          <div class="col-span-2 lg:col-span-1 font-medium">{{ '其他設定' }}</div>
+          <div class="col-span-2 lg:col-span-1 font-medium">
+            {{ $t('driverForms.otherSetting') }}
+          </div>
         </div>
 
         <div v-for="d in g.drivers" :key="d.id" class="grid grid-cols-12 gap-1 py-1 text-xs">

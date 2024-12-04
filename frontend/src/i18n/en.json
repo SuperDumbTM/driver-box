@@ -28,11 +28,12 @@
     "network": "NETK",
     "none": "None",
     "order": "Order",
+    "otherSetting": "Other",
     "path": "Path",
     "search": "Search...",
     "selectAll": "Sellect All",
-    "selectNone": "Select None",
     "selectFile": "Select",
+    "selectNone": "Select None",
     "selectedWithCount": "Selected: {count}",
     "type": "Driver Type",
     "view": "View"
