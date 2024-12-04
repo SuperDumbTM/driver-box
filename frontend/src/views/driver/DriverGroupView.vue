@@ -180,26 +180,26 @@ watch(driverType, newValue => {
           </div>
         </div>
 
-        <div class="grid grid-cols-10 gap-1 py-1 text-xs bg-gray-100">
+        <div class="grid grid-cols-12 gap-1 py-1 text-xs bg-gray-100">
           <div class="col-span-2 lg:col-span-3 font-medium">{{ $t('driverForms.name') }}</div>
-          <div class="col-span-3 lg:col-span-4 font-medium">{{ $t('driverForms.path') }}</div>
-          <div class="col-span-3 lg:col-span-2 font-medium">{{ $t('driverForms.argument') }}</div>
+          <div class="col-span-5 lg:col-span-5 font-medium">{{ $t('driverForms.path') }}</div>
+          <div class="col-span-3 lg:col-span-3 font-medium">{{ $t('driverForms.argument') }}</div>
           <div class="col-span-2 lg:col-span-1 font-medium">{{ '其他設定' }}</div>
         </div>
 
-        <div v-for="d in g.drivers" :key="d.id" class="grid grid-cols-10 gap-1 py-1 text-xs">
+        <div v-for="d in g.drivers" :key="d.id" class="grid grid-cols-12 gap-1 py-1 text-xs">
           <div class="col-span-2 lg:col-span-3 break-all line-clamp-2">
             {{ d.name }}
           </div>
 
           <div
-            class="col-span-3 lg:col-span-4 break-all line-clamp-2"
+            class="col-span-5 lg:col-span-5 break-all line-clamp-2"
             :class="{ 'text-red-600': notExistDrivers.includes(d.id) }"
           >
             {{ d.path }}
           </div>
 
-          <div class="col-span-3 lg:col-span-2 break-all line-clamp-2">
+          <div class="col-span-3 lg:col-span-3 break-all line-clamp-2">
             {{ d.flags }}
           </div>
 
