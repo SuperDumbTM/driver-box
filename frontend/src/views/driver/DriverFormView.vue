@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { store } from '@/wailsjs/go/models'
-import { ref } from 'vue'
-import TrashIcon from '@/components/icons/TrashIcon.vue'
 import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
-import { useRoute } from 'vue-router'
+import TrashIcon from '@/components/icons/TrashIcon.vue'
+import { store } from '@/wailsjs/go/models'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
-import InputModal from './components/InputModal.vue'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
+import InputModal from './components/InputModal.vue'
 
 const route = useRoute()
 
