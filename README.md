@@ -101,17 +101,24 @@ driver-box 旨在加快安裝大量硬件軀動的時間。用家可以將不同
 <!-- USAGE EXAMPLES -->
 ## 使用
 
+<img src="https://github.com/user-attachments/assets/8761a553-f669-48b1-80c8-7a3816642479" width="50%">
+
+driver-box 最細的執行單位為軀動程式。所謂軀動程式並不限於硬件軀動程式。
+因為 driver-box 是透過作業系統的殼層（Shell）執行所輸入的程式，任何執行檔（.exe）、腳本（script）及殼層命令（Shell command）都以透過 driver-box 執行。
+
+而你可以將多個軀動程式加至同一個「組合」中。所有加至同一個組合的軀動程式會一同執行。
+
 ### 加入、編輯軀動程式
 
-<img src="https://github.com/user-attachments/assets/0f1b8490-10a2-447e-a148-1af3e8f14c23" width="50%">
+<img src="https://github.com/user-attachments/assets/3c9b19a4-2bdf-4ca8-9e7a-c320d23247a8" width="50%">
 
 #### 軀動路徑
-軀動程式的路徑。<br>
-> driver\display\nvidia 531.29 WHQL\setup.exe
->
-> driver\network\intel 26.2.0.1\APPS\SETUP\SETUPBD\Winx64\SetupBD.exe
+軀動程式的路徑。你亦可以在此輸入 Shell command 或其他在 `PATH` 內的程式。
 
-在加入軀動程式時，建議先將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式的 `drivers/<分類>/` 資料夾內，以便管理及轉移（例如複製程式到 USB 上）
+設計上，driver-box 是預設所有軀動程都放置 `drivers` 資料夾內，因為將軀動程式的檔案（執行檔 `.exe` 或資料夾）複製到程式的 `drivers/<分類>/` 資料夾內可以方便管理及轉移（例如複製程式到 USB 上）。
+因此透過「選擇檔案」按鈕選擇的檔案將會以相對路徑表示。但你亦可以輸入絕對路徑。
+
+
 
 #### 執行參數
 [執行參數](https://en.wikipedia.org/wiki/Command-line_interface#Arguments)一般用於命令列介面（Command Line）上，以修改程式執行設定或輸入資料至程式中。
@@ -120,7 +127,7 @@ driver-box 旨在加快安裝大量硬件軀動的時間。用家可以將不同
 我們十分建議輸入相關的執行參數，令加入的軀動能以自動模式安裝。
 
 driver-box 已提供常見軀動的安裝參數。<br>
-<img src="https://github.com/user-attachments/assets/90160433-5982-4462-a1ca-bb042f45c460" width="30%">
+<img src="https://github.com/user-attachments/assets/ba98d370-1879-4b22-a01b-9008c016c049" width="50%">
 
 | 選項           	| 適用的程式                                                                                                                                                       	|
 |----------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
@@ -134,19 +141,16 @@ driver-box 已提供常見軀動的安裝參數。<br>
 | Intel Chipset  	| [Chipset INF Utility](https://www.intel.com/content/www/us/en/support/products/1145/software/chipset-software/intel-chipset-software-installation-utility.html)  	|
 | AMD Chipset    	| [AMD Chipset Drivers](https://www.amd.com/en/support/download/drivers.html)                                                                                      	|
     
-不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋
-> realtek audio silent install
-
-或利用 [Silent Install Builder](https://www.silentinstall.org/) 等類似的軟件自行製作
+不在預設集上的軀動可嘗試在網上以 `軀動名稱` + `silent`／`unattended`／`command line install` 搜尋，或利用 [Silent Install Builder](https://www.silentinstall.org/) 等類似的軟件自行製作。
 
 #### 不能同時安裝
 勺選後，在使用「同步安裝」模式時，有關的軀動程式將不會在同一時間執行。
 
 ### 安裝
 
-<img src="https://github.com/user-attachments/assets/f0d7cf67-42b0-42f3-a647-404d7b54e50a" width="50%">
+<img src="https://github.com/user-attachments/assets/90ed16aa-d29e-4d4e-aa1e-c13f89fbd90b" width="50%">
 
-<p style='color: gray'>*在所有工作執行完成前，執行狀態視窗不能夠被關閉。</p>
+*在所有工作執行完成前，執行狀態視窗不能夠被關閉。*
 
 #### 關機設定
 關機設定只會在所有工作執行成功及軀動安裝成功後才會執行。
