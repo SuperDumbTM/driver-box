@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
-	"os/exec"
 	"slices"
 )
 
@@ -123,21 +122,6 @@ func (m *DriverGroupManager) Remove(id string) error {
 		// }
 		m.groups = append(m.groups[:index], m.groups[index+1:]...)
 		return m.write()
-	}
-}
-
-func (m DriverGroupManager) PathExist(groupId string, driverId string) (bool, error) {
-	if index, err := m.IndexOf(groupId); err != nil {
-		return false, err
-	} else {
-		for _, driver := range m.groups[index].Drivers {
-			if driver.Id != driverId {
-				continue
-			}
-			_, err = exec.LookPath(driver.Path)
-			return err == nil, nil
-		}
-		return false, errors.New("store: no driver with the same driver_id was found")
 	}
 }
 

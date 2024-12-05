@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
+import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 import InputModal from './components/InputModal.vue'
@@ -11,6 +12,8 @@ import InputModal from './components/InputModal.vue'
 const route = useRoute()
 
 const $toast = useToast({ position: 'top-right' })
+
+const notExistDrivers = ref<Array<string>>([])
 
 const groups = ref<Array<store.DriverGroup>>([])
 
@@ -24,6 +27,16 @@ const group = ref<store.DriverGroup>(
     drivers: []
   })
 )
+
+watch(group.value.drivers, newValue => {
+  Promise.all(
+    newValue.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: d.id, exist: exist })))
+  ).then(results => {
+    notExistDrivers.value = results
+      .map(result => (result.exist ? undefined : result.id))
+      .filter(v => v !== undefined)
+  })
+})
 
 groupManager.Read().then(g => (groups.value = g))
 

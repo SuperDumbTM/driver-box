@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CommandStatueModal from '@/views/home/components/CommandStatusModal.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
+import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store, sysinfo } from '@/wailsjs/go/models'
 import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
@@ -50,9 +51,7 @@ groupManager
 
     Promise.all(
       groups.value.flatMap(g =>
-        g.drivers.flatMap(d =>
-          groupManager.PathExist(g.id, d.id).then(exist => ({ id: g.id, exist: exist }))
-        )
+        g.drivers.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: g.id, exist: exist })))
       )
     ).then(results => {
       notExistDrivers.value = results

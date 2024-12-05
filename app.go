@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -38,4 +39,9 @@ func (a *App) SelectFile(relative bool) (string, error) {
 func (a App) PathExists(path string) bool {
 	_, err := os.Stat(path)
 	return err != nil
+}
+
+func (a App) ExecutableExists(path string) bool {
+	_, err := exec.LookPath(path)
+	return err == nil
 }
