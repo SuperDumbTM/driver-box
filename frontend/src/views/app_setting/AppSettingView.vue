@@ -1,64 +1,64 @@
 <script setup lang="ts">
 import { store } from '@/wailsjs/go/models'
-import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
+import * as appManager from '@/wailsjs/go/store/AppSettingManager'
 import { onBeforeMount, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toast-notification'
 
-const settings = ref<store.AppSetting>({
-  create_partition: false,
-  set_password: false,
-  password: '',
-  parallel_install: false,
-  success_action: store.SuccessAction.NOTHING,
-  success_action_delay: 5,
-  filter_miniport_nic: true,
-  filter_microsoft_nic: true,
-  language: 'en'
-})
+const { t } = useI18n()
 
-const settingCategories = ['softwareSetting', 'defaultInstallSetting', 'displaySetting'] as const
+const $toast = useToast({ position: 'top-right' })
 
-const tab = ref<(typeof settingCategories)[number]>(settingCategories[0])
+const tabKeys = ['softwareSetting', 'defaultInstallSetting', 'displaySetting'] as const
+
+const currentTab = ref<(typeof tabKeys)[number]>(tabKeys[0])
+
+const settings = ref<store.AppSetting>(new store.AppSetting())
 
 onBeforeMount(() => {
-  app_manager.Read().then(s => (settings.value = s))
+  appManager
+    .Read()
+    .then(s => (settings.value = s))
+    .catch(() => {
+      $toast.error(t('toasts.readAppSettingFailed'))
+    })
 })
 </script>
 
 <template>
   <form
-    class="flex flex-col h-full gap-y-3 overflow-y-auto"
+    class="flex flex-col h-full gap-y-3"
     @submit.prevent="
       () => {
-        app_manager.Update(settings).then(() => {
+        appManager.Update(settings).then(() => {
           $i18n.locale = settings.language
           $toast.success($t('toasts.updated'), { duration: 1500, position: 'top-right' })
         })
       }
     "
   >
-    <div>
-      <ul class="flex items-center mb-2 border-b-2">
-        <li
-          v-for="category in settingCategories"
-          :key="category"
-          class="px-4 py-2 cursor-pointer select-none"
-          :class="
-            tab == category ? 'font-semibold border-b-2 border-b-kashmir-blue-500  -mb-[2px]' : ''
-          "
-          @click="tab = category"
-        >
-          {{ $t(`settings.${category}`) }}
-        </li>
-      </ul>
+    <div class="flex items-center border-b-2">
+      <button
+        v-for="key in tabKeys"
+        :key="key"
+        type="button"
+        class="px-4 py-2"
+        :class="
+          currentTab == key ? 'font-semibold border-b-2 border-b-kashmir-blue-500 -mb-[2px]' : ''
+        "
+        @click="currentTab = key"
+      >
+        {{ $t(`settings.${key}`) }}
+      </button>
     </div>
 
-    <div v-show="tab == 'softwareSetting'" class="flex flex-col gap-y-3">
+    <div v-show="currentTab == 'softwareSetting'" class="flex flex-col gap-y-3">
       <section>
         <p class="font-bold mb-2">
           {{ $t('settings.softwareSetting') }}
         </p>
 
-        <div>
+        <div class="flex flex-col gap-y-3">
           <label class="block mb-2 text-gray-900">
             {{ $t('settings.language') }}
           </label>
@@ -95,7 +95,7 @@ onBeforeMount(() => {
       </section>
     </div>
 
-    <div v-show="tab == 'defaultInstallSetting'" class="flex flex-col gap-y-3">
+    <div v-show="currentTab == 'defaultInstallSetting'" class="flex flex-col gap-y-3">
       <section>
         <p class="font-bold mb-2">
           {{ $t('settings.task') }}
@@ -176,7 +176,7 @@ onBeforeMount(() => {
       </section>
     </div>
 
-    <div v-show="tab == 'displaySetting'" class="flex flex-col gap-y-3">
+    <div v-show="currentTab == 'displaySetting'" class="flex flex-col gap-y-3">
       <section>
         <p class="font-bold mb-2">
           {{ $t('settings.hardwareInfo') }}
@@ -215,7 +215,7 @@ onBeforeMount(() => {
     <div>
       <button
         type="submit"
-        class="h-7 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
+        class="h-8 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
       >
         {{ $t('save') }}
       </button>
