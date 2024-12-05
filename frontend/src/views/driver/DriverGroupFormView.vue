@@ -7,32 +7,30 @@ import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
 import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
-import InputModal from './components/InputModal.vue'
+import DriverInputModal from './components/DriverInputModal.vue'
 
-const route = useRoute()
+const $route = useRoute()
 
 const $toast = useToast({ position: 'top-right' })
 
 const notExistDrivers = ref<Array<string>>([])
 
-const groups = ref<Array<store.DriverGroup>>([])
-
 const group = ref<store.DriverGroup>(
   new store.DriverGroup({
     type:
       store.DriverType[
-        route.query.type?.toString().toUpperCase() as keyof typeof store.DriverType
+        $route.query.type?.toString().toUpperCase() as keyof typeof store.DriverType
       ] ?? undefined,
-    name: route.query.name ?? '',
+    name: $route.query.name ?? '',
     drivers: []
   })
 )
 
 onBeforeMount(() => {
-  groupManager.Read().then(g => (groups.value = g))
-
-  if (route.params.id) {
-    groupManager.Get(route.params.id as string).then(g => (group.value = g))
+  if ($route.params.id) {
+    groupManager.Get($route.params.id as string).then(g => {
+      group.value = g
+    })
   }
 })
 
@@ -50,6 +48,7 @@ watch(group.value.drivers, newValue => {
 <template>
   <form
     class="flex flex-col justify-center h-full max-w-full lg:max-w-2xl xl:max-w-4xl mx-auto gap-y-8 overflow-y-auto"
+    autocomplete="off"
     @submit.prevent="
       () => {
         if (group.drivers.length == 0) {
@@ -90,7 +89,6 @@ watch(group.value.drivers, newValue => {
           name="name"
           v-model="group.name"
           class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-          autocomplete="off"
           required
         />
       </div>
@@ -161,10 +159,10 @@ watch(group.value.drivers, newValue => {
       </div>
     </div>
 
-    <div class="flex h-10 gap-x-5">
+    <div class="flex h-8 gap-x-5">
       <button
         type="button"
-        class="w-full my-1 text-sm font-medium text-white bg-gray-400 hover:bg-gray-300 rounded-lg"
+        class="w-full text-sm font-medium text-white bg-gray-400 hover:bg-gray-300 rounded-lg"
         @click="$router.back()"
       >
         {{ $t('back') }}
@@ -172,31 +170,30 @@ watch(group.value.drivers, newValue => {
 
       <button
         type="submit"
-        class="w-full my-1 text-sm font-medium text-white bg-half-baked-600 hover:bg-half-baked-500 rounded-lg"
+        class="w-full text-sm font-medium text-white bg-half-baked-600 hover:bg-half-baked-500 rounded-lg"
       >
         {{ $t('save') }}
       </button>
     </div>
   </form>
 
-  <InputModal
-    :groups="groups"
+  <DriverInputModal
     ref="inputModal"
     @submit="
-      input => {
-        if (input.id) {
-          group.drivers = group.drivers.map(d => (d.id == input.id ? input : d))
+      newDriver => {
+        if (newDriver.id) {
+          group.drivers = group.drivers.map(d => (d.id == newDriver.id ? newDriver : d))
         } else {
           group.drivers.push({
-            ...input,
-            id: (group.drivers.length + 1).toString() // add a fake id for editing
+            ...newDriver,
+            id: (group.drivers.length + 1).toString() // assign a temporary ID for editing
           })
         }
 
         $refs.inputModal?.hide()
       }
     "
-  ></InputModal>
+  ></DriverInputModal>
 </template>
 
 <style scoped>

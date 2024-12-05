@@ -16,11 +16,11 @@ const router = createRouter({
     },
     {
       path: '/drivers/create',
-      component: () => import('../views/driver/DriverFormView.vue')
+      component: () => import('../views/driver/DriverGroupFormView.vue')
     },
     {
       path: '/drivers/edit/:id',
-      component: () => import('../views/driver/DriverFormView.vue')
+      component: () => import('../views/driver/DriverGroupFormView.vue')
     },
     {
       path: '/settings',

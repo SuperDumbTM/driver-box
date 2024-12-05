@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { store } from '@/wailsjs/go/models'
 
-defineProps<{ type: store.DriverType }>()
+defineProps<{ type: store.DriverType | 'default' }>()
 
 const colors = {
   network: 'bg-blue-100',
   display: 'bg-green-100',
-  miscellaneous: 'bg-gray-100'
+  miscellaneous: 'bg-gray-100',
+  default: 'bg-orange-200'
 }
 </script>
 

@@ -7,7 +7,7 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManger from '@/wailsjs/go/store/DriverGroupManager'
-import { computed, onBeforeMount, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
@@ -28,13 +28,10 @@ const driverType = ref(
 
 const groups = ref<Array<store.DriverGroup>>([])
 
+/** driver ID of drivers that the executable path cannot be located */
 const notExistDrivers = ref<Array<string>>([])
 
 const reordering = ref(false)
-
-const driverOfType = computed(() => {
-  return groups.value?.filter(d => d.type == driverType.value)
-})
 
 onBeforeMount(() => {
   groupManger
@@ -45,13 +42,9 @@ onBeforeMount(() => {
     })
 })
 
-watch(groups, (newValue, oldValue) => {
-  if (newValue.length == oldValue.length) {
-    return
-  }
-
+watch(groups, newGroups => {
   Promise.all(
-    newValue.flatMap(g =>
+    newGroups.flatMap(g =>
       g.drivers.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: d.id, exist: exist })))
     )
   ).then(results => {
@@ -61,27 +54,27 @@ watch(groups, (newValue, oldValue) => {
   })
 })
 
-watch(driverType, newValue => {
-  $router.replace({ path: '/drivers', query: { type: newValue } })
+watch(driverType, newType => {
+  $router.replace({ path: '/drivers', query: { type: newType } })
 })
 </script>
 
 <template>
   <div class="flex flex-col h-full gap-y-2">
-    <ul class="flex flex-row gap-x-3 list-none text-center">
-      <li class="flex-1" v-for="type in store.DriverType" :key="type">
-        <a
-          class="block px-4 py-3 text-xs leading-normal font-bold uppercase select-none shadow-lg rounded"
-          :class="{
-            'text-half-baked-600 bg-white': driverType !== type,
-            'text-white bg-half-baked-600': driverType === type
-          }"
-          @click="driverType = type"
-        >
-          {{ t(`driverCategories.${type}`) }}
-        </a>
-      </li>
-    </ul>
+    <div class="flex flex-row gap-x-3 list-none text-center">
+      <button
+        v-for="type in store.DriverType"
+        :key="type"
+        class="w-full py-3 text-xs font-bold uppercase shadow-lg rounded"
+        :class="{
+          'text-half-baked-600 bg-white': driverType !== type,
+          'text-white bg-half-baked-600': driverType === type
+        }"
+        @click="driverType = type"
+      >
+        {{ t(`driverCategories.${type}`) }}
+      </button>
+    </div>
 
     <div class="flex flex-col grow py-2 min-h-48 overflow-y-scroll shadow-lg rounded">
       <div
@@ -225,152 +218,16 @@ watch(driverType, newValue => {
           </div>
         </div>
       </div>
-
-      <!-- <table class="table-fixed w-full text-sm text-left text-gray-500">
-        <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50">
-          <tr>
-            <th scope="col" class="px-4 py-4">
-              {{ $t('driverForms.name') }}
-            </th>
-            <th scope="col" class="px-4 py-4">
-              {{ $t('driverForms.path') }}
-            </th>
-            <th scope="col" class="sm:px-4 py-4">
-              {{ $t('driverForms.argument') }}
-            </th>
-            <th scope="col" class="px-4 py-4">
-              {{ $t('driverForms.action') }}
-            </th>
-          </tr>
-        </thead>
-        <tbody draggable="false">
-          <tr
-            v-for="(d, i) in driverOfType"
-            :key="d.id"
-            class="py-3 even:bg-half-baked-100"
-            :draggable="reordering"
-            @dragstart="
-              event => {
-                if (!reordering) {
-                  return event.preventDefault()
-                }
-
-                event.dataTransfer!.setData('id', d.id)
-                event.dataTransfer!.setData('position', i.toString())
-              }
-            "
-            @dragover.prevent="
-              event => {
-                ;(event.target as HTMLTableCellElement)
-                  .closest('tr')!
-                  .classList.add('border-b', 'border-b-half-baked-700')
-              }
-            "
-            @dragenter.prevent
-            @dragleave="
-              event => {
-                ;(event.target as HTMLTableCellElement)
-                  .closest('tr')!
-                  .classList.remove('border-b', 'border-b-half-baked-700')
-              }
-            "
-            @drop="
-              async event => {
-                ;(event.target as HTMLTableCellElement)
-                  .closest('tr')!
-                  .classList.remove(
-                    'border-b',
-                    'border-b-half-baked-700',
-                    'border-t',
-                    'border-t-half-baked-700'
-                  )
-
-                // async functuion will cause event.dataTransfer lost data
-                const sourceId = event.dataTransfer!.getData('id')
-                const sourcePosition = event.dataTransfer!.getData('position')
-
-                manager.IndexOf(d.id).then(targetIndex => {
-                  if (parseInt(sourcePosition) <= i) {
-                    // aligning MoveBehind's logic and UI draging's logic
-                    targetIndex -= 1
-                  }
-
-                  manager.MoveBehind(sourceId, targetIndex).then(result => {
-                    drivers = result
-                  })
-                })
-              }
-            "
-          >
-            <td class="px-2 py-1">
-              <span class="font-medium line-clamp-2 text-gray-900">
-                {{ d.name }}
-              </span>
-            </td>
-            <td class="px-2 py-1">
-              <span
-                class="text-xs line-clamp-3 break-all font-mono"
-                :class="[
-                  notExistDrivers.includes(d.id) ? 'text-rose-500 font-medium' : 'font-light'
-                ]"
-              >
-                {{ d.path }}
-              </span>
-            </td>
-            <td class="px-2 py-1">
-              <span class="text-xs line-clamp-3">
-                {{ d.flags }}
-              </span>
-            </td>
-            <td class="px-2 py-1">
-              <div class="flex gap-x-1.5">
-                <button
-                  class="p-1 font-medium bg-gray-200 rounded"
-                  @click="$refs.inputModal?.show(d)"
-                >
-                  <PencilSquareIcon></PencilSquareIcon>
-                </button>
-
-                <button
-                  class="p-1 font-medium bg-gray-200 rounded"
-                  @click="
-                    manager.Remove(d).then(() =>
-                      manager.Read().then(d => {
-                        drivers = d
-                      })
-                    )
-                  "
-                >
-                  <TrashIcon></TrashIcon>
-                </button>
-
-                <button
-                  class="p-1 font-medium bg-gray-200 rounded"
-                  @click="
-                    manager.Add(d).then(() =>
-                      manager.Read().then(d => {
-                        drivers = d
-                      })
-                    )
-                  "
-                >
-                  <CopyIcon></CopyIcon>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table> -->
     </div>
 
     <div class="flex justify-end gap-x-3">
       <button
-        v-show="driverOfType.length > 1"
+        v-show="groups?.filter(d => d.type == driverType).length > 1"
         type="button"
         class="h-8 px-3 text-white text-sm focus:outline-none rounded"
         :class="[
           reordering
-            ? 'bg-apple-green-800 hover:bg-apple-green-700  animate-blink-75'
+            ? 'bg-apple-green-800 hover:bg-apple-green-700 animate-blink-75'
             : 'bg-[#D9BD68] hover:bg-[#E5D195]'
         ]"
         @click="reordering = !reordering"

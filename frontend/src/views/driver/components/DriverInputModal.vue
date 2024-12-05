@@ -5,30 +5,27 @@ import SquareIcon from '@/components/icons/SquareIcon.vue'
 import { flags } from '@/definitions/flags'
 import { SelectFile } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
-import { computed, nextTick, ref, useTemplateRef } from 'vue'
+import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
+import { computed, nextTick, onBeforeMount, ref, useTemplateRef } from 'vue'
 import DriverTypeBadget from './DriverTypeBadget.vue'
-
-const props = defineProps<{ groups: Array<store.DriverGroup> }>()
-
-const modalRef = useTemplateRef<HTMLDivElement>('modalBody')
 
 defineExpose({
   show: (data?: Partial<store.Driver>) => {
     show.value = true
 
     nextTick(() => {
-      modalRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
+      // wait for the modal to open
+      modalBody.value?.scrollTo({ top: 0, behavior: 'smooth' })
     })
 
     if (data) {
-      dri.value = {
-        ...dri.value,
+      driver.value = {
         ...data,
         flags: data.flags?.join(','),
         allowRtCodes: data.allowRtCodes?.join(',')
       }
     } else {
-      dri.value = { minExeTime: 5, incompatibles: [] }
+      driver.value = { minExeTime: 5, incompatibles: [] }
     }
   },
   hide: () => {
@@ -36,32 +33,42 @@ defineExpose({
   }
 })
 
-const emit = defineEmits<{
-  submit: [dri: store.Driver]
-}>()
+defineEmits<{ submit: [dri: store.Driver] }>()
+
+const groups = ref<Array<store.DriverGroup>>([])
+
+const modalBody = useTemplateRef<HTMLDivElement>('modalBody')
 
 const show = ref(false)
 
-const search = ref('')
+const searchPhrase = ref('')
 
-const dri = ref<
+const driver = ref<
   Partial<Omit<store.Driver, 'allowRtCodes' | 'flags'> & { allowRtCodes: string; flags: string }>
 >({})
 
 const filterGroups = computed(() => {
-  if (search.value === '') {
-    return props.groups
+  if (searchPhrase.value === '') {
+    return groups.value
   } else {
-    return props.groups?.filter(
-      g => g.name.includes(search.value) || g.drivers.some(d => d.name.includes(search.value))
+    return groups.value?.filter(
+      g =>
+        g.name.includes(searchPhrase.value) ||
+        g.drivers.some(d => d.name.includes(searchPhrase.value))
     )
   }
+})
+
+onBeforeMount(() => {
+  groupManager.Read().then(g => {
+    groups.value = g
+  })
 })
 </script>
 
 <template>
   <Transition name="modal">
-    <div class="bg-gray-900/50 fixed inset-0 z-40" v-show="show"></div>
+    <div class="fixed inset-0 z-40 bg-gray-900/50" v-show="show"></div>
   </Transition>
 
   <Transition name="modal">
@@ -73,17 +80,17 @@ const filterGroups = computed(() => {
         <!-- Modal content -->
         <div class="bg-white rounded-lg shadow">
           <!-- Modal header -->
-          <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t bg-white">
+          <div class="flex items-center justify-between h-12 px-4 border-b rounded-t bg-white">
             <h3 class="font-semibold">
-              {{ dri ? $t('driverForms.editDriver') : $t('driverForms.createDriver') }}
+              {{ driver ? $t('driverForms.editDriver') : $t('driverForms.createDriver') }}
             </h3>
+
             <button
               type="button"
-              class="inline-flex justify-center items-center h-8 w-8 ms-auto text-sm text-gray-400 hover:text-gray-900 bg-transparent hover:bg-gray-200 rounded-lg"
+              class="p-3 text-sm text-gray-400 hover:text-gray-900 bg-transparent hover:bg-gray-100 rounded-lg"
               @click="
                 () => {
                   show = false
-                  dri = { minExeTime: 5 }
                 }
               "
             >
@@ -92,23 +99,24 @@ const filterGroups = computed(() => {
           </div>
 
           <!-- Modal body -->
-          <div class="max-h-[70vh] overflow-auto py-2 px-4" id="debug" ref="modalBody">
+          <div class="max-h-[70vh] overflow-auto py-2 px-4" ref="modalBody">
             <form
               class="flex flex-col gap-y-3"
+              autocomplete="off"
               @submit.prevent="
                 _ => {
-                  emit(
+                  $emit(
                     'submit',
                     new store.Driver({
-                      ...dri,
-                      flags: dri.flags ? dri.flags.split(',') : [],
-                      allowRtCodes: dri.allowRtCodes
-                        ? dri.allowRtCodes
+                      ...driver,
+                      flags: driver.flags ? driver.flags.split(',') : [],
+                      allowRtCodes: driver.allowRtCodes
+                        ? driver.allowRtCodes
                             ?.split(',')
                             .map(c => parseInt(c))
                             .filter(c => !Number.isNaN(c))
                         : [],
-                      incompatibles: dri.incompatibles ?? []
+                      incompatibles: driver.incompatibles ?? []
                     })
                   )
                 }
@@ -121,9 +129,8 @@ const filterGroups = computed(() => {
                 <input
                   type="text"
                   name="name"
-                  v-model="dri.name"
+                  v-model="driver.name"
                   class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                  autocomplete="off"
                 />
               </div>
 
@@ -138,7 +145,7 @@ const filterGroups = computed(() => {
                     class="w-28 px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 rounded-s-md rounded-e-0 border-gray-300"
                     @click="
                       SelectFile(true).then(path => {
-                        dri.path = path
+                        driver.path = path
                       })
                     "
                   >
@@ -147,10 +154,9 @@ const filterGroups = computed(() => {
                   <input
                     type="text"
                     name="path"
-                    v-model="dri.path"
-                    class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 border rounded-none rounded-e-lg shadow-sm"
+                    v-model="driver.path"
+                    class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-none rounded-e-lg shadow-sm"
                     ref="pathInput"
-                    autocomplete="off"
                     required
                   />
                 </div>
@@ -167,7 +173,7 @@ const filterGroups = computed(() => {
                     class="w-28 text-sm border border-e-0 rounded-e-0 rounded-s-lg border-apple-green-600 outline-none"
                     @change="
                       event => {
-                        dri.flags = (event.target as HTMLSelectElement).value
+                        driver.flags = (event.target as HTMLSelectElement).value
                       }
                     "
                   >
@@ -178,7 +184,7 @@ const filterGroups = computed(() => {
                       v-for="(flag, name) in flags"
                       :key="name"
                       :value="flag.join(',')"
-                      :selected="dri.flags === flag.join()"
+                      :selected="driver.flags === flag.join()"
                     >
                       {{ name }}
                     </option>
@@ -186,9 +192,8 @@ const filterGroups = computed(() => {
                   <input
                     type="text"
                     name="flags"
-                    v-model="dri.flags"
-                    class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 border rounded-none rounded-e-lg shadow-sm"
-                    autocomplete="off"
+                    v-model="driver.flags"
+                    class="flex-1 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-none rounded-e-lg shadow-sm"
                   />
                 </div>
 
@@ -205,10 +210,9 @@ const filterGroups = computed(() => {
                   <input
                     type="number"
                     name="minExeTime"
-                    v-model="dri.minExeTime"
+                    v-model="driver.minExeTime"
                     step="0.1"
                     class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                    autocomplete="off"
                     required
                   />
                   <p class="mt-1 text-xs font-light text-apple-green-800">
@@ -223,9 +227,8 @@ const filterGroups = computed(() => {
                   <input
                     type="text"
                     name="allowRtCodes"
-                    v-model="dri.allowRtCodes"
+                    v-model="driver.allowRtCodes"
                     class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                    autocomplete="off"
                   />
                   <p class="mt-1 text-xs font-light text-apple-green-800">
                     {{ $t('driverForms.allowedExitCodeHelp') }}
@@ -241,17 +244,19 @@ const filterGroups = computed(() => {
                   {{ $t('driverForms.incompatibleWith') }}
                 </label>
 
-                <div class="mb-2 text-xs line-clamp-1">
+                <div class="mb-1 text-xs line-clamp-1">
                   <span class="inline">
-                    {{ $t('driverForms.selectedWithCount', { count: dri.incompatibles?.length }) }}
+                    {{
+                      $t('driverForms.selectedWithCount', { count: driver.incompatibles?.length })
+                    }}
                   </span>
                 </div>
 
                 <div class="flex mb-2 gap-x-2">
                   <input
-                    v-model="search"
+                    v-model="searchPhrase"
                     :placeholder="$t('driverForms.search')"
-                    class="px-3 py-2 w-full text-black text-sm border-none rounded outline-apple-green-600 bg-gray-50"
+                    class="px-3 py-2 w-full text-black text-sm border-none rounded outline-apple-green-600 bg-gray-100"
                   />
 
                   <button
@@ -260,8 +265,8 @@ const filterGroups = computed(() => {
                     :title="$t('driverForms.selectAll')"
                     @click="
                       () => {
-                        dri.incompatibles = [
-                          ...props.groups.flatMap(g => g.drivers.flatMap(d => d.id)),
+                        driver.incompatibles = [
+                          ...groups.flatMap(g => g.drivers.flatMap(d => d.id)),
                           'set_password',
                           'create_partition'
                         ]
@@ -277,7 +282,7 @@ const filterGroups = computed(() => {
                     :title="$t('driverForms.selectNone')"
                     @click="
                       () => {
-                        dri.incompatibles = []
+                        driver.incompatibles = []
                       }
                     "
                   >
@@ -285,63 +290,59 @@ const filterGroups = computed(() => {
                   </button>
                 </div>
 
-                <ul class="h-48 p-1.5 overflow-auto bg-white border rounded-lg">
+                <ul class="h-44 p-1.5 overflow-auto border rounded-lg">
                   <li
                     class="py-2.5 px-4 text-sm"
                     v-show="
-                      search === '' ||
-                      'set password'.includes(search) ||
-                      $t('installOptions.setPassword').includes(search)
+                      searchPhrase === '' ||
+                      'set password'.includes(searchPhrase) ||
+                      $t('installOptions.setPassword').includes(searchPhrase)
                     "
                   >
                     <label class="flex item-center w-full select-none cursor-pointer">
                       <input
                         type="checkbox"
                         value="set_password"
-                        v-model="dri.incompatibles"
+                        v-model="driver.incompatibles"
                         class="me-1.5"
                       />
-                      <span
-                        class="content-center me-1 px-1.5 h-5 text-xs text-nowrap bg-orange-200 rounded"
-                      >
-                        {{ $t('driverForms.default') }}
+                      <DriverTypeBadget type="default"></DriverTypeBadget>
+                      <span class="line-clamp-2">
+                        {{ $t('installOptions.setPassword') }}
                       </span>
-                      {{ $t('installOptions.setPassword') }}
                     </label>
                   </li>
 
                   <li
                     class="py-2.5 px-4 text-sm"
                     v-show="
-                      search === '' ||
-                      'create partition'.includes(search) ||
-                      $t('installOptions.createPartition').includes(search)
+                      searchPhrase === '' ||
+                      'create partition'.includes(searchPhrase) ||
+                      $t('installOptions.createPartition').includes(searchPhrase)
                     "
                   >
                     <label class="flex item-center w-full select-none cursor-pointer">
                       <input
                         type="checkbox"
                         value="create_partition"
-                        v-model="dri.incompatibles"
+                        v-model="driver.incompatibles"
                         class="me-1.5"
                       />
-                      <span
-                        class="content-center me-1 px-1.5 h-5 text-xs text-nowrap bg-orange-200 rounded"
-                      >
-                        {{ $t('driverForms.default') }}
+                      <DriverTypeBadget type="default"></DriverTypeBadget>
+                      <span class="line-clamp-2">
+                        {{ $t('installOptions.createPartition') }}
                       </span>
-                      {{ $t('installOptions.createPartition') }}
                     </label>
                   </li>
 
                   <template v-for="g in filterGroups" :key="g.id">
-                    <template v-for="d in g.drivers.filter(d => d.id != dri.id)" :key="d.id">
+                    <template v-for="d in g.drivers.filter(d => d.id != driver.id)" :key="d.id">
                       <li class="py-2.5 px-4 text-sm">
                         <label class="flex items-center w-full select-none cursor-pointer">
                           <input
                             type="checkbox"
                             :value="d.id"
-                            v-model="dri.incompatibles"
+                            v-model="driver.incompatibles"
                             class="me-1.5"
                           />
                           <DriverTypeBadget :type="g.type"></DriverTypeBadget>
