@@ -38,7 +38,7 @@ onBeforeMount(() => {
       </div>
     </aside>
 
-    <main class="w-full h-full p-3 overflow-x-hidden">
+    <main class="w-full h-full p-3">
       <RouterView></RouterView>
     </main>
   </div>
