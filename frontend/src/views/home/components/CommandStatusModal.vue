@@ -8,7 +8,6 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
 import TaskStatus from './TaskStatus.vue'
 import type { Command, Process } from './types'
-import { getProcessName } from './utils'
 
 defineExpose({
   show: async (isParallel_: boolean, cmds: Array<Command>) => {
@@ -60,6 +59,12 @@ runtime.EventsOn('execute:exited', async (id: string, result: NonNullable<Proces
     }
   })
 })
+
+function getProcessName(process: Process) {
+  return process.command.name
+    ? `${process.command.groupName} - ${process.command.name}`
+    : process.command.groupName
+}
 
 async function dispatchCommand() {
   lock.acquire('executor', async () => {
