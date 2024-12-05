@@ -22,10 +22,6 @@ export function MoveBehind(arg1, arg2) {
   return window['go']['store']['DriverGroupManager']['MoveBehind'](arg1, arg2);
 }
 
-export function PathExist(arg1, arg2) {
-  return window['go']['store']['DriverGroupManager']['PathExist'](arg1, arg2);
-}
-
 export function Read() {
   return window['go']['store']['DriverGroupManager']['Read']();
 }

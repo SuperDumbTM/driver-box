@@ -4,6 +4,7 @@ import CopyIcon from '@/components/icons/CopyIcon.vue'
 import OneTwoThreeIcon from '@/components/icons/OneTwoThreeIcon.vue'
 import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
+import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManger from '@/wailsjs/go/store/DriverGroupManager'
 import { computed, ref, watch } from 'vue'
@@ -49,9 +50,7 @@ watch(groups, (newValue, oldValue) => {
 
   Promise.all(
     newValue.flatMap(g =>
-      g.drivers.flatMap(d =>
-        groupManger.PathExist(g.id, d.id).then(exist => ({ id: d.id, exist: exist }))
-      )
+      g.drivers.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: d.id, exist: exist })))
     )
   ).then(results => {
     notExistDrivers.value = results

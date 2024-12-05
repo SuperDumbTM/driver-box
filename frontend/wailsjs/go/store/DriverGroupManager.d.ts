@@ -12,8 +12,6 @@ export function IndexOf(arg1:string):Promise<number>;
 
 export function MoveBehind(arg1:string,arg2:number):Promise<Array<store.DriverGroup>>;
 
-export function PathExist(arg1:string,arg2:string):Promise<boolean>;
-
 export function Read():Promise<Array<store.DriverGroup>>;
 
 export function Remove(arg1:string):Promise<void>;
