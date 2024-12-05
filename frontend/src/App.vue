@@ -3,11 +3,14 @@ import FileExeIcon from '@/components/icons/FileExeIcon.vue'
 import GearIcon from '@/components/icons/GearIcon.vue'
 import HomeIcon from '@/components/icons/HomeIcon.vue'
 import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
+import { onBeforeMount } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { locale } = useI18n()
 
-app_manager.Read().then(s => (locale.value = s.language))
+onBeforeMount(() => {
+  app_manager.Read().then(s => (locale.value = s.language))
+})
 </script>
 
 <template>

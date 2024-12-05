@@ -6,7 +6,7 @@ import { store, sysinfo } from '@/wailsjs/go/models'
 import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
 import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
-import { ref, useTemplateRef } from 'vue'
+import { onBeforeMount, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
 import type { Command } from './components/types'
@@ -44,49 +44,53 @@ const hwinfos = ref<{
   disk: Array<sysinfo.Win32_DiskDrive>
 } | null>(null)
 
-groupManager
-  .Read()
-  .then(g => {
-    groups.value = g
+onBeforeMount(() => {
+  groupManager
+    .Read()
+    .then(g => {
+      groups.value = g
 
-    Promise.all(
-      groups.value.flatMap(g =>
-        g.drivers.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: g.id, exist: exist })))
-      )
-    ).then(results => {
-      notExistDrivers.value = results
-        .map(result => (result.exist ? undefined : result.id))
-        .filter(v => v !== undefined)
+      Promise.all(
+        groups.value.flatMap(g =>
+          g.drivers.flatMap(d =>
+            ExecutableExists(d.path).then(exist => ({ id: g.id, exist: exist }))
+          )
+        )
+      ).then(results => {
+        notExistDrivers.value = results
+          .map(result => (result.exist ? undefined : result.id))
+          .filter(v => v !== undefined)
+      })
     })
-  })
-  .catch(() => {
-    $toast.error(t('toasts.readDriverFailed'))
-  })
+    .catch(() => {
+      $toast.error(t('toasts.readDriverFailed'))
+    })
 
-app_manager
-  .Read()
-  .then(s => (settings.value = s))
-  .catch(() => {
-    $toast.error(t('toasts.readAppSettingFailed'))
-  })
+  app_manager
+    .Read()
+    .then(s => (settings.value = s))
+    .catch(() => {
+      $toast.error(t('toasts.readAppSettingFailed'))
+    })
 
-Promise.all([
-  sysinfoqy.MotherboardInfo(),
-  sysinfoqy.CpuInfo(),
-  sysinfoqy.GpuInfo(),
-  sysinfoqy.MemoryInfo(),
-  sysinfoqy.NicInfo(),
-  sysinfoqy.DiskInfo()
-]).then(infos => {
-  hwinfos.value = ['motherboard', 'cpu', 'gpu', 'memory', 'nic', 'disk'].reduce(
-    (obj, key, index) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      obj[key] = infos[index]
-      return obj
-    },
-    {} as typeof hwinfos.value
-  )
+  Promise.all([
+    sysinfoqy.MotherboardInfo(),
+    sysinfoqy.CpuInfo(),
+    sysinfoqy.GpuInfo(),
+    sysinfoqy.MemoryInfo(),
+    sysinfoqy.NicInfo(),
+    sysinfoqy.DiskInfo()
+  ]).then(infos => {
+    hwinfos.value = ['motherboard', 'cpu', 'gpu', 'memory', 'nic', 'disk'].reduce(
+      (obj, key, index) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        obj[key] = infos[index]
+        return obj
+      },
+      {} as typeof hwinfos.value
+    )
+  })
 })
 
 async function handleSubmit() {

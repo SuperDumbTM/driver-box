@@ -4,7 +4,7 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
-import { ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 import InputModal from './components/InputModal.vue'
@@ -28,6 +28,14 @@ const group = ref<store.DriverGroup>(
   })
 )
 
+onBeforeMount(() => {
+  groupManager.Read().then(g => (groups.value = g))
+
+  if (route.params.id) {
+    groupManager.Get(route.params.id as string).then(g => (group.value = g))
+  }
+})
+
 watch(group.value.drivers, newValue => {
   Promise.all(
     newValue.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: d.id, exist: exist })))
@@ -37,12 +45,6 @@ watch(group.value.drivers, newValue => {
       .filter(v => v !== undefined)
   })
 })
-
-groupManager.Read().then(g => (groups.value = g))
-
-if (route.params.id) {
-  groupManager.Get(route.params.id as string).then(g => (group.value = g))
-}
 </script>
 
 <template>

@@ -7,7 +7,7 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManger from '@/wailsjs/go/store/DriverGroupManager'
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
@@ -36,12 +36,14 @@ const driverOfType = computed(() => {
   return groups.value?.filter(d => d.type == driverType.value)
 })
 
-groupManger
-  .Read()
-  .then(g => (groups.value = g))
-  .catch(() => {
-    $toast.error(t('toasts.readDriverFailed'))
-  })
+onBeforeMount(() => {
+  groupManger
+    .Read()
+    .then(g => (groups.value = g))
+    .catch(() => {
+      $toast.error(t('toasts.readDriverFailed'))
+    })
+})
 
 watch(groups, (newValue, oldValue) => {
   if (newValue.length == oldValue.length) {

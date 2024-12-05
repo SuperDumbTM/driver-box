@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { store } from '@/wailsjs/go/models'
 import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
 const settings = ref<store.AppSetting>({
   create_partition: false,
@@ -19,7 +19,9 @@ const settingCategories = ['softwareSetting', 'defaultInstallSetting', 'displayS
 
 const tab = ref<(typeof settingCategories)[number]>(settingCategories[0])
 
-app_manager.Read().then(s => (settings.value = s))
+onBeforeMount(() => {
+  app_manager.Read().then(s => (settings.value = s))
+})
 </script>
 
 <template>
