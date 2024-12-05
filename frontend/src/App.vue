@@ -23,12 +23,12 @@ onBeforeMount(() => {
 <template>
   <div class="flex h-screen">
     <aside class="w-12">
-      <div class="flex justify-center h-full px-1 py-3 overflow-y-auto bg-gray-50">
-        <ul class="pt-3 space-y-3 font-medium">
+      <div class="flex justify-center h-full bg-gray-50">
+        <ul class="mt-6 space-y-3 font-medium">
           <li v-for="(link, i) in routes" :key="i">
             <RouterLink
               :to="link.to"
-              class="flex items-center p-2 rounded-lg hover:bg-gray-200"
+              class="flex p-2 rounded-lg hover:bg-gray-200"
               activeClass="text-apple-green-900 bg-powder-blue-400"
             >
               <component :is="link.icon"></component>
