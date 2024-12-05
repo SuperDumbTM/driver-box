@@ -6,8 +6,9 @@ import AsyncLock from 'async-lock'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
-import type { Command, Process } from './types'
 import TaskStatus from './TaskStatus.vue'
+import type { Command, Process } from './types'
+import { getProcessName } from './utils'
 
 defineExpose({
   show: async (isParallel_: boolean, cmds: Array<Command>) => {
@@ -112,7 +113,11 @@ function handleAbort(process: Process) {
       // `aborted` status will be updated at `execute:exited` event handler
       executor.Abort(process.procId!).catch(error => {
         if (error.includes('process does not exist')) {
-          $toast.warning(t('toasts.cancelCompletedFailed', { name: process.command.name }))
+          $toast.warning(
+            t('toasts.cancelCompletedFailed', {
+              name: getProcessName(process)
+            })
+          )
           return
         }
 
@@ -121,9 +126,13 @@ function handleAbort(process: Process) {
           .split('\n')
           .forEach((err: string) => {
             if (err.includes('abort failed')) {
-              $toast.warning(t('toasts.cancelFailed', { name: process.command.name }))
+              $toast.warning(
+                t('toasts.cancelFailed', {
+                  name: getProcessName(process)
+                })
+              )
             } else {
-              $toast.error(`[${process.command.name}] ${err}`)
+              $toast.error(`[${getProcessName(process)}] ${err}`)
             }
           })
 
