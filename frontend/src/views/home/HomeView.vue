@@ -3,7 +3,7 @@ import CommandStatueModal from '@/views/home/components/CommandStatusModal.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
 import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store, sysinfo } from '@/wailsjs/go/models'
-import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
+import * as appManager from '@/wailsjs/go/store/AppSettingManager'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
 import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
 import { onBeforeMount, ref, useTemplateRef } from 'vue'
@@ -13,11 +13,11 @@ import type { Command } from './components/types'
 
 const { t } = useI18n()
 
+const $toast = useToast({ position: 'top-right' })
+
 const statusModal = useTemplateRef('statusModal')
 
 const form = useTemplateRef('form')
-
-const $toast = useToast({ position: 'top-right' })
 
 const groups = ref<Array<store.DriverGroup>>([])
 
@@ -45,6 +45,13 @@ const hwinfos = ref<{
 } | null>(null)
 
 onBeforeMount(() => {
+  appManager
+    .Read()
+    .then(s => (settings.value = s))
+    .catch(() => {
+      $toast.error(t('toasts.readAppSettingFailed'))
+    })
+
   groupManager
     .Read()
     .then(g => {
@@ -64,13 +71,6 @@ onBeforeMount(() => {
     })
     .catch(() => {
       $toast.error(t('toasts.readDriverFailed'))
-    })
-
-  app_manager
-    .Read()
-    .then(s => (settings.value = s))
-    .catch(() => {
-      $toast.error(t('toasts.readAppSettingFailed'))
     })
 
   Promise.all([
@@ -258,11 +258,17 @@ async function handleSubmit() {
     </div>
 
     <form class="flex gap-x-3 h-28 mt-3" ref="form">
-      <div class="flex flex-col flex-1 gap-y-3 justify-around text-sm">
+      <div class="flex flex-col flex-1 justify-between">
         <div class="relative w-full">
+          <label
+            class="absolute top-0 start-4 h-full translate-y-1 text-xs text-gray-500 pointer-events-none"
+          >
+            {{ $t('driverCategories.network') }}
+          </label>
+
           <select
             name="network"
-            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-900"
+            class="w-full ps-3 pe-9 pt-5 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-700"
           >
             <option>{{ $t('pleaseSelect') }}</option>
             <option
@@ -273,17 +279,18 @@ async function handleSubmit() {
               {{ `${d.name}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}` }}
             </option>
           </select>
-          <label
-            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-2 text-xs truncate text-gray-500 pointer-events-none"
-          >
-            {{ $t('driverCategories.network') }}
-          </label>
         </div>
 
         <div class="relative w-full">
+          <label
+            class="absolute top-0 start-4 h-full translate-y-1 text-xs text-gray-500 pointer-events-none"
+          >
+            {{ $t('driverCategories.display') }}
+          </label>
+
           <select
             name="display"
-            class="block w-full peer ps-3 pe-9 pt-4 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-900"
+            class="w-full ps-3 pe-9 pt-5 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-700"
           >
             <option>{{ $t('pleaseSelect') }}</option>
             <option
@@ -294,33 +301,28 @@ async function handleSubmit() {
               {{ `${d.name}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}` }}
             </option>
           </select>
-          <label
-            class="absolute top-0 start-0 h-full p-4 pt-2.5 -translate-y-2 text-xs truncate text-gray-500 pointer-events-none"
-          >
-            {{ $t('driverCategories.display') }}
-          </label>
         </div>
       </div>
 
       <div class="flex flex-1">
         <div class="relative w-full h-full mb-3">
-          <div class="h-full overflow-y-scroll ps-2 pt-3 rounded border">
+          <label
+            class="absolute left-3 top-1 origin-[0_0] -translate-y-[0.55rem] px-2 bg-white text-xs scale-[0.9] text-gray-500 pointer-events-none"
+          >
+            {{ $t('driverCategories.miscellaneous') }}
+          </label>
+
+          <div class="h-full overflow-y-scroll px-2 pt-3 rounded-lg border">
             <template
               v-for="d in groups.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
               :key="d.id"
             >
-              <!-- <label class="ms-2 text-sm text-gray-900"> -->
               <label class="flex items-center w-full select-none cursor-pointer">
                 <input type="checkbox" name="miscellaneous" class="me-1.5" :value="d.id" />
                 {{ `${d.name}${notExistDrivers.includes(d.id) ? ' ⚠' : ''}` }}
               </label>
             </template>
           </div>
-          <label
-            class="absolute left-3 top-0 w-10 origin-[0_0] -translate-y-[0.55rem] bg-white text-primary scale-[0.9] text-xs text-center text-neutral-500 truncate pointer-events-none"
-          >
-            {{ $t('driverCategories.miscellaneous') }}
-          </label>
         </div>
       </div>
     </form>
@@ -331,91 +333,83 @@ async function handleSubmit() {
       <div class="flex flex-col">
         <p class="font-semibold">{{ $t('installOptions.title') }}</p>
 
-        <div class="flex flex-col">
-          <div class="flex gap-x-4">
-            <div class="flex items-center mb-4">
-              <label class="flex item-center w-full select-none cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="create_partition"
-                  v-model="settings.create_partition"
-                  class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                {{ $t('installOptions.createPartition') }}
-              </label>
-            </div>
+        <div class="flex flex-col flex-1 justify-around">
+          <div class="flex items-center gap-x-4">
+            <label class="select-none cursor-pointer">
+              <input
+                type="checkbox"
+                name="create_partition"
+                v-model="settings.create_partition"
+                class="me-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              {{ $t('installOptions.createPartition') }}
+            </label>
 
-            <div class="flex gap-x-3">
-              <div class="flex items-center mb-4">
-                <!-- <label class="ms-2 text-sm"> -->
-                <label class="flex item-center w-full select-none cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="parallel_install"
-                    v-model="settings.parallel_install"
-                    class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  {{ $t('installOptions.parallelInstall') }}
-                </label>
-              </div>
-            </div>
+            <label class="select-none cursor-pointer">
+              <input
+                type="checkbox"
+                name="parallel_install"
+                v-model="settings.parallel_install"
+                class="me-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              {{ $t('installOptions.parallelInstall') }}
+            </label>
           </div>
 
           <div class="flex items-center gap-x-2">
-            <label class="flex item-center select-none cursor-pointer">
+            <label class="select-none cursor-pointer">
               <input
                 type="checkbox"
                 name="set_password"
                 v-model="settings.set_password"
-                class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                class="me-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
               {{ $t('installOptions.setPassword') }}
             </label>
 
-            <div class="flex shrink">
-              <input
-                type="text"
-                name="password"
-                v-model="settings.password"
-                class="max-w-28 p-1.5 text-xs border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-                :disabled="!settings.set_password"
-              />
-            </div>
+            <input
+              type="text"
+              name="password"
+              v-model="settings.password"
+              class="max-w-28 p-1.5 text-xs border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+              :disabled="!settings.set_password"
+            />
           </div>
         </div>
       </div>
 
       <div class="flex flex-col grow justify-between">
-        <fieldset>
+        <div>
           <label class="block mb-1 text-sm text-gray-900">
             {{ $t('installOptions.successAction') }}
           </label>
+
           <select
             name="success_action"
             v-model="settings.success_action"
-            class="block w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
+            class="w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
           >
             <option v-for="action in store.SuccessAction" :key="action" :value="action">
               {{ $t(`successActions.${action}`) }}
             </option>
           </select>
-        </fieldset>
+        </div>
 
-        <div class="flex flex-row gap-x-2 justify-end items-center mt-[0.4rem]">
+        <div class="flex flex-row gap-x-3 justify-end items-center mt-2">
           <button
             type="button"
-            class="h-8 px-3 text-white text-sm bg-rose-700 hover:bg-rose-600 rounded"
+            class="px-3 py-1.5 text-white text-sm bg-rose-700 hover:bg-rose-600 rounded"
             @click="
               () => {
                 $refs.form.reset()
-                app_manager.Read().then(s => (settings = s))
+                appManager.Read().then(s => (settings = s))
               }
             "
           >
             {{ $t('installOptions.reset') }}
           </button>
           <button
-            class="h-8 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
+            class="px-3 py-1.5 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
             @click="handleSubmit"
           >
             {{ $t('installOptions.execute') }}
