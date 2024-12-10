@@ -76,11 +76,11 @@ onBeforeMount(() => {
       class="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full"
       v-show="show"
     >
-      <div class="w-[80vw] max-w-[650px] max-h-full p-4">
+      <div class="w-[75vw] max-w-[650px]">
         <!-- Modal content -->
         <div class="bg-white rounded-lg shadow">
           <!-- Modal header -->
-          <div class="flex items-center justify-between h-12 px-4 border-b rounded-t bg-white">
+          <div class="flex items-center justify-between h-12 px-4 border-b rounded-t">
             <h3 class="font-semibold">
               {{ driver ? $t('driverForms.editDriver') : $t('driverForms.createDriver') }}
             </h3>

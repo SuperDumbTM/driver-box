@@ -29,12 +29,12 @@ const statusClasses: { [key in typeof props.process.status]: string } = {
     <div class="flex items-center w-4/6 ps-1 py-1">
       <!-- status badget -->
       <div class="shrink-0 w-[4.1rem]">
-        <span
+        <p
           class="inline-flex justify-center items-center max-w-[96%] h-6 px-1 rounded"
           :class="statusClasses[props.process.status]"
         >
-          <p class="text-sm truncate">{{ $t(`executeStatues.${props.process.status}`) }}</p>
-        </span>
+          <span class="text-sm truncate">{{ $t(`executeStatues.${props.process.status}`) }}</span>
+        </p>
       </div>
 
       <!-- messages -->

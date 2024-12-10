@@ -24,13 +24,13 @@ defineExpose({
 
 const emit = defineEmits<{ completed: [] }>()
 
-let isParallel = false
-
 const { t } = useI18n()
+
+const $toast = useToast({ position: 'top-left', duration: 7000 })
 
 const lock = new AsyncLock()
 
-const $toast = useToast({ position: 'top-left', duration: 7000 })
+let isParallel = false
 
 const show = ref(false)
 
@@ -165,11 +165,11 @@ function handleAbort(process: Process) {
       class="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full"
       v-show="show"
     >
-      <div class="w-[65vw] max-w-3xl max-h-full p-4">
+      <div class="w-[65vw] max-w-3xl">
         <!-- Modal content -->
         <div class="bg-white rounded shadow">
           <!-- Modal header -->
-          <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t bg-white">
+          <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t">
             <h3 class="font-semibold">
               {{ $t('executeStatues.title') }}
             </h3>
