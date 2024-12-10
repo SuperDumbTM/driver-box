@@ -68,12 +68,7 @@ watch(group.value.drivers, newValue => {
         <label class="block mb-2 text-sm font-medium text-gray-900">
           {{ $t('driverForms.type') }}
         </label>
-        <select
-          name="type"
-          v-model="group.type"
-          class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
-          required
-        >
+        <select name="type" v-model="group.type" class="w-full p-1.5 text-sm shadow-sm" required>
           <option v-for="type in store.DriverType" :key="type" :value="type">
             {{ $t(`driverCategories.${type}`) }}
           </option>
@@ -88,7 +83,7 @@ watch(group.value.drivers, newValue => {
           type="text"
           name="name"
           v-model="group.name"
-          class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+          class="w-full p-1.5 text-sm shadow-sm"
           required
         />
       </div>
@@ -143,7 +138,7 @@ watch(group.value.drivers, newValue => {
           </div>
         </div>
 
-        <p class="mt-1 text-xs font-light text-apple-green-800">
+        <p class="hint-text">
           {{ $t('driverForms.incompatibleForNewHelp') }}
         </p>
       </div>

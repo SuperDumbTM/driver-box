@@ -130,7 +130,7 @@ onBeforeMount(() => {
                   type="text"
                   name="name"
                   v-model="driver.name"
-                  class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                  class="w-full p-1.5 text-sm shadow-sm"
                 />
               </div>
 
@@ -155,7 +155,7 @@ onBeforeMount(() => {
                     type="text"
                     name="path"
                     v-model="driver.path"
-                    class="block flex-1 min-w-0 w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-none rounded-e-lg shadow-sm"
+                    class="block flex-1 min-w-0 w-full p-1.5 text-sm rounded-none rounded-e shadow-sm"
                     ref="pathInput"
                     required
                   />
@@ -170,7 +170,7 @@ onBeforeMount(() => {
                 <div class="flex">
                   <select
                     name="flags"
-                    class="w-28 text-sm border border-e-0 rounded-e-0 rounded-s-lg border-apple-green-600 outline-none"
+                    class="w-28 text-sm border border-e-0 rounded-e-none rounded-s"
                     @change="
                       event => {
                         driver.flags = (event.target as HTMLSelectElement).value
@@ -193,11 +193,11 @@ onBeforeMount(() => {
                     type="text"
                     name="flags"
                     v-model="driver.flags"
-                    class="flex-1 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-none rounded-e-lg shadow-sm"
+                    class="flex-1 p-1.5 text-sm rounded-none rounded-e shadow-sm"
                   />
                 </div>
 
-                <p class="mt-1 text-xs font-light text-apple-green-800">
+                <p class="hint-text">
                   {{ $t('driverForms.commaSeparated') }}
                 </p>
               </div>
@@ -212,10 +212,10 @@ onBeforeMount(() => {
                     name="minExeTime"
                     v-model="driver.minExeTime"
                     step="0.1"
-                    class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                    class="w-full p-1.5 text-sm shadow-sm"
                     required
                   />
-                  <p class="mt-1 text-xs font-light text-apple-green-800">
+                  <p class="hint-text">
                     {{ $t('driverForms.minExecuteTimeHelp') }}
                   </p>
                 </div>
@@ -228,12 +228,12 @@ onBeforeMount(() => {
                     type="text"
                     name="allowRtCodes"
                     v-model="driver.allowRtCodes"
-                    class="w-full p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                    class="w-full p-1.5 text-sm shadow-sm"
                   />
-                  <p class="mt-1 text-xs font-light text-apple-green-800">
+                  <p class="hint-text">
                     {{ $t('driverForms.allowedExitCodeHelp') }}
                   </p>
-                  <p class="mt-1 text-xs font-light text-apple-green-800">
+                  <p class="hint-text">
                     {{ $t('driverForms.commaSeparated') }}
                   </p>
                 </div>
@@ -256,12 +256,12 @@ onBeforeMount(() => {
                   <input
                     v-model="searchPhrase"
                     :placeholder="$t('driverForms.search')"
-                    class="px-3 py-2 w-full text-black text-sm border-none rounded outline-apple-green-600 bg-gray-100"
+                    class="px-3 py-2 w-full text-black text-sm border-none rounded bg-gray-100"
                   />
 
                   <button
                     type="button"
-                    class="px-3 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded-lg"
+                    class="px-3 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded"
                     :title="$t('driverForms.selectAll')"
                     @click="
                       () => {
@@ -278,7 +278,7 @@ onBeforeMount(() => {
 
                   <button
                     type="button"
-                    class="px-3 text-sm font-medium text-white bg-rose-400 hover:bg-rose-300 rounded-lg"
+                    class="px-3 text-sm font-medium text-white bg-rose-400 hover:bg-rose-300 rounded"
                     :title="$t('driverForms.selectNone')"
                     @click="
                       () => {

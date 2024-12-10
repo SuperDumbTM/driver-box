@@ -65,7 +65,7 @@ onBeforeMount(() => {
           <select
             name="language"
             v-model="settings.language"
-            class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+            class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
           >
             <option value="en">English</option>
             <option value="zh_Hant_HK">繁體中文</option>
@@ -86,7 +86,7 @@ onBeforeMount(() => {
               min="0"
               step="0"
               v-model="settings.success_action_delay"
-              class="w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+              class="w-20 p-1.5 text-sm shadow-sm"
               required
             />
             &nbsp; {{ $t('settings.second') }}
@@ -132,7 +132,7 @@ onBeforeMount(() => {
                 type="text"
                 name="password"
                 v-model="settings.password"
-                class="w-full min-w-20 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+                class="w-full min-w-20 p-1.5 text-sm shadow-sm"
                 :disabled="!settings.set_password"
               />
             </div>
@@ -165,7 +165,7 @@ onBeforeMount(() => {
             <select
               name="success_action"
               v-model="settings.success_action"
-              class="w-full max-w-72 min-w-24 p-1.5 text-sm border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+              class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
             >
               <option v-for="action in store.SuccessAction" :key="action" :value="action">
                 {{ $t(`successActions.${action}`) }}

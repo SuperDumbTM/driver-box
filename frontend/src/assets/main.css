@@ -9,8 +9,28 @@ body {
   font-family: 'Noto Sans TC';
 }
 
+input,
+select {
+  border-width: 1px;
+  border-radius: 0.375rem;
+  border-color: theme('colors.apple-green.600');
+}
+
+input:focus,
+select:focus {
+  outline-color: theme('colors.powder-blue.700');
+}
+
 input[type='checkbox'] {
   accent-color: theme('colors.powder-blue.700');
+}
+
+.hint-text {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 300;
+  color: theme('colors.apple-green.800');
 }
 
 .v-toast {

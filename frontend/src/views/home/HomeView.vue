@@ -266,10 +266,7 @@ async function handleSubmit() {
             {{ $t('driverCategories.network') }}
           </label>
 
-          <select
-            name="network"
-            class="w-full ps-3 pe-9 pt-5 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-700"
-          >
+          <select name="network" class="w-full ps-3 pe-9 pt-5 pb-1 rounded-lg">
             <option>{{ $t('pleaseSelect') }}</option>
             <option
               v-for="d in groups.filter(d => d.type == store.DriverType.NETWORK)"
@@ -288,10 +285,7 @@ async function handleSubmit() {
             {{ $t('driverCategories.display') }}
           </label>
 
-          <select
-            name="display"
-            class="w-full ps-3 pe-9 pt-5 pb-1 border border-gray-200 rounded-lg focus:border-powder-blue-700"
-          >
+          <select name="display" class="w-full ps-3 pe-9 pt-5 pb-1 rounded-lg">
             <option>{{ $t('pleaseSelect') }}</option>
             <option
               v-for="d in groups.filter(d => d.type == store.DriverType.DISPLAY)"
@@ -312,7 +306,7 @@ async function handleSubmit() {
             {{ $t('driverCategories.miscellaneous') }}
           </label>
 
-          <div class="h-full overflow-y-scroll px-2 pt-3 rounded-lg border">
+          <div class="h-full overflow-y-scroll px-2 pt-3 rounded-lg border border-apple-green-600">
             <template
               v-for="d in groups.filter(d => d.type == store.DriverType.MISCELLANEOUS)"
               :key="d.id"
@@ -340,7 +334,7 @@ async function handleSubmit() {
                 type="checkbox"
                 name="create_partition"
                 v-model="settings.create_partition"
-                class="me-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                class="me-1"
               />
               {{ $t('installOptions.createPartition') }}
             </label>
@@ -350,7 +344,7 @@ async function handleSubmit() {
                 type="checkbox"
                 name="parallel_install"
                 v-model="settings.parallel_install"
-                class="me-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                class="me-1"
               />
               {{ $t('installOptions.parallelInstall') }}
             </label>
@@ -362,7 +356,7 @@ async function handleSubmit() {
                 type="checkbox"
                 name="set_password"
                 v-model="settings.set_password"
-                class="me-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                class="me-1"
               />
               {{ $t('installOptions.setPassword') }}
             </label>
@@ -371,7 +365,7 @@ async function handleSubmit() {
               type="text"
               name="password"
               v-model="settings.password"
-              class="max-w-28 p-1.5 text-xs border border-apple-green-600 focus:outline-powder-blue-700 rounded-lg shadow-sm"
+              class="max-w-28 p-1.5 text-xs shadow-sm"
               :disabled="!settings.set_password"
             />
           </div>
@@ -387,7 +381,7 @@ async function handleSubmit() {
           <select
             name="success_action"
             v-model="settings.success_action"
-            class="w-full p-1 text-sm text-gray-900 border border-gray-300 rounded-lg"
+            class="w-full p-1 text-sm text-gray-900"
           >
             <option v-for="action in store.SuccessAction" :key="action" :value="action">
               {{ $t(`successActions.${action}`) }}
