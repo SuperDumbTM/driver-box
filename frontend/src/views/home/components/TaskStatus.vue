@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Process } from './types'
+import type { Process } from '../types'
 
 const props = defineProps<{ process: Process }>()
 

@@ -9,7 +9,7 @@ import * as sysinfoqy from '@/wailsjs/go/sysinfo/SysInfo'
 import { onBeforeMount, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
-import type { Command } from './components/types'
+import type { Command } from './types'
 
 const { t } = useI18n()
 

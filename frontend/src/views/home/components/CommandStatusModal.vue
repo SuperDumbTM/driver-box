@@ -6,8 +6,8 @@ import AsyncLock from 'async-lock'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
+import type { Command, Process } from '../types'
 import TaskStatus from './TaskStatus.vue'
-import type { Command, Process } from './types'
 
 defineExpose({
   show: async (isParallel_: boolean, cmds: Array<Command>) => {
