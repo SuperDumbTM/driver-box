@@ -21,6 +21,7 @@ const form = useTemplateRef('form')
 
 const groups = ref<Array<store.DriverGroup>>([])
 
+/** driver ID of drivers that the executable cannot be found */
 const notExistDrivers = ref<Array<string>>([])
 
 const settings = ref<store.AppSetting>({

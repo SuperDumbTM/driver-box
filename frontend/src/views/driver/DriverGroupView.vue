@@ -28,7 +28,7 @@ const driverType = ref(
 
 const groups = ref<Array<store.DriverGroup>>([])
 
-/** driver ID of drivers that the executable path cannot be located */
+/** driver ID of drivers that the executable cannot be found */
 const notExistDrivers = ref<Array<string>>([])
 
 const reordering = ref(false)
