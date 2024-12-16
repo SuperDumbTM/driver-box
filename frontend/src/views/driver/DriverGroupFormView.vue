@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ArrowExpandVerticalIcon from '@/components/icons/ArrowExpandVerticalIcon.vue'
+import OneTwoThreeIcon from '@/components/icons/OneTwoThreeIcon.vue'
 import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
 import { ExecutableExists } from '@/wailsjs/go/main/App'
@@ -100,6 +102,7 @@ watch(group.value.drivers, newValue => {
             <div class="col-span-2">{{ $t('driverForms.name') }}</div>
             <div class="col-span-3">{{ $t('driverForms.path') }}</div>
             <div class="col-span-2">{{ $t('driverForms.argument') }}</div>
+            <div class="col-span-2">{{ $t('driverForms.otherSetting') }}</div>
           </div>
 
           <div v-if="group.drivers.length == 0" class="py-1 text-center last:border-b">N/A</div>
@@ -111,20 +114,41 @@ watch(group.value.drivers, newValue => {
             class="grid grid-cols-10 items-center gap-2 py-1.5 text-xs border-b"
           >
             <div class="col-span-2">
-              <p class="truncate">
+              <p class="break-all line-clamp-2">
                 {{ d.name }}
               </p>
             </div>
+
             <div class="col-span-3">
-              <p class="font-mono truncate">
+              <p class="font-mono break-all line-clamp-2">
                 {{ d.path }}
               </p>
             </div>
+
             <div class="col-span-2">
-              <p class="truncate">
+              <p class="break-all line-clamp-2">
                 {{ d.flags.join(', ') }}
               </p>
             </div>
+
+            <div class="flex col-span-2 gap-x-1">
+              <span
+                v-show="d.incompatibles.length > 0"
+                class="inline-block p-0.5 max-h-5 bg-yellow-300 rounded-sm"
+                :title="$t('driverForms.incompatibleWith')"
+              >
+                <ArrowExpandVerticalIcon></ArrowExpandVerticalIcon>
+              </span>
+
+              <span
+                v-show="d.allowRtCodes.length > 0"
+                class="inline-block p-0.5 max-h-5 bg-blue-300 rounded-sm"
+                :title="$t('driverForms.allowedExitCode')"
+              >
+                <OneTwoThreeIcon></OneTwoThreeIcon>
+              </span>
+            </div>
+
             <div>
               <div class="flex gap-x-2">
                 <button type="button" @click="$refs.inputModal?.show(d)">
