@@ -95,6 +95,22 @@ onBeforeMount(() => {
           </div>
         </div>
       </section>
+
+      <section>
+        <p class="font-bold mb-2">軀動下載</p>
+
+        <div class="flex flex-col gap-y-3">
+          <div>
+            <label class="block mb-2 text-gray-900"> URL </label>
+            <input
+              type="url"
+              name="driver_download_url"
+              v-model="settings.driver_download_url"
+              class="w-full p-1.5 text-sm shadow-sm"
+            />
+          </div>
+        </div>
+      </section>
     </div>
 
     <div v-show="currentTab == 'defaultInstallSetting'" class="flex flex-col gap-y-3">

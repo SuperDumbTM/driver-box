@@ -48,6 +48,7 @@ export namespace store {
 	    filter_miniport_nic: boolean;
 	    filter_microsoft_nic: boolean;
 	    language: string;
+	    driver_download_url: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new AppSetting(source);
@@ -64,6 +65,7 @@ export namespace store {
 	        this.filter_miniport_nic = source["filter_miniport_nic"];
 	        this.filter_microsoft_nic = source["filter_microsoft_nic"];
 	        this.language = source["language"];
+	        this.driver_download_url = source["driver_download_url"];
 	    }
 	}
 	export class Driver {
