@@ -55,6 +55,7 @@ type AppSetting struct {
 	FilterMiniportNic  bool          `json:"filter_miniport_nic"`
 	FilterMicrosoftNic bool          `json:"filter_microsoft_nic"`
 	Language           string        `json:"language"`
+	DriverDownloadUrl  string        `json:"driver_download_url"`
 }
 
 type SuccessAction string

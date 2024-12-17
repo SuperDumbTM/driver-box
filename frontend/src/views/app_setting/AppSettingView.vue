@@ -59,17 +59,19 @@ onBeforeMount(() => {
         </p>
 
         <div class="flex flex-col gap-y-3">
-          <label class="block mb-2 text-gray-900">
-            {{ $t('settings.language') }}
-          </label>
-          <select
-            name="language"
-            v-model="settings.language"
-            class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
-          >
-            <option value="en">English</option>
-            <option value="zh_Hant_HK">繁體中文</option>
-          </select>
+          <div>
+            <label class="block mb-2 text-gray-900">
+              {{ $t('settings.language') }}
+            </label>
+            <select
+              name="language"
+              v-model="settings.language"
+              class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
+            >
+              <option value="en">English</option>
+              <option value="zh_Hant_HK">繁體中文</option>
+            </select>
+          </div>
         </div>
       </section>
 
