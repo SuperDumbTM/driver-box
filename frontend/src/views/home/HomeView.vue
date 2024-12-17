@@ -24,17 +24,7 @@ const groups = ref<Array<store.DriverGroup>>([])
 /** driver ID of drivers that the executable cannot be found */
 const notExistDrivers = ref<Array<string>>([])
 
-const settings = ref<store.AppSetting>({
-  create_partition: false,
-  set_password: false,
-  password: '',
-  parallel_install: false,
-  success_action: store.SuccessAction.NOTHING,
-  success_action_delay: 5,
-  filter_miniport_nic: true,
-  filter_microsoft_nic: true,
-  language: 'en'
-})
+const settings = ref<store.AppSetting>(new store.AppSetting())
 
 const hwinfos = ref<{
   motherboard: Array<sysinfo.Win32_BaseBoard>
