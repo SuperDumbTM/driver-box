@@ -1,5 +1,7 @@
 {
   "back": "返回",
+  "cancel": "取消",
+  "confirm": "確定",
   "cpu": "中央處理器",
   "driverCategories": {
     "display": "顯示卡",
@@ -36,6 +38,8 @@
     "selectNone": "清除選擇",
     "selectedWithCount": "已選擇：{count}",
     "type": "軀動類別",
+    "unsaveConfirmMessage": "你所做的修改尚未儲存，請問你是否確認離開？",
+    "unsaveConfirmTitle": "修改未儲存",
     "view": "檢視"
   },
   "executeStatues": {

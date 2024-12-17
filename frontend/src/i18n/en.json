@@ -1,5 +1,7 @@
 {
   "back": "Back",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
   "cpu": "CPU",
   "driverCategories": {
     "display": "Display",
@@ -36,6 +38,8 @@
     "selectNone": "Select None",
     "selectedWithCount": "Selected: {count}",
     "type": "Driver Type",
+    "unsaveConfirmMessage": "You have unsaved changes, are you sure to leave?",
+    "unsaveConfirmTitle": "Unsaved Changes",
     "view": "View"
   },
   "executeStatues": {

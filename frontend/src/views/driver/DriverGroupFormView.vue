@@ -6,14 +6,19 @@ import TrashIcon from '@/components/icons/TrashIcon.vue'
 import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
-import { onBeforeMount, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { onBeforeMount, ref, useTemplateRef, watch } from 'vue'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 import DriverInputModal from './components/DriverInputModal.vue'
+import UnsaveConfirmModal from './components/UnsaveConfirmModal.vue'
 
 const $route = useRoute()
 
 const $toast = useToast({ position: 'top-right' })
+
+const questionModal = useTemplateRef('questionModal')
+
+const modified = ref(false)
 
 const notExistDrivers = ref<Array<string>>([])
 
@@ -36,7 +41,23 @@ onBeforeMount(() => {
   }
 })
 
+onBeforeRouteLeave((to, from, next) => {
+  if (modified.value) {
+    questionModal.value?.show(answer => {
+      next(answer == 'yes')
+    })
+  } else {
+    next(true)
+  }
+})
+
+watch(group.value, () => (modified.value = true), { once: true })
+
 watch(group.value.drivers, newValue => {
+  if (!modified.value) {
+    modified.value = true
+  }
+
   Promise.all(
     newValue.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: d.id, exist: exist })))
   ).then(results => {
@@ -57,7 +78,10 @@ watch(group.value.drivers, newValue => {
           $toast.warning($t('toasts.addAtLeastOneDriver'))
         } else {
           ;(group.id == undefined ? groupManager.Add(group) : groupManager.Update(group))
-            .then(() => $toast.success($t('toasts.updated')))
+            .then(() => {
+              modified = false
+              $toast.success($t('toasts.updated'))
+            })
             .catch(reason => {
               $toast.error(reason)
             })
@@ -213,6 +237,8 @@ watch(group.value.drivers, newValue => {
       }
     "
   ></DriverInputModal>
+
+  <UnsaveConfirmModal ref="questionModal"></UnsaveConfirmModal>
 </template>
 
 <style scoped>
