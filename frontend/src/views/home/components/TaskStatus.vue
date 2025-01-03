@@ -1,20 +1,10 @@
 <script setup lang="ts">
+import { statusBadget } from '@/definitions/styles'
 import type { Process } from '../types'
 
 const props = defineProps<{ process: Process }>()
 
 defineEmits<{ abort: [] }>()
-
-const statusClasses: { [key in typeof props.process.status]: string } = {
-  pending: 'bg-gray-300',
-  running: 'bg-half-baked-500 animate-pulse',
-  aborting: 'bg-yellow-400 animate-pulse',
-  aborted: 'bg-yellow-400',
-  speeded: 'bg-red-300',
-  failed: 'bg-red-300',
-  completed: 'bg-apple-green-600',
-  broken: 'bg-red-700 text-white'
-}
 </script>
 
 <template>
@@ -31,7 +21,10 @@ const statusClasses: { [key in typeof props.process.status]: string } = {
       <div class="shrink-0 w-[4.1rem]">
         <p
           class="inline-flex justify-center items-center max-w-[96%] h-6 px-1 rounded"
-          :class="statusClasses[props.process.status]"
+          :class="[
+            { 'animate-pulse': props.process.status.includes('ing') },
+            statusBadget[props.process.status]
+          ]"
         >
           <span class="text-sm truncate">{{ $t(`executeStatues.${props.process.status}`) }}</span>
         </p>
