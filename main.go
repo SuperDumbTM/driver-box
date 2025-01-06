@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"driver-box/pkg/execute"
+	"driver-box/pkg/porter"
 	"driver-box/pkg/store"
 	"driver-box/pkg/sysinfo"
 	"embed"
@@ -20,8 +21,11 @@ var assets embed.FS
 
 func main() {
 	var (
+		dirRoot string
 		/* Path to the configuration directory */
 		dirConf string
+		/* Path to the driver directory */
+		dirDir string
 		/* Path to the WebView2 executable */
 		pathWV2 string
 	)
@@ -29,15 +33,16 @@ func main() {
 	if pathExe, err := os.Executable(); err != nil {
 		panic(err)
 	} else {
-		// setup /conf directorys
-		dirConf = filepath.Join(filepath.Dir(pathExe), "conf")
+		dirRoot = filepath.Dir(pathExe)
+
+		dirConf = filepath.Join(dirRoot, "conf")
 		if _, err := os.Stat(dirConf); err != nil {
 			if err := os.MkdirAll(dirConf, os.ModePerm); err != nil {
 				panic(err)
 			}
 		}
 
-		dirDir := filepath.Join(filepath.Dir(pathExe), "drivers")
+		dirDir = filepath.Join(dirRoot, "drivers")
 		if _, err := os.Stat(dirDir); err != nil {
 			if err := os.MkdirAll(dirDir, os.ModePerm); err != nil {
 				panic(err)
@@ -49,7 +54,7 @@ func main() {
 		}
 
 		// WebView2 binary lookup
-		pathWV2 = filepath.Join(filepath.Dir(pathExe), "bin", "WebView2")
+		pathWV2 = filepath.Join(dirRoot, "bin", "WebView2")
 		if _, err := os.Stat(pathWV2); err != nil {
 			pathWV2 = ""
 		}
@@ -77,6 +82,7 @@ func main() {
 			mgt,
 			&store.DriverGroupManager{Path: filepath.Join(dirConf, "groups.json")},
 			&store.AppSettingManager{Path: filepath.Join(dirConf, "setting.json")},
+			&porter.Porter{DirRoot: dirRoot, DirConf: dirConf, DirDriver: dirDir},
 			&sysinfo.SysInfo{},
 		},
 		EnumBind: []interface{}{

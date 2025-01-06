@@ -26,6 +26,11 @@ const router = createRouter({
       path: '/settings',
       name: 'setting',
       component: () => import('../views/app_setting/AppSettingView.vue')
+    },
+    {
+      path: '/download',
+      name: 'download',
+      component: () => import('../views/download/DownloadView.vue')
     }
   ]
 })

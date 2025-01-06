@@ -72,8 +72,27 @@
   "motherboard": "底板",
   "nic": "網絡介面卡",
   "pleaseSelect": "請選擇",
+  "porters": {
+    "cleanup": "清理檔案",
+    "compression": "壓縮檔案",
+    "decompression": "解壓縮檔案",
+    "download": "下載檔案",
+    "export": "匯出",
+    "exportDestination": "輸出資料夾",
+    "exportToFile": "匯出至檔案",
+    "file": "檔案",
+    "import": "匯入",
+    "importFromFile": "從檔案",
+    "importFromNetwork": "從網絡",
+    "progress": "進度",
+    "title": "匯入／匯出資料",
+    "titleHint": "將程式設定及軀動程式匯入／匯出",
+    "url": "下載網址",
+    "ignoreAppSetting": "不要匯入程式設定"
+  },
   "ram": "記憶體",
   "save": "儲存",
+  "select": "選擇",
   "settings": {
     "defaultInstallSetting": "預設安裝選項",
     "displaySetting": "顯示設定",
@@ -86,7 +105,9 @@
     "second": "秒",
     "softwareSetting": "程式設定",
     "successActionDelay": "關機選項延遲",
-    "task": "額外工作"
+    "task": "額外工作",
+    "importUrl": "匯入資料下載網址",
+    "porter": "匯入／匯出資料"
   },
   "storage": "儲存裝置",
   "successActions": {

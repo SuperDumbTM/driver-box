@@ -54,34 +54,14 @@ onBeforeMount(() => {
 
     <div v-show="currentTab == 'softwareSetting'" class="flex flex-col gap-y-3">
       <section>
-        <p class="font-bold mb-2">
-          {{ $t('settings.softwareSetting') }}
-        </p>
+        <p class="font-bold mb-2">一般設定</p>
 
         <div class="flex flex-col gap-y-3">
           <div>
             <label class="block mb-2 text-gray-900">
-              {{ $t('settings.language') }}
+              {{ $t('settings.successActionDelay') }}
             </label>
-            <select
-              name="language"
-              v-model="settings.language"
-              class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
-            >
-              <option value="en">English</option>
-              <option value="zh_Hant_HK">繁體中文</option>
-            </select>
-          </div>
-        </div>
-      </section>
 
-      <section>
-        <p class="font-bold mb-2">
-          {{ $t('settings.successActionDelay') }}
-        </p>
-
-        <div class="flex flex-col gap-y-3">
-          <div class="flex items-center">
             <input
               type="number"
               name="success_action_delay"
@@ -97,11 +77,12 @@ onBeforeMount(() => {
       </section>
 
       <section>
-        <p class="font-bold mb-2">軀動下載</p>
+        <p class="font-bold mb-2">{{ $t('settings.porter') }}</p>
 
         <div class="flex flex-col gap-y-3">
           <div>
-            <label class="block mb-2 text-gray-900"> URL </label>
+            <label class="block mb-2 text-gray-900">{{ $t('settings.importUrl') }}</label>
+
             <input
               type="url"
               name="driver_download_url"
@@ -195,6 +176,23 @@ onBeforeMount(() => {
     </div>
 
     <div v-show="currentTab == 'displaySetting'" class="flex flex-col gap-y-3">
+      <section>
+        <p class="font-bold mb-2">
+          {{ $t('settings.language') }}
+        </p>
+
+        <div>
+          <select
+            name="language"
+            v-model="settings.language"
+            class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
+          >
+            <option value="en">English</option>
+            <option value="zh_Hant_HK">繁體中文</option>
+          </select>
+        </div>
+      </section>
+
       <section>
         <p class="font-bold mb-2">
           {{ $t('settings.hardwareInfo') }}

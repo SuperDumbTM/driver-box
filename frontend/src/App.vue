@@ -3,6 +3,7 @@ import * as app_manager from '@/wailsjs/go/store/AppSettingManager'
 import { onBeforeMount, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { RouteLocationRaw } from 'vue-router'
+import DownloadIcon from './components/icons/DownloadIcon.vue'
 import FileExeIcon from './components/icons/FileExeIcon.vue'
 import GearIcon from './components/icons/GearIcon.vue'
 import HomeIcon from './components/icons/HomeIcon.vue'
@@ -12,7 +13,8 @@ const { locale } = useI18n()
 const routes: Array<{ to: RouteLocationRaw; icon: Component }> = [
   { to: '/', icon: HomeIcon },
   { to: '/drivers', icon: FileExeIcon },
-  { to: '/settings', icon: GearIcon }
+  { to: '/settings', icon: GearIcon },
+  { to: '/download', icon: DownloadIcon }
 ]
 
 onBeforeMount(() => {
