@@ -119,6 +119,8 @@ func toZip(tracker *ProgressTracker, dest string, directories ...string) error {
 		}
 	}
 
+	tracker.messages <- fmt.Sprintf("All files were packed into: %s", file.Name())
+
 	tracker.Complete("compression")
 	return nil
 }
