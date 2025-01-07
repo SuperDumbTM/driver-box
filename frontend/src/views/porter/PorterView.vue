@@ -77,9 +77,13 @@ onBeforeMount(() => {
           type="button"
           class="mt-3 py-1 w-28 text-white bg-half-baked-600 hover:bg-half-baked-500 rounded"
           @click="
-            $refs.progressModal?.export(
-              'C:\\Users\\EltonLO(House730)\\Documents\\Repository\\Driver-Box\\build'
-            )
+            () => {
+              if (!exportDirectory) {
+                $toast.warning($t('toast.enterExportPath'))
+              } else {
+                $refs.progressModal?.export(exportDirectory)
+              }
+            }
           "
         >
           {{ t('porter.export') }}
@@ -90,7 +94,7 @@ onBeforeMount(() => {
     <div class="flex flex-col gap-y-3">
       <div class="flex gap-x-4">
         <h2 class="mb-1 text-lg font-medium">
-          {{ t('porter.import') }}
+          {{ $t('porter.import') }}
         </h2>
 
         <div class="relative inline-flex p-0.5 border rounded-3xl">
@@ -105,7 +109,7 @@ onBeforeMount(() => {
             class="z-10 px-3 text-center text-xs rounded-3xl select-none"
             @click="importInput.from = 'url'"
           >
-            {{ t('porter.importFromNetwork') }}
+            {{ $t('porter.importFromNetwork') }}
           </button>
 
           <span
@@ -151,7 +155,7 @@ onBeforeMount(() => {
       <!-- from url -->
       <div v-else class="flex gap-x-6">
         <label class="w-24 content-center text-gray-900">
-          {{ t('porter.url') }}
+          {{ $t('porter.url') }}
         </label>
 
         <div class="flex gap-x-2 w-full">
@@ -166,7 +170,7 @@ onBeforeMount(() => {
 
       <label>
         <input type="checkbox" v-model="importInput.ignoreAppSetting" />
-        {{ t('porter.ignoreAppSetting') }}
+        {{ $t('porter.ignoreAppSetting') }}
       </label>
 
       <div class="flex justify-end">
@@ -181,7 +185,7 @@ onBeforeMount(() => {
             )
           "
         >
-          {{ t('porter.import') }}
+          {{ $t('porter.import') }}
         </button>
       </div>
     </div>

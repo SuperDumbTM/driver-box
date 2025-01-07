@@ -16,7 +16,11 @@ defineExpose({
     programPorter
       .Export(destination)
       .catch(err => {
-        if (!err.includes('canceled')) {
+        if (err.includes('context canceled')) {
+          return
+        } else if (err.includes('The system cannot find the path specified.')) {
+          $toast.error(t('toast.pathNotFind'))
+        } else {
           $toast.error(err)
         }
       })
@@ -36,11 +40,7 @@ defineExpose({
     if (from == 'url') {
       programPorter
         .ImportFromURL(source, ignoreAS)
-        .catch(err => {
-          if (!err.includes('canceled')) {
-            $toast.error(err)
-          }
-        })
+        .catch(toastErrMsg)
         .finally(() => {
           clearInterval(interval)
           updateProgress()
@@ -48,11 +48,7 @@ defineExpose({
     } else {
       programPorter
         .ImportFromFile(source, ignoreAS)
-        .catch(err => {
-          if (!err.includes('canceled')) {
-            $toast.error(err)
-          }
-        })
+        .catch(toastErrMsg)
         .finally(() => {
           clearInterval(interval)
           updateProgress()
@@ -88,6 +84,8 @@ function updateProgress() {
       scroll = true
     }
 
+    console.log(p.tasks)
+
     progress.value = p
     messages.value.push(...p.message.filter(m => m !== ''))
 
@@ -97,6 +95,22 @@ function updateProgress() {
       })
     }
   })
+}
+
+function toastErrMsg(err: string) {
+  if (err.includes('context canceled')) {
+    return
+  } else if (err.includes('The system cannot find the path specified.')) {
+    $toast.error(t('toast.pathNotFind'))
+  } else if (err.includes('unsupported protocol scheme')) {
+    $toast.error(t('toast.unsupportUrlProtocal'))
+  } else if (err.includes('no such host')) {
+    $toast.error(t('toast.noSuchHost'))
+  } else if (err == 'zip: not a valid zip file') {
+    $toast.error(t('toast.invalidZipFile'))
+  } else {
+    $toast.error(err)
+  }
 }
 </script>
 
@@ -154,7 +168,7 @@ function updateProgress() {
                     }
                   "
                 >
-                  {{ t('common.cancel') }}
+                  {{ $t('common.cancel') }}
                 </button>
               </div>
             </div>

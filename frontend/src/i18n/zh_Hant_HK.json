@@ -128,11 +128,16 @@
     "addAtLeastOneDriver": "請至少加入一個軀動程式。",
     "cancelCompletedFailed": "[{name}] 無法取消，可能已經完成執行。",
     "cancelFailed": "[{name}] 無法取消。",
+    "enterExportPath": "請先輸入儲存匯出檔案的路徑。",
     "finished": "完成",
     "noInputWarning": "請先選擇軀動或工作。",
+    "pathNotFind": "路徑不存在",
     "readAppSettingFailed": "無法讀預設選項資料，重新設定或可解決問題。",
     "readDriverFailed": "無法讀取軀動資料，重新設定或可解決問題。",
     "readInputFailed": "程式出錯，無法取得輸入。",
-    "updated": "已更新。"
+    "updated": "已更新。",
+    "unsupportUrlProtocal": "不支援輸入的 URL。",
+    "noSuchHost": "無法連接網址。",
+    "invalidZipFile": "非有效的檔案。"
   }
 }
