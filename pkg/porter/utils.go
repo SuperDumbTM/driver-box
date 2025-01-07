@@ -195,6 +195,8 @@ func fromZip(tracker *ProgressTracker, orig string, dest string) error {
 }
 
 func download(tracker *ProgressTracker, url string, dest string) error {
+	tracker.Start("download", 1) // placeholder value before establish connection to URL
+
 	request, err := http.NewRequestWithContext(tracker.ctx, "GET", url, nil)
 	if err != nil {
 		tracker.Fail("download", err)
