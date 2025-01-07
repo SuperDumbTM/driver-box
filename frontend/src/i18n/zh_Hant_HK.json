@@ -1,14 +1,24 @@
 {
-  "back": "返回",
-  "cancel": "取消",
-  "confirm": "確定",
-  "cpu": "中央處理器",
-  "driverCategories": {
+  "common": {
+    "back": "返回",
+    "cancel": "取消",
+    "confirm": "確定",
+    "cpu": "中央處理器",
+    "gpu": "顯示卡",
+    "motherboard": "底板",
+    "nic": "網絡介面卡",
+    "pleaseSelect": "請選擇",
+    "ram": "記憶體",
+    "save": "儲存",
+    "select": "選擇",
+    "storage": "儲存裝置"
+  },
+  "driverCatetory": {
     "display": "顯示卡",
     "miscellaneous": "其他",
     "network": "網絡介面卡"
   },
-  "driverForms": {
+  "driverForm": {
     "action": "動作",
     "allowedExitCode": "非錯誤狀態代碼",
     "allowedExitCodeHelp": "安裝程序返回所輸入的狀態代碼時，將會視作安裝成功。",
@@ -42,7 +52,7 @@
     "unsaveConfirmTitle": "修改未儲存",
     "view": "檢視"
   },
-  "executeStatues": {
+  "executeStatus": {
     "abort": "取消",
     "aborted": "已取消",
     "aborting": "取消中",
@@ -59,8 +69,7 @@
     "startFailed": "程式出錯，未能執行",
     "title": "執行狀態"
   },
-  "gpu": "顯示卡",
-  "installOptions": {
+  "installOption": {
     "createPartition": "建立磁區",
     "execute": "執行",
     "parallelInstall": "同步安裝",
@@ -69,10 +78,8 @@
     "successAction": "關機設定",
     "title": "額外工作及安裝設定"
   },
-  "motherboard": "底板",
-  "nic": "網絡介面卡",
-  "pleaseSelect": "請選擇",
-  "porters": {
+  "porter": {
+    "backup": "備份",
     "cleanup": "清理檔案",
     "compression": "壓縮檔案",
     "decompression": "解壓縮檔案",
@@ -81,46 +88,43 @@
     "exportDestination": "輸出資料夾",
     "exportToFile": "匯出至檔案",
     "file": "檔案",
+    "ignoreAppSetting": "不要匯入程式設定",
     "import": "匯入",
     "importFromFile": "從檔案",
     "importFromNetwork": "從網絡",
+    "initialisation": "初始化",
     "progress": "進度",
     "title": "匯入／匯出資料",
     "titleHint": "將程式設定及軀動程式匯入／匯出",
-    "url": "下載網址",
-    "ignoreAppSetting": "不要匯入程式設定"
+    "url": "下載網址"
   },
-  "ram": "記憶體",
-  "save": "儲存",
-  "select": "選擇",
-  "settings": {
+  "setting": {
     "defaultInstallSetting": "預設安裝選項",
     "displaySetting": "顯示設定",
     "filterMicorsoftNic": "過濾 Microsoft 網卡",
     "filterMiniportNic": "過濾 Miniport 網卡",
-    "generalSetting": "一般",
+    "generalSetting": "一般設定",
     "hardwareInfo": "硬件資訊",
+    "importUrl": "匯入資料下載網址",
     "installOption": "安裝設定",
     "language": "語言",
+    "porter": "匯入／匯出資料",
     "second": "秒",
     "softwareSetting": "程式設定",
     "successActionDelay": "關機選項延遲",
-    "task": "額外工作",
-    "importUrl": "匯入資料下載網址",
-    "porter": "匯入／匯出資料"
+    "task": "額外工作"
   },
-  "storage": "儲存裝置",
-  "successActions": {
+  "successAction": {
     "firmware": "進入 BIOS/UEFI",
     "nothing": "沒有動作",
     "reboot": "重新開機",
     "shutdown": "關機"
   },
-  "tasks": {
+  "task": {
     "createPartition": "建立磁碟分區及掛載檔案系統",
     "setPassword": "設定密碼"
   },
-  "toasts": {
+  "toast": {
     "addAtLeastOneDriver": "請至少加入一個軀動程式。",
     "cancelCompletedFailed": "[{name}] 無法取消，可能已經完成執行。",
     "cancelFailed": "[{name}] 無法取消。",

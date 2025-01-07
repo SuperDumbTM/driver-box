@@ -33,7 +33,7 @@ const show = ref(false)
           <!-- Modal header -->
           <div class="flex items-center justify-between h-12 px-4 border-b rounded-t">
             <h3 class="font-semibold">
-              {{ $t('driverForms.unsaveConfirmTitle') }}
+              {{ $t('driverForm.unsaveConfirmTitle') }}
             </h3>
 
             <button
@@ -53,7 +53,7 @@ const show = ref(false)
           <!-- Modal body -->
           <div class="px-3 py-5">
             <p>
-              {{ $t('driverForms.unsaveConfirmMessage') }}
+              {{ $t('driverForm.unsaveConfirmMessage') }}
             </p>
           </div>
 
@@ -68,7 +68,7 @@ const show = ref(false)
                 }
               "
             >
-              {{ $t('confirm') }}
+              {{ $t('common.confirm') }}
             </button>
             <button
               type="button"
@@ -80,7 +80,7 @@ const show = ref(false)
                 }
               "
             >
-              {{ $t('cancel') }}
+              {{ $t('common.cancel') }}
             </button>
           </div>
         </div>

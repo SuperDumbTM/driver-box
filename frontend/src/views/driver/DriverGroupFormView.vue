@@ -75,12 +75,12 @@ watch(group.value.drivers, newValue => {
     @submit.prevent="
       () => {
         if (group.drivers.length == 0) {
-          $toast.warning($t('toasts.addAtLeastOneDriver'))
+          $toast.warning($t('toast.addAtLeastOneDriver'))
         } else {
           ;(group.id == undefined ? groupManager.Add(group) : groupManager.Update(group))
             .then(() => {
               modified = false
-              $toast.success($t('toasts.updated'))
+              $toast.success($t('toast.updated'))
             })
             .catch(reason => {
               $toast.error(reason)
@@ -92,18 +92,18 @@ watch(group.value.drivers, newValue => {
     <div class="flex gap-x-3">
       <div class="w-32">
         <label class="block mb-2 text-sm font-medium text-gray-900">
-          {{ $t('driverForms.type') }}
+          {{ $t('driverForm.type') }}
         </label>
         <select name="type" v-model="group.type" class="w-full p-1.5 text-sm shadow-sm" required>
           <option v-for="type in store.DriverType" :key="type" :value="type">
-            {{ $t(`driverCategories.${type}`) }}
+            {{ $t(`driverCatetory.${type}`) }}
           </option>
         </select>
       </div>
 
       <div class="flex-1">
         <label class="block mb-2 text-sm font-medium text-gray-900">
-          {{ $t('driverForms.name') }}
+          {{ $t('driverForm.name') }}
         </label>
         <input
           type="text"
@@ -117,16 +117,16 @@ watch(group.value.drivers, newValue => {
 
     <div class="flex flex-col gap-y-4">
       <label class="block text-sm font-medium text-gray-900">
-        {{ $t('driverForms.driver') }}
+        {{ $t('driverForm.driver') }}
       </label>
 
       <div class="max-h-[40vh] text-sm overflow-y-auto">
         <div class="grid grid-rows">
           <div class="grid grid-cols-10 gap-2 py-1.5 border-y">
-            <div class="col-span-2">{{ $t('driverForms.name') }}</div>
-            <div class="col-span-3">{{ $t('driverForms.path') }}</div>
-            <div class="col-span-2">{{ $t('driverForms.argument') }}</div>
-            <div class="col-span-2">{{ $t('driverForms.otherSetting') }}</div>
+            <div class="col-span-2">{{ $t('driverForm.name') }}</div>
+            <div class="col-span-3">{{ $t('driverForm.path') }}</div>
+            <div class="col-span-2">{{ $t('driverForm.argument') }}</div>
+            <div class="col-span-2">{{ $t('driverForm.otherSetting') }}</div>
           </div>
 
           <div v-if="group.drivers.length == 0" class="py-1 text-center last:border-b">N/A</div>
@@ -159,7 +159,7 @@ watch(group.value.drivers, newValue => {
               <span
                 v-show="d.incompatibles.length > 0"
                 class="inline-block p-0.5 max-h-5 bg-yellow-300 rounded-sm"
-                :title="$t('driverForms.incompatibleWith')"
+                :title="$t('driverForm.incompatibleWith')"
               >
                 <ArrowExpandVerticalIcon></ArrowExpandVerticalIcon>
               </span>
@@ -167,7 +167,7 @@ watch(group.value.drivers, newValue => {
               <span
                 v-show="d.allowRtCodes.length > 0"
                 class="inline-block p-0.5 max-h-5 bg-blue-300 rounded-sm"
-                :title="$t('driverForms.allowedExitCode')"
+                :title="$t('driverForm.allowedExitCode')"
               >
                 <OneTwoThreeIcon></OneTwoThreeIcon>
               </span>
@@ -187,7 +187,7 @@ watch(group.value.drivers, newValue => {
         </div>
 
         <p class="hint-text">
-          {{ $t('driverForms.incompatibleForNewHelp') }}
+          {{ $t('driverForm.incompatibleForNewHelp') }}
         </p>
       </div>
 
@@ -208,14 +208,14 @@ watch(group.value.drivers, newValue => {
         class="w-full text-sm font-medium text-white bg-gray-400 hover:bg-gray-300 rounded-lg"
         @click="$router.back()"
       >
-        {{ $t('back') }}
+        {{ $t('common.back') }}
       </button>
 
       <button
         type="submit"
         class="w-full text-sm font-medium text-white bg-half-baked-600 hover:bg-half-baked-500 rounded-lg"
       >
-        {{ $t('save') }}
+        {{ $t('common.save') }}
       </button>
     </div>
   </form>

@@ -38,7 +38,7 @@ onBeforeMount(() => {
     .Read()
     .then(g => (groups.value = g))
     .catch(() => {
-      $toast.error(t('toasts.readDriverFailed'))
+      $toast.error(t('toast.readDriverFailed'))
     })
 })
 
@@ -72,7 +72,7 @@ watch(driverType, newType => {
         }"
         @click="driverType = type"
       >
-        {{ t(`driverCategories.${type}`) }}
+        {{ t(`driverCatetory.${type}`) }}
       </button>
     </div>
 
@@ -175,11 +175,11 @@ watch(driverType, newType => {
         </div>
 
         <div class="grid grid-cols-12 gap-1 py-1 text-xs bg-gray-100">
-          <div class="col-span-2 lg:col-span-3 font-medium">{{ $t('driverForms.name') }}</div>
-          <div class="col-span-5 lg:col-span-5 font-medium">{{ $t('driverForms.path') }}</div>
-          <div class="col-span-3 lg:col-span-3 font-medium">{{ $t('driverForms.argument') }}</div>
+          <div class="col-span-2 lg:col-span-3 font-medium">{{ $t('driverForm.name') }}</div>
+          <div class="col-span-5 lg:col-span-5 font-medium">{{ $t('driverForm.path') }}</div>
+          <div class="col-span-3 lg:col-span-3 font-medium">{{ $t('driverForm.argument') }}</div>
           <div class="col-span-2 lg:col-span-1 font-medium">
-            {{ $t('driverForms.otherSetting') }}
+            {{ $t('driverForm.otherSetting') }}
           </div>
         </div>
 
@@ -203,7 +203,7 @@ watch(driverType, newType => {
             <span
               v-show="d.incompatibles.length > 0"
               class="inline-block p-0.5 max-h-5 bg-yellow-300 rounded-sm"
-              :title="$t('driverForms.incompatibleWith')"
+              :title="$t('driverForm.incompatibleWith')"
             >
               <ArrowExpandVerticalIcon></ArrowExpandVerticalIcon>
             </span>
@@ -211,7 +211,7 @@ watch(driverType, newType => {
             <span
               v-show="d.allowRtCodes.length > 0"
               class="inline-block p-0.5 max-h-5 bg-blue-300 rounded-sm"
-              :title="$t('driverForms.allowedExitCode')"
+              :title="$t('driverForm.allowedExitCode')"
             >
               <OneTwoThreeIcon></OneTwoThreeIcon>
             </span>
@@ -232,14 +232,14 @@ watch(driverType, newType => {
         ]"
         @click="reordering = !reordering"
       >
-        {{ reordering ? $t('driverForms.view') : $t('driverForms.order') }}
+        {{ reordering ? $t('driverForm.view') : $t('driverForm.order') }}
       </button>
 
       <RouterLink
         :to="{ path: '/drivers/create', query: { type: driverType } }"
         class="flex items-center h-8 px-3 text-white text-sm focus:outline-none bg-powder-blue-800 hover:bg-powder-blue-700 rounded"
       >
-        {{ $t('driverForms.create') }}
+        {{ $t('driverForm.create') }}
       </RouterLink>
     </div>
   </div>

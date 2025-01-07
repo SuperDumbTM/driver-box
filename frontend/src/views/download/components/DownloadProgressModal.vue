@@ -116,7 +116,7 @@ function updateProgress() {
           <!-- Modal header -->
           <div class="flex items-center justify-between h-12 px-4 border-b rounded-t">
             <h3 class="font-semibold">
-              {{ t('porters.progress') }}
+              {{ t('porter.progress') }}
             </h3>
 
             <button
@@ -159,7 +159,7 @@ function updateProgress() {
                     }
                   "
                 >
-                  {{ t('cancel') }}
+                  {{ t('common.cancel') }}
                 </button>
               </div>
             </div>

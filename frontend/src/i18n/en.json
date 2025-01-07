@@ -1,14 +1,24 @@
 {
-  "back": "Back",
-  "cancel": "Cancel",
-  "confirm": "Confirm",
-  "cpu": "CPU",
-  "driverCategories": {
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "cpu": "CPU",
+    "gpu": "GPU",
+    "motherboard": "Motherboard",
+    "nic": "Network Interface Card",
+    "pleaseSelect": "Please Select",
+    "ram": "RAM",
+    "save": "Save",
+    "select": "Select",
+    "storage": "Storage"
+  },
+  "driverCatetory": {
     "display": "Display",
     "miscellaneous": "Miscellaneous",
     "network": "Network"
   },
-  "driverForms": {
+  "driverForm": {
     "action": "Action",
     "allowedExitCode": "Allowed Exit Code",
     "allowedExitCodeHelp": "If the exit code of the execution is in specificied value,  the execution will be treated as successful.",
@@ -42,7 +52,7 @@
     "unsaveConfirmTitle": "Unsaved Changes",
     "view": "View"
   },
-  "executeStatues": {
+  "executeStatus": {
     "abort": "Abort",
     "aborted": "TERM",
     "aborting": "ABORTING",
@@ -59,8 +69,7 @@
     "startFailed": "Failed to start due to errors.",
     "title": "Execution Status"
   },
-  "gpu": "GPU",
-  "installOptions": {
+  "installOption": {
     "createPartition": "Create Partitions",
     "execute": "Execute",
     "parallelInstall": "Parallel",
@@ -69,27 +78,43 @@
     "successAction": "Shutdown Option",
     "title": "Tasks & Settings"
   },
-  "motherboard": "Motherboard",
-  "nic": "Network Interface Card",
-  "pleaseSelect": "Select",
-  "ram": "RAM",
-  "save": "Save",
-  "settings": {
-    "defaultInstallSetting": "Default Install Settings",
+  "porter": {
+    "backup": "Backup",
+    "cleanup": "Cleanup",
+    "compression": "Compression",
+    "decompression": "Decompression",
+    "download": "Download",
+    "export": "Export",
+    "exportDestination": "Destination",
+    "exportToFile": "Export To File",
+    "file": "File",
+    "ignoreAppSetting": "Do not import app settings.",
+    "import": "Import",
+    "importFromFile": "File",
+    "importFromNetwork": "URL",
+    "initialisation": "Initialisation",
+    "progress": "Progress",
+    "title": "Import/Export",
+    "titleHint": "Import/Export drivers and app settings.",
+    "url": "URL"
+  },
+  "setting": {
+    "defaultInstallSetting": "Install Setting Defaults",
     "displaySetting": "Display Setting",
     "filterMicorsoftNic": "Filter Microsoft NICs",
     "filterMiniportNic": "Filter Miniport NICs",
     "generalSetting": "General",
     "hardwareInfo": "Hardware Info",
+    "importUrl": "Import URL",
     "installOption": "Install Setting",
     "language": "Language",
+    "porter": "Import/Export",
     "second": "Second(s)",
     "softwareSetting": "Software Setting",
     "successActionDelay": "Success Action Delay",
     "task": "Task"
   },
-  "storage": "Storage",
-  "successActions": {
+  "successAction": {
     "firmware": "Reboot to BIOS/UEFI",
     "nothing": "Nothing",
     "reboot": "Reboot",
@@ -99,7 +124,7 @@
     "createPartitions": "Create and Mount Partitions",
     "setPassword": "Set Password"
   },
-  "toasts": {
+  "toast": {
     "addAtLeastOneDriver": "Please add at least one driver.",
     "cancelCompletedFailed": "[{name}] Failed to abort. The execution is probably completed.",
     "cancelFailed": "[{name}] Failed to abort.",

@@ -82,7 +82,7 @@ onBeforeMount(() => {
           <!-- Modal header -->
           <div class="flex items-center justify-between h-12 px-4 border-b rounded-t">
             <h3 class="font-semibold">
-              {{ driver ? $t('driverForms.editDriver') : $t('driverForms.createDriver') }}
+              {{ driver ? $t('driverForm.editDriver') : $t('driverForm.createDriver') }}
             </h3>
 
             <button
@@ -124,7 +124,7 @@ onBeforeMount(() => {
             >
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">
-                  {{ $t('driverForms.name') }}
+                  {{ $t('driverForm.name') }}
                 </label>
                 <input
                   type="text"
@@ -136,7 +136,7 @@ onBeforeMount(() => {
 
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">
-                  {{ $t('driverForms.path') }}
+                  {{ $t('driverForm.path') }}
                 </label>
 
                 <div class="flex">
@@ -149,7 +149,7 @@ onBeforeMount(() => {
                       })
                     "
                   >
-                    {{ $t('driverForms.selectFile') }}
+                    {{ $t('driverForm.selectFile') }}
                   </button>
                   <input
                     type="text"
@@ -164,7 +164,7 @@ onBeforeMount(() => {
 
               <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900">
-                  {{ $t('driverForms.argument') }}
+                  {{ $t('driverForm.argument') }}
                 </label>
 
                 <div class="flex">
@@ -178,7 +178,7 @@ onBeforeMount(() => {
                     "
                   >
                     <option value="">
-                      {{ $t('driverForms.manualInput') }}
+                      {{ $t('driverForm.manualInput') }}
                     </option>
                     <option
                       v-for="(flag, name) in flags"
@@ -198,14 +198,14 @@ onBeforeMount(() => {
                 </div>
 
                 <p class="hint-text">
-                  {{ $t('driverForms.commaSeparated') }}
+                  {{ $t('driverForm.commaSeparated') }}
                 </p>
               </div>
 
               <div class="flex gap-x-3">
                 <div>
                   <label class="block mb-2 text-sm font-medium text-gray-900">
-                    {{ $t('driverForms.minExecuteTime') }}
+                    {{ $t('driverForm.minExecuteTime') }}
                   </label>
                   <input
                     type="number"
@@ -216,13 +216,13 @@ onBeforeMount(() => {
                     required
                   />
                   <p class="hint-text">
-                    {{ $t('driverForms.minExecuteTimeHelp') }}
+                    {{ $t('driverForm.minExecuteTimeHelp') }}
                   </p>
                 </div>
 
                 <div>
                   <label class="block mb-2 text-sm font-medium text-gray-900">
-                    {{ $t('driverForms.allowedExitCode') }}
+                    {{ $t('driverForm.allowedExitCode') }}
                   </label>
                   <input
                     type="text"
@@ -231,23 +231,23 @@ onBeforeMount(() => {
                     class="w-full p-1.5 text-sm shadow-sm"
                   />
                   <p class="hint-text">
-                    {{ $t('driverForms.allowedExitCodeHelp') }}
+                    {{ $t('driverForm.allowedExitCodeHelp') }}
                   </p>
                   <p class="hint-text">
-                    {{ $t('driverForms.commaSeparated') }}
+                    {{ $t('driverForm.commaSeparated') }}
                   </p>
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-900">
-                  {{ $t('driverForms.incompatibleWith') }}
+                  {{ $t('driverForm.incompatibleWith') }}
                 </label>
 
                 <div class="mb-1 text-xs line-clamp-1">
                   <span class="inline">
                     {{
-                      $t('driverForms.selectedWithCount', { count: driver.incompatibles?.length })
+                      $t('driverForm.selectedWithCount', { count: driver.incompatibles?.length })
                     }}
                   </span>
                 </div>
@@ -255,14 +255,14 @@ onBeforeMount(() => {
                 <div class="flex mb-2 gap-x-2">
                   <input
                     v-model="searchPhrase"
-                    :placeholder="$t('driverForms.search')"
+                    :placeholder="$t('driverForm.search')"
                     class="px-3 py-2 w-full text-black text-sm border-none rounded bg-gray-100"
                   />
 
                   <button
                     type="button"
                     class="px-3 text-sm font-medium text-white bg-powder-blue-800 hover:bg-powder-blue-600 rounded"
-                    :title="$t('driverForms.selectAll')"
+                    :title="$t('driverForm.selectAll')"
                     @click="
                       () => {
                         driver.incompatibles = [
@@ -279,7 +279,7 @@ onBeforeMount(() => {
                   <button
                     type="button"
                     class="px-3 text-sm font-medium text-white bg-rose-400 hover:bg-rose-300 rounded"
-                    :title="$t('driverForms.selectNone')"
+                    :title="$t('driverForm.selectNone')"
                     @click="
                       () => {
                         driver.incompatibles = []
@@ -296,7 +296,7 @@ onBeforeMount(() => {
                     v-show="
                       searchPhrase === '' ||
                       'set password'.includes(searchPhrase) ||
-                      $t('installOptions.setPassword').includes(searchPhrase)
+                      $t('installOption.setPassword').includes(searchPhrase)
                     "
                   >
                     <label class="flex item-center w-full select-none cursor-pointer">
@@ -308,7 +308,7 @@ onBeforeMount(() => {
                       />
                       <DriverTypeBadget type="default"></DriverTypeBadget>
                       <span class="line-clamp-2">
-                        {{ $t('installOptions.setPassword') }}
+                        {{ $t('installOption.setPassword') }}
                       </span>
                     </label>
                   </li>
@@ -318,7 +318,7 @@ onBeforeMount(() => {
                     v-show="
                       searchPhrase === '' ||
                       'create partition'.includes(searchPhrase) ||
-                      $t('installOptions.createPartition').includes(searchPhrase)
+                      $t('installOption.createPartition').includes(searchPhrase)
                     "
                   >
                     <label class="flex item-center w-full select-none cursor-pointer">
@@ -330,7 +330,7 @@ onBeforeMount(() => {
                       />
                       <DriverTypeBadget type="default"></DriverTypeBadget>
                       <span class="line-clamp-2">
-                        {{ $t('installOptions.createPartition') }}
+                        {{ $t('installOption.createPartition') }}
                       </span>
                     </label>
                   </li>
@@ -360,7 +360,7 @@ onBeforeMount(() => {
                 type="submit"
                 class="w-full my-1 py-2 text-sm font-medium text-white bg-half-baked-600 hover:bg-half-baked-500 rounded-lg"
               >
-                {{ $t('save') }}
+                {{ $t('common.save') }}
               </button>
             </form>
           </div>

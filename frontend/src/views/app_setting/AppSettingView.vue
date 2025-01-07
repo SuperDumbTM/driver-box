@@ -20,7 +20,7 @@ onBeforeMount(() => {
     .Read()
     .then(s => (settings.value = s))
     .catch(() => {
-      $toast.error(t('toasts.readAppSettingFailed'))
+      $toast.error(t('toast.readAppSettingFailed'))
     })
 })
 </script>
@@ -32,7 +32,7 @@ onBeforeMount(() => {
       () => {
         appManager.Update(settings).then(() => {
           $i18n.locale = settings.language
-          $toast.success($t('toasts.updated'), { duration: 1500, position: 'top-right' })
+          $toast.success($t('toast.updated'), { duration: 1500, position: 'top-right' })
         })
       }
     "
@@ -48,18 +48,20 @@ onBeforeMount(() => {
         "
         @click="currentTab = key"
       >
-        {{ $t(`settings.${key}`) }}
+        {{ $t(`setting.${key}`) }}
       </button>
     </div>
 
     <div v-show="currentTab == 'softwareSetting'" class="flex flex-col gap-y-3">
       <section>
-        <p class="font-bold mb-2">一般設定</p>
+        <p class="font-bold mb-2">
+          {{ $t('setting.generalSetting') }}
+        </p>
 
         <div class="flex flex-col gap-y-3">
           <div>
             <label class="block mb-2 text-gray-900">
-              {{ $t('settings.successActionDelay') }}
+              {{ $t('setting.successActionDelay') }}
             </label>
 
             <input
@@ -71,17 +73,17 @@ onBeforeMount(() => {
               class="w-20 p-1.5 text-sm shadow-sm"
               required
             />
-            &nbsp; {{ $t('settings.second') }}
+            &nbsp; {{ $t('setting.second') }}
           </div>
         </div>
       </section>
 
       <section>
-        <p class="font-bold mb-2">{{ $t('settings.porter') }}</p>
+        <p class="font-bold mb-2">{{ $t('setting.porter') }}</p>
 
         <div class="flex flex-col gap-y-3">
           <div>
-            <label class="block mb-2 text-gray-900">{{ $t('settings.importUrl') }}</label>
+            <label class="block mb-2 text-gray-900">{{ $t('setting.importUrl') }}</label>
 
             <input
               type="url"
@@ -97,7 +99,7 @@ onBeforeMount(() => {
     <div v-show="currentTab == 'defaultInstallSetting'" class="flex flex-col gap-y-3">
       <section>
         <p class="font-bold mb-2">
-          {{ $t('settings.task') }}
+          {{ $t('setting.task') }}
         </p>
 
         <div class="flex flex-col gap-y-3">
@@ -109,7 +111,7 @@ onBeforeMount(() => {
                 v-model="settings.create_partition"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              {{ $t('installOptions.createPartition') }}
+              {{ $t('installOption.createPartition') }}
             </label>
           </div>
 
@@ -122,7 +124,7 @@ onBeforeMount(() => {
                   v-model="settings.set_password"
                   class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                {{ $t('installOptions.setPassword') }}
+                {{ $t('installOption.setPassword') }}
               </label>
             </div>
 
@@ -141,7 +143,7 @@ onBeforeMount(() => {
 
       <section>
         <p class="font-bold mb-2">
-          {{ $t('settings.installOption') }}
+          {{ $t('setting.installOption') }}
         </p>
 
         <div class="flex flex-col gap-y-3">
@@ -153,13 +155,13 @@ onBeforeMount(() => {
                 v-model="settings.parallel_install"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              {{ $t('installOptions.parallelInstall') }}
+              {{ $t('installOption.parallelInstall') }}
             </label>
           </div>
 
           <div>
             <label class="block mb-2 text-gray-900">
-              {{ $t('installOptions.successAction') }}
+              {{ $t('installOption.successAction') }}
             </label>
             <select
               name="success_action"
@@ -167,7 +169,7 @@ onBeforeMount(() => {
               class="w-full max-w-72 min-w-24 p-1.5 text-sm shadow-sm"
             >
               <option v-for="action in store.SuccessAction" :key="action" :value="action">
-                {{ $t(`successActions.${action}`) }}
+                {{ $t(`successAction.${action}`) }}
               </option>
             </select>
           </div>
@@ -178,7 +180,7 @@ onBeforeMount(() => {
     <div v-show="currentTab == 'displaySetting'" class="flex flex-col gap-y-3">
       <section>
         <p class="font-bold mb-2">
-          {{ $t('settings.language') }}
+          {{ $t('setting.language') }}
         </p>
 
         <div>
@@ -195,7 +197,7 @@ onBeforeMount(() => {
 
       <section>
         <p class="font-bold mb-2">
-          {{ $t('settings.hardwareInfo') }}
+          {{ $t('setting.hardwareInfo') }}
         </p>
 
         <div class="flex flex-col gap-y-3">
@@ -207,7 +209,7 @@ onBeforeMount(() => {
                 v-model="settings.filter_miniport_nic"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              {{ $t('settings.filterMiniportNic') }}
+              {{ $t('setting.filterMiniportNic') }}
             </label>
           </div>
         </div>
@@ -221,7 +223,7 @@ onBeforeMount(() => {
                 v-model="settings.filter_microsoft_nic"
                 class="me-1.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              {{ $t('settings.filterMicorsoftNic') }}
+              {{ $t('setting.filterMicorsoftNic') }}
             </label>
           </div>
         </div>
@@ -233,7 +235,7 @@ onBeforeMount(() => {
         type="submit"
         class="h-8 mt-3 px-3 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
       >
-        {{ $t('save') }}
+        {{ $t('common.save') }}
       </button>
     </div>
   </form>

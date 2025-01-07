@@ -40,7 +40,7 @@ onBeforeMount(() => {
     .Read()
     .then(s => (settings.value = s))
     .catch(() => {
-      $toast.error(t('toasts.readAppSettingFailed'))
+      $toast.error(t('toast.readAppSettingFailed'))
     })
 
   groupManager
@@ -61,7 +61,7 @@ onBeforeMount(() => {
       })
     })
     .catch(() => {
-      $toast.error(t('toasts.readDriverFailed'))
+      $toast.error(t('toast.readDriverFailed'))
     })
 
   Promise.all([
@@ -86,7 +86,7 @@ onBeforeMount(() => {
 
 async function handleSubmit() {
   if (!form.value) {
-    $toast.error(t('toasts.readInputFailed'))
+    $toast.error(t('toast.readInputFailed'))
     return
   }
 
@@ -159,7 +159,7 @@ async function handleSubmit() {
     })
 
   if (commands.length == 0) {
-    $toast.warning(t('toasts.noInputWarning'))
+    $toast.warning(t('toast.noInputWarning'))
     return
   }
 
@@ -176,7 +176,7 @@ async function handleSubmit() {
     >
       <template v-if="hwinfos !== null">
         <div>
-          <h2 class="text-sm font-bold">{{ $t('motherboard') }}</h2>
+          <h2 class="text-sm font-bold">{{ $t('common.motherboard') }}</h2>
 
           <p v-for="(mb, i) in hwinfos.motherboard" :key="i" class="text-sm">
             {{ `${mb.Manufacturer} ${mb.Product}` }}
@@ -184,7 +184,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">{{ $t('cpu') }}</h2>
+          <h2 class="text-sm font-bold">{{ $t('common.cpu') }}</h2>
 
           <p v-for="(cpu, i) in hwinfos.cpu" :key="i" class="text-sm">
             {{ cpu.Name }}
@@ -192,7 +192,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">{{ $t('ram') }}</h2>
+          <h2 class="text-sm font-bold">{{ $t('common.ram') }}</h2>
 
           <p v-for="(mem, i) in hwinfos.memory" :key="i" class="text-sm">
             {{
@@ -202,7 +202,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">{{ $t('gpu') }}</h2>
+          <h2 class="text-sm font-bold">{{ $t('common.gpu') }}</h2>
 
           <p v-for="(dp, i) in hwinfos.gpu" :key="i" class="text-sm">
             {{ `${dp.Name} (${dp.AdapterRAM / Math.pow(1024, 3)}GB)` }}
@@ -210,7 +210,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">{{ $t('nic') }}</h2>
+          <h2 class="text-sm font-bold">{{ $t('common.nic') }}</h2>
 
           <p
             v-for="(dp, i) in hwinfos.nic
@@ -232,7 +232,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <h2 class="text-sm font-bold">{{ $t('storage') }}</h2>
+          <h2 class="text-sm font-bold">{{ $t('common.storage') }}</h2>
 
           <p v-for="(dp, i) in hwinfos.disk" :key="i" class="text-sm">
             {{ `${dp.Model} (${Math.round(dp.Size / Math.pow(1024, 3))}GB)` }}
@@ -254,11 +254,11 @@ async function handleSubmit() {
           <label
             class="absolute top-0 start-4 h-full translate-y-1 text-xs text-gray-500 pointer-events-none"
           >
-            {{ $t('driverCategories.network') }}
+            {{ $t('driverCatetory.network') }}
           </label>
 
           <select name="network" class="w-full ps-3 pe-9 pt-5 pb-1 rounded-lg">
-            <option>{{ $t('pleaseSelect') }}</option>
+            <option>{{ $t('common.pleaseSelect') }}</option>
             <option
               v-for="d in groups.filter(d => d.type == store.DriverType.NETWORK)"
               :key="d.id"
@@ -273,11 +273,11 @@ async function handleSubmit() {
           <label
             class="absolute top-0 start-4 h-full translate-y-1 text-xs text-gray-500 pointer-events-none"
           >
-            {{ $t('driverCategories.display') }}
+            {{ $t('driverCatetory.display') }}
           </label>
 
           <select name="display" class="w-full ps-3 pe-9 pt-5 pb-1 rounded-lg">
-            <option>{{ $t('pleaseSelect') }}</option>
+            <option>{{ $t('common.pleaseSelect') }}</option>
             <option
               v-for="d in groups.filter(d => d.type == store.DriverType.DISPLAY)"
               :key="d.id"
@@ -294,7 +294,7 @@ async function handleSubmit() {
           <label
             class="absolute left-3 top-1 origin-[0_0] -translate-y-[0.55rem] px-2 bg-white text-xs scale-[0.9] text-gray-500 pointer-events-none"
           >
-            {{ $t('driverCategories.miscellaneous') }}
+            {{ $t('driverCatetory.miscellaneous') }}
           </label>
 
           <div class="h-full overflow-y-scroll px-2 pt-3 rounded-lg border border-apple-green-600">
@@ -316,7 +316,7 @@ async function handleSubmit() {
 
     <div class="flex gap-x-6">
       <div class="flex flex-col">
-        <p class="font-semibold">{{ $t('installOptions.title') }}</p>
+        <p class="font-semibold">{{ $t('installOption.title') }}</p>
 
         <div class="flex flex-col flex-1 justify-around">
           <div class="flex items-center gap-x-4">
@@ -327,7 +327,7 @@ async function handleSubmit() {
                 v-model="settings.create_partition"
                 class="me-1"
               />
-              {{ $t('installOptions.createPartition') }}
+              {{ $t('installOption.createPartition') }}
             </label>
 
             <label class="select-none cursor-pointer">
@@ -337,7 +337,7 @@ async function handleSubmit() {
                 v-model="settings.parallel_install"
                 class="me-1"
               />
-              {{ $t('installOptions.parallelInstall') }}
+              {{ $t('installOption.parallelInstall') }}
             </label>
           </div>
 
@@ -349,7 +349,7 @@ async function handleSubmit() {
                 v-model="settings.set_password"
                 class="me-1"
               />
-              {{ $t('installOptions.setPassword') }}
+              {{ $t('installOption.setPassword') }}
             </label>
 
             <input
@@ -366,7 +366,7 @@ async function handleSubmit() {
       <div class="flex flex-col grow justify-between">
         <div>
           <label class="block mb-1 text-sm text-gray-900">
-            {{ $t('installOptions.successAction') }}
+            {{ $t('installOption.successAction') }}
           </label>
 
           <select
@@ -375,7 +375,7 @@ async function handleSubmit() {
             class="w-full p-1 text-sm text-gray-900"
           >
             <option v-for="action in store.SuccessAction" :key="action" :value="action">
-              {{ $t(`successActions.${action}`) }}
+              {{ $t(`successAction.${action}`) }}
             </option>
           </select>
         </div>
@@ -391,13 +391,13 @@ async function handleSubmit() {
               }
             "
           >
-            {{ $t('installOptions.reset') }}
+            {{ $t('installOption.reset') }}
           </button>
           <button
             class="px-3 py-1.5 text-white text-sm bg-half-baked-600 hover:bg-half-baked-500 rounded"
             @click="handleSubmit"
           >
-            {{ $t('installOptions.execute') }}
+            {{ $t('installOption.execute') }}
           </button>
         </div>
       </div>

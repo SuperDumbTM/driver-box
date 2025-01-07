@@ -65,12 +65,12 @@ const progress = computed(() => {
               statusBadget[progresses.status as keyof typeof statusBadget]
             ]"
           >
-            <span class="text-sm truncate">{{ $t(`executeStatues.${progresses.status}`) }}</span>
+            <span class="text-sm truncate">{{ $t(`executeStatus.${progresses.status}`) }}</span>
           </p>
         </div>
 
         <span class="font-medium">
-          {{ $t(`porters.${currentTask.name}`) }}
+          {{ $t(`porter.${currentTask.name}`) }}
         </span>
       </div>
 

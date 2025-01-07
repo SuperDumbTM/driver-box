@@ -53,9 +53,9 @@ runtime.EventsOn('execute:exited', async (id: string, result: NonNullable<Proces
   dispatchCommand().then(() => {
     if (processes.value.every(c => c.status === 'completed')) {
       emit('completed')
-      $toast.success(t('toasts.finished'), { position: 'bottom-right' })
+      $toast.success(t('toast.finished'), { position: 'bottom-right' })
     } else if (processes.value.every(c => !c.status.includes('ing'))) {
-      $toast.info(t('toasts.finished'), { position: 'bottom-right' })
+      $toast.info(t('toast.finished'), { position: 'bottom-right' })
     }
   })
 })
@@ -119,7 +119,7 @@ function handleAbort(process: Process) {
       executor.Abort(process.procId!).catch(error => {
         if (error.includes('process does not exist')) {
           $toast.warning(
-            t('toasts.cancelCompletedFailed', {
+            t('toast.cancelCompletedFailed', {
               name: getProcessName(process)
             })
           )
@@ -132,7 +132,7 @@ function handleAbort(process: Process) {
           .forEach((err: string) => {
             if (err.includes('abort failed')) {
               $toast.warning(
-                t('toasts.cancelFailed', {
+                t('toast.cancelFailed', {
                   name: getProcessName(process)
                 })
               )
@@ -171,7 +171,7 @@ function handleAbort(process: Process) {
           <!-- Modal header -->
           <div class="flex items-center justify-between px-3 py-1.5 border-b rounded-t">
             <h3 class="font-semibold">
-              {{ $t('executeStatues.title') }}
+              {{ $t('executeStatus.title') }}
             </h3>
             <button
               type="button"

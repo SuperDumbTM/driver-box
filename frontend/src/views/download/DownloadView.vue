@@ -34,18 +34,18 @@ onBeforeMount(() => {
 <template>
   <div class="flex flex-col h-full gap-y-6">
     <div>
-      <h1 class="text-xl font-bold">{{ t('porters.title') }}</h1>
-      <p class="text-gray-400">{{ t('porters.titleHint') }}</p>
+      <h1 class="text-xl font-bold">{{ t('porter.title') }}</h1>
+      <p class="text-gray-400">{{ t('porter.titleHint') }}</p>
 
       <hr class="mt-2 -mb-3" />
     </div>
 
     <div class="flex flex-col gap-y-3">
-      <h2 class="mb-1 text-lg font-medium">{{ t('porters.exportToFile') }}</h2>
+      <h2 class="mb-1 text-lg font-medium">{{ t('porter.exportToFile') }}</h2>
 
       <div class="flex gap-x-6">
         <label class="w-24 content-center text-gray-900">
-          {{ t('porters.exportDestination') }}
+          {{ t('porter.exportDestination') }}
         </label>
 
         <div class="flex gap-x-2 w-full">
@@ -67,7 +67,7 @@ onBeforeMount(() => {
               }
             "
           >
-            {{ t('select') }}
+            {{ t('common.select') }}
           </button>
         </div>
       </div>
@@ -82,7 +82,7 @@ onBeforeMount(() => {
             )
           "
         >
-          {{ t('porters.export') }}
+          {{ t('porter.export') }}
         </button>
       </div>
     </div>
@@ -90,7 +90,7 @@ onBeforeMount(() => {
     <div class="flex flex-col gap-y-3">
       <div class="flex gap-x-4">
         <h2 class="mb-1 text-lg font-medium">
-          {{ t('porters.import') }}
+          {{ t('porter.import') }}
         </h2>
 
         <div class="relative inline-flex p-0.5 border rounded-3xl">
@@ -98,14 +98,14 @@ onBeforeMount(() => {
             class="z-10 px-3 text-center text-xs rounded-3xl select-none"
             @click="importInput.from = 'file'"
           >
-            {{ t('porters.importFromFile') }}
+            {{ t('porter.importFromFile') }}
           </button>
 
           <button
             class="z-10 px-3 text-center text-xs rounded-3xl select-none"
             @click="importInput.from = 'url'"
           >
-            {{ t('porters.importFromNetwork') }}
+            {{ t('porter.importFromNetwork') }}
           </button>
 
           <span
@@ -119,7 +119,7 @@ onBeforeMount(() => {
       <!-- from file -->
       <div v-if="importInput.from == 'file'" class="flex gap-x-6">
         <label class="w-24 content-center text-gray-900">
-          {{ t('porters.file') }}
+          {{ t('porter.file') }}
         </label>
 
         <div class="flex gap-x-2 w-full">
@@ -143,7 +143,7 @@ onBeforeMount(() => {
               }
             "
           >
-            {{ t('select') }}
+            {{ t('common.select') }}
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ onBeforeMount(() => {
       <!-- from url -->
       <div v-else class="flex gap-x-6">
         <label class="w-24 content-center text-gray-900">
-          {{ t('porters.url') }}
+          {{ t('porter.url') }}
         </label>
 
         <div class="flex gap-x-2 w-full">
@@ -166,7 +166,7 @@ onBeforeMount(() => {
 
       <label>
         <input type="checkbox" v-model="importInput.ignoreAppSetting" />
-        {{ t('porters.ignoreAppSetting') }}
+        {{ t('porter.ignoreAppSetting') }}
       </label>
 
       <div class="flex justify-end">
@@ -181,7 +181,7 @@ onBeforeMount(() => {
             )
           "
         >
-          {{ t('porters.import') }}
+          {{ t('porter.import') }}
         </button>
       </div>
     </div>

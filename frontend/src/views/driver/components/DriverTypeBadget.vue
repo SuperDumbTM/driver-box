@@ -13,6 +13,6 @@ const colors = {
 
 <template>
   <span class="content-center me-1 px-1.5 h-5 text-xs text-nowrap rounded" :class="colors[type]">
-    {{ $t(`driverForms.${type}`) }}
+    {{ $t(`driverForm.${type}`) }}
   </span>
 </template>
