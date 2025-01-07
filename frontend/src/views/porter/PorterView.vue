@@ -62,7 +62,9 @@ onBeforeMount(() => {
             @click="
               () => {
                 SelectFolder(false).then(path => {
-                  exportDirectory = path
+                  if (path != '') {
+                    exportDirectory = path
+                  }
                 })
               }
             "
@@ -142,7 +144,9 @@ onBeforeMount(() => {
             @click="
               () => {
                 SelectFile(false).then(path => {
-                  importInput.filePath = path
+                  if (path != '') {
+                    importInput.filePath = path
+                  }
                 })
               }
             "
