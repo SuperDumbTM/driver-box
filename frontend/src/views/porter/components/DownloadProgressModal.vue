@@ -123,12 +123,7 @@ function updateProgress() {
               v-show="progress?.status.includes('ed')"
               type="button"
               class="p-3 text-sm text-gray-400 hover:text-gray-900 bg-transparent hover:bg-gray-100 rounded-lg"
-              @click="
-                () => {
-                  show = false
-                  programPorter.Abort()
-                }
-              "
+              @click="show = false"
             >
               <CrossIcon></CrossIcon>
             </button>
