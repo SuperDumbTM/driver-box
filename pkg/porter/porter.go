@@ -33,7 +33,8 @@ func (p Porter) Status() string {
 		}
 	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status == "pending" }) {
 		return "pending"
-	} else if some(p.tracker.progresses, func(p *Progress) bool { return p.Status == "running" }) {
+	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status != "failed" }) {
+		// "aborting" and "aborted" is eliminated in the above conditions
 		return "running"
 	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status == "completed" }) {
 		return "completed"
@@ -134,9 +135,7 @@ func (p *Porter) Export(dest string) error {
 
 	p.tracker.Complete("initialisation")
 
-	err = toZip(p.tracker, dest, relDirConf, relDirDir)
-
-	return err
+	return toZip(p.tracker, dest, relDirConf, relDirDir)
 
 }
 
