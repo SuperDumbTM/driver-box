@@ -33,11 +33,11 @@ func (p Porter) Status() string {
 		}
 	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status == "pending" }) {
 		return "pending"
+	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status == "completed" }) {
+		return "completed"
 	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status != "failed" }) {
 		// "aborting" and "aborted" is eliminated in the above conditions
 		return "running"
-	} else if all(p.tracker.progresses, func(p *Progress) bool { return p.Status == "completed" }) {
-		return "completed"
 	} else {
 		return "failed"
 	}
