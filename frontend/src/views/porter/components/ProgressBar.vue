@@ -28,29 +28,6 @@ const progress = computed(() => {
   }
   return Math.floor((currentTask.value.current / currentTask.value.total) * 100)
 })
-
-// const progressWindow = computed(() => {
-//   const indices = Array.from(Array(props.progresses.length).keys())
-
-//   if (props.progresses.length <= 3) {
-//     return indices
-//   }
-
-//   if (currentTask.value === null) {
-//     return []
-//   } else {
-//     if ('1' == '1') {
-//       return [1, 2, 3]
-//     } else {
-//       if (props.progresses.length - (currentTask.value + 1) < 3) {
-//         // within last 3 tasks
-//         return indices.slice(props.progresses.length - 3)
-//       } else {
-//         return indices.slice(currentTask.value, currentTask.value + 3)
-//       }
-//     }
-//   }
-// })
 </script>
 
 <template>
@@ -83,35 +60,5 @@ const progress = computed(() => {
         :style="{ width: `${progress}%` }"
       ></div>
     </div>
-  </div>
-
-  <div class="flex justify-between">
-    <!-- <template v-for="i in progressWindow" :key="i">
-      <div v-show="i != 0 || props.progresses.length < 3" class="flex flex-col w-20 justify-center">
-        <div
-          class="flex items-center w-8 h-8 mx-auto text-lg text-white bg-apple-green-600 rounded-full"
-        >
-          <span class="text-white text-center w-full">
-            <i class="fa fa-check w-full fill-current white"></i>
-          </span>
-        </div>
-
-        <div class="pt-1 text-xs text-center">
-          {{ props.progresses[i].Name }}
-        </div>
-      </div>
-
-      <div class="flex grow align-center items-center align-middle content-center pb-4">
-        <div class="flex-1 w-full bg-gray-200 rounded items-center align-middle align-center">
-          <div
-            class="text-xs leading-none py-1 text-center text-grey-darkest rounded"
-            :class="[props.progresses[i].status == 'failed' ? 'bg-red-400' : 'bg-apple-green-700']"
-            :style="{
-              width: `${(props.progresses[i].Current / props.progresses[i].Total) * 100}%`
-            }"
-          ></div>
-        </div>
-      </div>
-    </template> -->
   </div>
 </template>

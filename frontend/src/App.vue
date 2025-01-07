@@ -14,7 +14,7 @@ const routes: Array<{ to: RouteLocationRaw; icon: Component }> = [
   { to: '/', icon: HomeIcon },
   { to: '/drivers', icon: FileExeIcon },
   { to: '/settings', icon: GearIcon },
-  { to: '/download', icon: DownloadIcon }
+  { to: '/porter', icon: DownloadIcon }
 ]
 
 onBeforeMount(() => {

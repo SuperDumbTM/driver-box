@@ -25,6 +25,7 @@ defineExpose({
         updateProgress()
       })
 
+    updateProgress()
     interval = setInterval(updateProgress, 300)
   },
   import: (from: 'url' | 'file', source: string, ignoreAS: boolean) => {
@@ -58,17 +59,18 @@ defineExpose({
         })
     }
 
+    updateProgress()
     interval = setInterval(updateProgress, 300)
   }
 })
 
 const { t } = useI18n()
 
-let interval = -1
-
 const $toast = useToast({ position: 'top-right' })
 
 const messageBox = useTemplateRef('message-box')
+
+let interval = -1
 
 const show = ref(false)
 
@@ -85,8 +87,6 @@ function updateProgress() {
     ) {
       scroll = true
     }
-
-    console.log(p)
 
     progress.value = p
     messages.value.push(...p.message.filter(m => m !== ''))
