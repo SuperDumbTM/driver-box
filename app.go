@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/wailsapp/go-webview2/webviewloader"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -67,4 +68,20 @@ func (a App) PathExists(path string) bool {
 func (a App) ExecutableExists(path string) bool {
 	_, err := exec.LookPath(path)
 	return err == nil
+}
+
+func (a App) WebView2Version() (string, error) {
+	return webviewloader.GetAvailableCoreWebView2BrowserVersionString(pathWV2)
+}
+
+func (a App) WebView2Path() string {
+	return pathWV2
+}
+
+func (a App) AppConfigPath() string {
+	return dirConf
+}
+
+func (a App) AppDriverPath() string {
+	return dirDir
 }

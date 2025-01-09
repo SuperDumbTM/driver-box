@@ -69,6 +69,21 @@
     "startFailed": "Failed to start due to errors.",
     "title": "Execution Status"
   },
+  "info": {
+    "about": "About",
+    "buildType": "Build Type",
+    "dev": "Development",
+    "development": "Development",
+    "license": "License",
+    "path": "Path",
+    "pathDriver": "Path to Driver",
+    "production": "Production",
+    "reportBug": "Report Bug",
+    "sourceCode": "Source Code",
+    "thisSoftware": "This Software",
+    "useingBuiltInWebView2": "Using OS built-in WebView2",
+    "version": "Version"
+  },
   "installOption": {
     "createPartition": "Create Partitions",
     "execute": "Execute",

@@ -19,17 +19,17 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-func main() {
-	var (
-		dirRoot string
-		/* Path to the configuration directory */
-		dirConf string
-		/* Path to the driver directory */
-		dirDir string
-		/* Path to the WebView2 executable */
-		pathWV2 string
-	)
+var (
+	dirRoot string
+	/* Path to the configuration directory */
+	dirConf string
+	/* Path to the driver directory */
+	dirDir string
+	/* Path to the WebView2 executable */
+	pathWV2 string
+)
 
+func main() {
 	if pathExe, err := os.Executable(); err != nil {
 		panic(err)
 	} else {

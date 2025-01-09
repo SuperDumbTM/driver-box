@@ -7,6 +7,7 @@ import DownloadIcon from './components/icons/DownloadIcon.vue'
 import FileExeIcon from './components/icons/FileExeIcon.vue'
 import GearIcon from './components/icons/GearIcon.vue'
 import HomeIcon from './components/icons/HomeIcon.vue'
+import InfoLgIcon from './components/icons/InfoLgIcon.vue'
 
 const { locale } = useI18n()
 
@@ -14,7 +15,8 @@ const routes: Array<{ to: RouteLocationRaw; icon: Component }> = [
   { to: '/', icon: HomeIcon },
   { to: '/drivers', icon: FileExeIcon },
   { to: '/settings', icon: GearIcon },
-  { to: '/porter', icon: DownloadIcon }
+  { to: '/porter', icon: DownloadIcon },
+  { to: '/app-info', icon: InfoLgIcon }
 ]
 
 onBeforeMount(() => {

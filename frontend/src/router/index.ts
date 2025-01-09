@@ -31,6 +31,11 @@ const router = createRouter({
       path: '/porter',
       name: 'porter',
       component: () => import('../views/porter/PorterView.vue')
+    },
+    {
+      path: '/app-info',
+      name: 'appInfo',
+      component: () => import('../views/app_info/AppInfoView.vue')
     }
   ]
 })

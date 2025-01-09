@@ -69,6 +69,21 @@
     "startFailed": "程式出錯，未能執行",
     "title": "執行狀態"
   },
+  "info": {
+    "about": "關於",
+    "buildType": "組建類型",
+    "dev": "測試版",
+    "development": "程式開發",
+    "license": "特許條款",
+    "path": "路徑",
+    "pathDriver": "軀動程式路徑",
+    "production": "正式版",
+    "reportBug": "回報問題",
+    "sourceCode": "源碼",
+    "thisSoftware": "本程式",
+    "useingBuiltInWebView2": "正使系統預裝的 WebView2",
+    "version": "版本"
+  },
   "installOption": {
     "createPartition": "建立磁區",
     "execute": "執行",
@@ -130,14 +145,14 @@
     "cancelFailed": "[{name}] 無法取消。",
     "enterExportPath": "請先輸入儲存匯出檔案的路徑。",
     "finished": "完成",
+    "invalidZipFile": "非有效的檔案。",
     "noInputWarning": "請先選擇軀動或工作。",
+    "noSuchHost": "無法連接網址。",
     "pathNotFind": "路徑不存在",
     "readAppSettingFailed": "無法讀預設選項資料，重新設定或可解決問題。",
     "readDriverFailed": "無法讀取軀動資料，重新設定或可解決問題。",
     "readInputFailed": "程式出錯，無法取得輸入。",
-    "updated": "已更新。",
     "unsupportUrlProtocal": "不支援輸入的 URL。",
-    "noSuchHost": "無法連接網址。",
-    "invalidZipFile": "非有效的檔案。"
+    "updated": "已更新。"
   }
 }
