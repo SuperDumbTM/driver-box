@@ -9,7 +9,7 @@ WebView2Path().then(console.log)
 
 const info = ref({
   app: {
-    version: '2.1.0',
+    version: '2.2.0',
     buildType: '',
     pathDriver: ''
   },
