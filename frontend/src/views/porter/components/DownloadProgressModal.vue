@@ -84,8 +84,6 @@ function updateProgress() {
       scroll = true
     }
 
-    console.log(p.tasks)
-
     progress.value = p
     messages.value.push(...p.message.filter(m => m !== ''))
 

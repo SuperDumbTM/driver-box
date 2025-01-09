@@ -5,8 +5,6 @@ import { AppDriverPath, WebView2Path, WebView2Version } from '@/wailsjs/go/main/
 import { BrowserOpenURL, Environment } from '@/wailsjs/runtime/runtime'
 import { onBeforeMount, ref } from 'vue'
 
-WebView2Path().then(console.log)
-
 const info = ref({
   app: {
     version: '2.2.0',
