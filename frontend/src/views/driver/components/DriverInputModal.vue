@@ -6,11 +6,15 @@ import { flags } from '@/definitions/flags'
 import { SelectFile } from '@/wailsjs/go/main/App'
 import { store } from '@/wailsjs/go/models'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
-import { computed, nextTick, onBeforeMount, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, ref, useTemplateRef } from 'vue'
 import DriverTypeBadget from './DriverTypeBadget.vue'
 
 defineExpose({
   show: (data?: Partial<store.Driver>) => {
+    groupManager.Read().then(g => {
+      groups.value = g
+    })
+
     show.value = true
 
     nextTick(() => {
@@ -57,12 +61,6 @@ const filterGroups = computed(() => {
         g.drivers.some(d => d.name.includes(searchPhrase.value))
     )
   }
-})
-
-onBeforeMount(() => {
-  groupManager.Read().then(g => {
-    groups.value = g
-  })
 })
 </script>
 

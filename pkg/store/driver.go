@@ -75,7 +75,19 @@ func (m *DriverGroupManager) Get(id string) (DriverGroup, error) {
 	}
 }
 
-func (m *DriverGroupManager) Add(group DriverGroup) error {
+func (m DriverGroupManager) generateGid() string {
+	for {
+		if id, err := randomString(4); err != nil {
+			continue
+		} else if _, err := m.GroupOf(id); err == nil {
+			continue
+		} else {
+			return id
+		}
+	}
+}
+
+func (m *DriverGroupManager) Add(group DriverGroup) (string, error) {
 	for group.Id = ""; group.Id == ""; {
 		if id, err := randomString(4); err != nil {
 			continue
@@ -86,26 +98,26 @@ func (m *DriverGroupManager) Add(group DriverGroup) error {
 		}
 	}
 
-	for gidx := range group.Drivers {
-		for group.Drivers[gidx].Id = ""; group.Drivers[gidx].Id == ""; {
-			if id, err := randomString(4); err != nil {
-				continue
-			} else if _, err := m.GroupOf(id); err == nil {
-				continue
-			} else {
-				group.Drivers[gidx].Id = id
-			}
+	for idx := range group.Drivers {
+		for group.Drivers[idx].Id = ""; group.Drivers[idx].Id == ""; {
+			group.Drivers[idx].Id = m.generateGid()
 		}
 	}
 
 	m.groups = append(m.groups, group)
-	return m.write()
+	return group.Id, m.write()
 }
 
 func (m *DriverGroupManager) Update(group DriverGroup) error {
 	if index, err := m.IndexOf(group.Id); err != nil {
 		return err
 	} else {
+		for idx := range group.Drivers {
+			if group.Drivers[idx].Id == "" {
+				group.Drivers[idx].Id = m.generateGid()
+			}
+		}
+
 		m.groups[index] = group
 		return m.write()
 	}
