@@ -7,6 +7,6 @@ export function Abort(arg1:string):Promise<void>;
 
 export function Run(arg1:string,arg2:Array<string>):Promise<string>;
 
-export function RunAndOutput(arg1:string,arg2:Array<string>):Promise<execute.CommandResult>;
+export function RunAndOutput(arg1:string,arg2:Array<string>,arg3:boolean):Promise<execute.CommandResult>;
 
 export function SetContext(arg1:context.Context):Promise<void>;

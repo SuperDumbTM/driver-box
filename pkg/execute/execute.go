@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"syscall"
 
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -38,11 +39,18 @@ func (ce *CommandExecutor) Run(program string, options []string) string {
 	return id
 }
 
-func (ce *CommandExecutor) RunAndOutput(program string, options []string) CommandResult {
+func (ce *CommandExecutor) RunAndOutput(program string, options []string, hideWindow bool) CommandResult {
 	var (
 		errMsg  string
 		command = NewCommand(program, options)
 	)
+
+	if hideWindow {
+		command.cmd.SysProcAttr = &syscall.SysProcAttr{
+			HideWindow:    true,
+			CreationFlags: 0x08000000,
+		}
+	}
 
 	if err := command.Run(); err != nil {
 		errMsg = err.Error()

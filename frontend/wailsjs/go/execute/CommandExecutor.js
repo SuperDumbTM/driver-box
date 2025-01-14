@@ -10,8 +10,8 @@ export function Run(arg1, arg2) {
   return window['go']['execute']['CommandExecutor']['Run'](arg1, arg2);
 }
 
-export function RunAndOutput(arg1, arg2) {
-  return window['go']['execute']['CommandExecutor']['RunAndOutput'](arg1, arg2);
+export function RunAndOutput(arg1, arg2, arg3) {
+  return window['go']['execute']['CommandExecutor']['RunAndOutput'](arg1, arg2, arg3);
 }
 
 export function SetContext(arg1) {

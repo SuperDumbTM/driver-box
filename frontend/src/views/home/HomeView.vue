@@ -410,22 +410,35 @@ async function handleSubmit() {
       () => {
         switch (settings.success_action) {
           case store.SuccessAction.SHUTDOWN:
-            executor.RunAndOutput('cmd', ['/C', `shutdown /s /t ${settings.success_action_delay}`])
+            executor.RunAndOutput(
+              'cmd',
+              ['/C', `shutdown /s /t ${settings.success_action_delay}`],
+              true
+            )
             break
           case store.SuccessAction.REBOOT:
-            executor.RunAndOutput('cmd', ['/C', `shutdown /r /t ${settings.success_action_delay}`])
+            executor.RunAndOutput(
+              'cmd',
+              ['/C', `shutdown /r /t ${settings.success_action_delay}`],
+              true
+            )
             break
           case store.SuccessAction.FIRMWARE:
             executor
-              .RunAndOutput('cmd', ['/C', `shutdown /r /fw /t ${settings.success_action_delay}`])
+              .RunAndOutput(
+                'cmd',
+                ['/C', `shutdown /r /fw /t ${settings.success_action_delay}`],
+                true
+              )
               .then(result => {
                 if (result.exitCode != 0) {
                   // sometimes, /fw would resulted in an error: 'The system could not find the environment option that was entered. (203)'
                   // execute again normally solve the error
-                  executor.RunAndOutput('cmd', [
-                    '/C',
-                    `shutdown /r /fw /t ${settings.success_action_delay}`
-                  ])
+                  executor.RunAndOutput(
+                    'cmd',
+                    ['/C', `shutdown /r /fw /t ${settings.success_action_delay}`],
+                    true
+                  )
                 }
               })
             break

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BoxArrowUpRight from '@/components/icons/BoxArrowUpRight.vue'
-import { Run } from '@/wailsjs/go/execute/CommandExecutor'
+import { RunAndOutput } from '@/wailsjs/go/execute/CommandExecutor'
 import { AppDriverPath, WebView2Path, WebView2Version } from '@/wailsjs/go/main/App'
 import { BrowserOpenURL, Environment } from '@/wailsjs/runtime/runtime'
 import { onBeforeMount, ref } from 'vue'
@@ -65,7 +65,7 @@ onBeforeMount(() => {
           <button
             type="button"
             class="ml-1"
-            @click="Run('cmd', ['/C', `explorer.exe ${info.app.pathDriver}`])"
+            @click="RunAndOutput('cmd', ['/c', `explorer.exe ${info.app.pathDriver}`], true)"
           >
             <BoxArrowUpRight></BoxArrowUpRight>
           </button>
