@@ -99,7 +99,7 @@ function handleSubmit(leave: boolean) {
     group.value.id == undefined
       ? groupManager.Add(group.value).then(gid => {
           group.value.id = gid
-          $router.replace({ path: `/drivers/edit/${gid}` })
+          // no replce URL since users is not able to refresh the page in production
         })
       : groupManager.Update({
           ...group.value,
@@ -119,7 +119,7 @@ function handleSubmit(leave: boolean) {
       if (leave) {
         $router.back()
       } else {
-        groupManager.Get($route.params.id as string).then(g => {
+        groupManager.Get(group.value.id).then(g => {
           group.value = g
           groupOriginal = structuredClone(g)
 
@@ -139,7 +139,9 @@ function handleSubmit(leave: boolean) {
   <form
     class="flex flex-col justify-center h-full max-w-full lg:max-w-2xl xl:max-w-4xl mx-auto gap-y-8 overflow-y-auto"
     autocomplete="off"
-    @submit.prevent="handleSubmit(true)"
+    @submit.prevent="
+      event => handleSubmit((event as SubmitEvent).submitter?.id != 'driver-submit-btn')
+    "
   >
     <div class="flex gap-x-3">
       <div class="w-32">
@@ -250,9 +252,9 @@ function handleSubmit(leave: boolean) {
       <div class="flex justify-end gap-x-3">
         <button
           v-show="JSON.stringify(group.drivers) != JSON.stringify(groupOriginal.drivers)"
-          type="button"
+          type="submit"
+          id="driver-submit-btn"
           class="h-8 px-2 text-sm font-medium text-white bg-half-baked-600 hover:bg-half-baked-500 rounded-lg"
-          @click="handleSubmit(false)"
         >
           <FloppyIcon></FloppyIcon>
         </button>
