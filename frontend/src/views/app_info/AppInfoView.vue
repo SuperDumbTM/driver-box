@@ -8,7 +8,7 @@ import { onBeforeMount, ref } from 'vue'
 const info = ref({
   app: {
     version: '2.2.0',
-    buildType: '',
+    buildType: 'production',
     pathDriver: ''
   },
   webview: {
@@ -84,7 +84,7 @@ onBeforeMount(() => {
       <div class="grid grid-cols-7 gap-4">
         <div class="col-span-2">{{ $t('info.path') }}</div>
         <div class="col-span-5">
-          {{ info.webview.location || $t('info.useingBuiltInWebView2') }}
+          {{ info.webview.location || $t('info.usingBuiltInWebView2') }}
         </div>
       </div>
     </div>
