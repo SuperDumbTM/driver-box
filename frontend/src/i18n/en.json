@@ -30,7 +30,7 @@
     "display": "DISP",
     "driver": "Driver",
     "editDriver": "Edit Driver",
-    "incompatibleForNewHelp": "If you want to add a newly created driver into \"incompatible with\" of another newly created driver, please save first.",
+    "incompatibleForNewHelp": "The newly created driver will appear in \"Incompatible With\" only after you submit the changes.",
     "incompatibleWith": "Incompatible With",
     "manualInput": "Manual",
     "minExecuteTime": "Execution Time (sec)",
