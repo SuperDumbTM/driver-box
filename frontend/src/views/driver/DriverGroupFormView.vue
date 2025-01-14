@@ -3,10 +3,10 @@ import ArrowExpandVerticalIcon from '@/components/icons/ArrowExpandVerticalIcon.
 import OneTwoThreeIcon from '@/components/icons/OneTwoThreeIcon.vue'
 import PencilSquareIcon from '@/components/icons/PencilSquareIcon.vue'
 import TrashIcon from '@/components/icons/TrashIcon.vue'
-import { ExecutableExists } from '@/wailsjs/go/main/App'
+import { getNotExistDrivers } from '@/utils/index'
 import { store } from '@/wailsjs/go/models'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
-import { onBeforeMount, ref, useTemplateRef, watch } from 'vue'
+import { onBeforeMount, ref, toRaw, useTemplateRef, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 import DriverInputModal from './components/DriverInputModal.vue'
@@ -33,12 +33,43 @@ const group = ref<store.DriverGroup>(
   })
 )
 
+/** A original clone of the `group` variable */
+let groupOriginal: store.DriverGroup = structuredClone(toRaw(group.value))
+
 onBeforeMount(() => {
-  if ($route.params.id) {
-    groupManager.Get($route.params.id as string).then(g => {
+  groupManager
+    .Get($route.params.id as string)
+    .then(g => {
       group.value = g
+      groupOriginal = structuredClone(g)
+
+      getNotExistDrivers(g.drivers).then(result => {
+        notExistDrivers.value = result
+      })
     })
-  }
+    .catch(() => undefined)
+    .finally(() => {
+      // setup watchers after the async call
+      // to avoid unwanted triggering due to group.value replacement
+
+      watch(
+        group,
+        newGroup => {
+          modified.value = JSON.stringify(groupOriginal) !== JSON.stringify(newGroup)
+        },
+        { deep: true }
+      )
+
+      watch(
+        () => group.value.drivers,
+        newDrivers => {
+          getNotExistDrivers(newDrivers).then(result => {
+            notExistDrivers.value = result
+          })
+        },
+        { deep: true }
+      )
+    })
 })
 
 onBeforeRouteLeave((to, from, next) => {
@@ -49,22 +80,6 @@ onBeforeRouteLeave((to, from, next) => {
   } else {
     next(true)
   }
-})
-
-watch(group.value, () => (modified.value = true), { once: true })
-
-watch(group.value.drivers, newValue => {
-  if (!modified.value) {
-    modified.value = true
-  }
-
-  Promise.all(
-    newValue.flatMap(d => ExecutableExists(d.path).then(exist => ({ id: d.id, exist: exist })))
-  ).then(results => {
-    notExistDrivers.value = results
-      .map(result => (result.exist ? undefined : result.id))
-      .filter(v => v !== undefined)
-  })
 })
 </script>
 
@@ -144,7 +159,10 @@ watch(group.value.drivers, newValue => {
             </div>
 
             <div class="col-span-3">
-              <p class="font-mono break-all line-clamp-2">
+              <p
+                class="font-mono break-all line-clamp-2"
+                :class="{ 'text-red-600': notExistDrivers.includes(d.id) }"
+              >
                 {{ d.path }}
               </p>
             </div>

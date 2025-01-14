@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { getNotExistDrivers } from '@/utils'
 import CommandStatueModal from '@/views/home/components/CommandStatusModal.vue'
 import * as executor from '@/wailsjs/go/execute/CommandExecutor'
-import { ExecutableExists } from '@/wailsjs/go/main/App'
 import { store, sysinfo } from '@/wailsjs/go/models'
 import * as appManager from '@/wailsjs/go/store/AppSettingManager'
 import * as groupManager from '@/wailsjs/go/store/DriverGroupManager'
@@ -48,16 +48,8 @@ onBeforeMount(() => {
     .then(g => {
       groups.value = g
 
-      Promise.all(
-        groups.value.flatMap(g =>
-          g.drivers.flatMap(d =>
-            ExecutableExists(d.path).then(exist => ({ id: g.id, exist: exist }))
-          )
-        )
-      ).then(results => {
-        notExistDrivers.value = results
-          .map(result => (result.exist ? undefined : result.id))
-          .filter(v => v !== undefined)
+      getNotExistDrivers(groups.value.flatMap(g => g.drivers)).then(result => {
+        notExistDrivers.value = result
       })
     })
     .catch(() => {
