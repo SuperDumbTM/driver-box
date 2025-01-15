@@ -7,7 +7,7 @@ import { onBeforeMount, ref } from 'vue'
 
 const info = ref({
   app: {
-    version: '2.2.0',
+    version: '2.2.1',
     buildType: 'production',
     pathDriver: ''
   },
