@@ -89,17 +89,18 @@ onBeforeRouteLeave((to, from, next) => {
   }
 })
 
-function handleSubmit(leave: boolean) {
+function handleSubmit(event: SubmitEvent) {
   if (group.value.drivers.length == 0) {
     $toast.warning(t('toast.addAtLeastOneDriver'))
     return
   }
 
-  const promise =
+  const action =
     group.value.id == undefined
       ? groupManager.Add(group.value).then(gid => {
           group.value.id = gid
-          // no replce URL since users is not able to refresh the page in production
+          // no need for replacing the URL to edit URL
+          // since users is not able to refresh the page in production mode
         })
       : groupManager.Update({
           ...group.value,
@@ -111,12 +112,12 @@ function handleSubmit(leave: boolean) {
           })
         })
 
-  promise
+  action
     .then(() => {
       modified.value = false
       $toast.success(t('toast.updated'))
 
-      if (leave) {
+      if (event.submitter?.id != 'driver-submit-btn') {
         $router.back()
       } else {
         groupManager.Get(group.value.id).then(g => {
@@ -139,9 +140,7 @@ function handleSubmit(leave: boolean) {
   <form
     class="flex flex-col justify-center h-full max-w-full lg:max-w-2xl xl:max-w-4xl mx-auto gap-y-8 overflow-y-auto"
     autocomplete="off"
-    @submit.prevent="
-      event => handleSubmit((event as SubmitEvent).submitter?.id != 'driver-submit-btn')
-    "
+    @submit.prevent="event => handleSubmit(event as SubmitEvent)"
   >
     <div class="flex gap-x-3">
       <div class="w-32">
