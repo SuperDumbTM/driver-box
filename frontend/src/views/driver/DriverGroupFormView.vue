@@ -56,9 +56,9 @@ onBeforeMount(() => {
     })
     .catch(() => undefined)
     .finally(() => {
-      // setup watchers after the async call
-      // to avoid unwanted triggering due to group.value replacement
-
+      // let the async call fails when $route.params.id is undefinded to avoid duplicate watcher setup logic
+      //
+      // setup watchers after the async call to avoid the triggering due to group.value replacement
       watch(
         group,
         newGroup => {
