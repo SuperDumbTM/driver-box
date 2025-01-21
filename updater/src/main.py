@@ -1,30 +1,93 @@
 import argparse
 import os
+import shutil
 import tempfile
 import zipfile
 from pathlib import Path
 
 import requests
 import tqdm
+from packaging import version
 
 argparser = argparse.ArgumentParser(description='')
 
 argparser.add_argument('-d', '--app-directory', type=str,
                        help='Root directory of driver-box')
 
-argparser.add_argument('-v', '--version', type=str,
-                       required=True, help='Version target')
+argparser.add_argument('-s', '--version-from', type=str,
+                       required=True, help='Update from which verion')
 
-argparser.add_argument('-t', '--binary-type', type=str,
+argparser.add_argument('-t', '--version-to', type=str,
+                       required=True, help='Update to which version')
+
+argparser.add_argument('-b', '--binary-type', type=str,
                        required=True, help='Binary target')
 
 
-def backup(root: Path):
+def backup():
     os.mkdir('.backup')
-    for path in ('driver-box.exe', 'bin'):
-        filepath = root.joinpath(path)
+    for path in ('driver-box.exe', 'bin', 'conf'):
+        filepath = Path(path)
         if filepath.exists():
-            filepath.rename(root.parent.joinpath('.backup').joinpath(path))
+            filepath.rename(Path('.')
+                            .parent
+                            .joinpath('.backup')
+                            .joinpath(path))
+
+
+def cleanup(restore: bool):
+    if not restore:
+        print('Removing backups...')
+        shutil.rmtree('.backup', True)
+    else:
+        print('Restoring states...')
+        pass
+
+
+def replace_executable(version: str, binary_type: str):
+    filename = f'driver-box.{binary_type}.zip'
+    resp = requests.get('https://github.com/SuperDumbTM/driver-box/releases/download/'
+                        f'v{version}/{filename}',
+                        stream=True)
+
+    if resp.headers.get('content-type') not in ('application/zip', 'application/octet-stream'):
+        raise ValueError('invalid version or binary type')
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+        fpath = tmpdir.joinpath(filename)
+
+        print(f'Downloading: {filename}')
+        with (tqdm.tqdm(total=int(resp.headers['Content-Length']), unit="B", unit_scale=True) as progress,
+                open(fpath, 'wb') as f):
+            for chunk in resp.iter_content(1024):
+                f.write(chunk)
+                progress.update(len(chunk))
+                progress.display()
+
+        print(f'\nUnpacking...')
+        with zipfile.ZipFile(fpath, 'r') as z:
+            for archive in tqdm.tqdm(z.filelist, unit='file'):
+                z.extract(archive.filename, str(tmpdir))
+
+        print('Updating...')
+        for path in map(Path, ('driver-box.exe', 'bin')):
+            if path.exists():
+                path.unlink()
+            if tmpdir.joinpath(path).exists():
+                tmpdir.joinpath(path).rename(path)
+
+
+def replace_config(from_: version.Version, to: version.Version):
+    if from_.major == to.major:
+        return
+    if from_.major < to.major:
+        raise ValueError('replacing newer verion to older version')
+
+    conf_dir = Path('conf')
+
+    if from_.major == 1 and to.major == 2:
+        raise NotImplementedError()
 
 
 if __name__ == '__main__':
@@ -41,43 +104,27 @@ if __name__ == '__main__':
     if args.app_directory:
         os.chdir(args.app_directory)
 
-    root = Path(args.app_directory or os.getcwd())
+    version_from = version.parse(args.version_from)
+    version_to = version.parse(args.version_to)
+
+    if version_from.major < version_to.major:
+        print('Downgrade is not supported!')
+        input('Press any key to exit...')
 
     print('+', '-'*26, '+')
-    print('|{:^14s}{:^14s}|'.format('Version', args.version))
-    print('|{:^14s}{:^14s}|'.format('Binary', args.binary_type))
-    print('+', '-'*26, '+')
-    print()
+    print('| {:13s}{:^13s} |'.format('Update From', str(version_from)))
+    print('| {:13s}{:^13s} |'.format('Update To', str(version_to)))
+    print('| {:13s}{:^13s} |'.format('Binary', args.binary_type))
+    print('+', '-'*26, '+', end='\n\n')
 
-    filename = f'driver-box.{args.binary_type}.zip'
-    resp = requests.get('https://github.com/SuperDumbTM/driver-box/releases/download/'
-                        f'v{args.version}/{filename}',
-                        stream=True)
+    try:
+        replace_executable(args.version_to, args.binary_type)
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmpdir = Path(tmpdir)
-        fpath = tmpdir.joinpath(filename)
+        replace_config(version_from, version_to)
+    except Exception as e:
+        print(f'Error occures: {e}')
+        cleanup(True)
+    else:
+        cleanup(False)
 
-        print(f'Downloading: {filename}')
-        with (tqdm.tqdm(total=int(resp.headers['Content-Length']), unit="B", unit_scale=True) as progress,
-                open(fpath, 'wb') as f):
-            for chunk in resp.iter_content(1024):
-                f.write(chunk)
-                progress.update(len(chunk))
-                progress.display()
-
-        print(f'\nUnpacking...')
-        with zipfile.ZipFile(fpath, 'r') as z:
-            for archive in tqdm.tqdm(z.filelist, unit='B'):
-                z.extract(archive.filename, str(tmpdir))
-
-        print('Updating...')
-        for path in ('driver-box.exe', 'bin'):
-            filepath = root.joinpath(path)
-
-            if filepath.exists():
-                filepath.unlink()
-            if tmpdir.joinpath(path).exists():
-                tmpdir.joinpath(path).rename(root.joinpath(path))
-
-    input("Press any key to continue...")
+    input('Finished. Press any key to continue...')
