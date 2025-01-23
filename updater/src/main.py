@@ -1,6 +1,9 @@
 import argparse
+import contextlib
 import os
+import random
 import shutil
+import string
 import tempfile
 import zipfile
 from pathlib import Path
@@ -24,15 +27,29 @@ argparser.add_argument('-b', '--binary-type', type=str,
                        required=True, help='Binary target')
 
 
+@contextlib.contextmanager
+def temporary_directory(dir: str = None, delete: bool = True):
+    def random_string() -> str:
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+    dir_temp = Path(dir or tempfile.gettempdir()).joinpath(random_string())
+
+    while dir_temp.exists():
+        dir_temp = dir_temp.parent.joinpath(random_string())
+    os.mkdir(dir_temp, 0o777)
+
+    yield dir_temp
+
+    if delete:
+        shutil.rmtree(dir_temp, True)
+
+
 def backup():
     os.mkdir('.backup')
     for path in ('driver-box.exe', 'bin', 'conf'):
-        filepath = Path(path)
-        if filepath.exists():
-            filepath.rename(Path('.')
-                            .parent
-                            .joinpath('.backup')
-                            .joinpath(path))
+        if not (filepath := Path(path)).exists():
+            continue
+        filepath.rename(Path('.').parent.joinpath('.backup').joinpath(path))
 
 
 def cleanup(restore: bool):
@@ -53,7 +70,7 @@ def replace_executable(version: str, binary_type: str):
     if resp.headers.get('content-type') not in ('application/zip', 'application/octet-stream'):
         raise ValueError('invalid version or binary type')
 
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with temporary_directory(delete=False) as tmpdir:
         tmpdir = Path(tmpdir)
         fpath = tmpdir.joinpath(filename)
 
@@ -111,14 +128,14 @@ if __name__ == '__main__':
         print('Downgrade is not supported!')
         input('Press any key to exit...')
 
-    print('+', '-'*26, '+')
-    print('| {:13s}{:^13s} |'.format('Update From', str(version_from)))
-    print('| {:13s}{:^13s} |'.format('Update To', str(version_to)))
-    print('| {:13s}{:^13s} |'.format('Binary', args.binary_type))
-    print('+', '-'*26, '+', end='\n\n')
-
     try:
-        replace_executable(args.version_to, args.binary_type)
+        print('+', '-'*26, '+')
+        print('| {:13s}{:^13s} |'.format('Update From', str(version_from)))
+        print('| {:13s}{:^13s} |'.format('Update To', str(version_to)))
+        print('| {:13s}{:^13s} |'.format('Binary', args.binary_type))
+        print('+', '-'*26, '+', end='\n\n')
+
+        replace_executable(str(version_to), args.binary_type)
 
         replace_config(version_from, version_to)
     except Exception as e:
