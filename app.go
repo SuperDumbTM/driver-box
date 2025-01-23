@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -84,4 +86,54 @@ func (a App) AppConfigPath() string {
 
 func (a App) AppDriverPath() string {
 	return dirDir
+}
+
+func (a App) AppVersion() string {
+	return version.String()
+}
+
+func (a App) AppBinaryType() string {
+	return binaryType
+}
+
+func (a App) Update(from string, to string, binary string) error {
+	file, err := os.CreateTemp("", "*.exe")
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	response, err := http.Get("https://raw.githubusercontent.com/SuperDumbTM/driver-box/refs/heads/main/updater/updater.exe")
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	if _, err := io.Copy(file, response.Body); err != nil {
+		return err
+	}
+
+	file.Close()
+
+	process, err := os.StartProcess(file.Name(), []string{
+		file.Name(),
+		"-s", from,
+		"-t", to,
+		"-b", binary,
+	}, &os.ProcAttr{
+		Dir:   ".",
+		Env:   os.Environ(),
+		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if err := process.Release(); err != nil {
+		return err
+	}
+
+	return nil
 }

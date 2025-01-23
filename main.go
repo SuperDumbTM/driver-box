@@ -7,9 +7,13 @@ import (
 	"driver-box/pkg/store"
 	"driver-box/pkg/sysinfo"
 	"embed"
+	"fmt"
+	"math/bits"
 	"os"
 	"path/filepath"
+	"runtime"
 
+	"github.com/Masterminds/semver"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -21,15 +25,33 @@ var assets embed.FS
 
 var (
 	dirRoot string
-	/* Path to the configuration directory */
+	// Path to the configuration directory
 	dirConf string
-	/* Path to the driver directory */
+	// Path to the driver directory
 	dirDir string
-	/* Path to the WebView2 executable */
+	// Path to the WebView2 executable
 	pathWV2 string
+	// Type of the build version number
+	buildVersion string
+	// Type of the build: dev, production
+	binaryType string
+	// Version struct, parsed from [buildVersion]
+	version *semver.Version
 )
 
-func main() {
+func init() {
+	if buildVersion == "" {
+		version, _ = semver.NewVersion("0.0.0")
+	} else if v, err := semver.NewVersion(buildVersion); err != nil {
+		panic(err)
+	} else {
+		version = v
+	}
+
+	if binaryType == "" {
+		binaryType = fmt.Sprintf("%s%d", runtime.GOOS, bits.UintSize)
+	}
+
 	if pathExe, err := os.Executable(); err != nil {
 		panic(err)
 	} else {
@@ -59,7 +81,9 @@ func main() {
 			pathWV2 = ""
 		}
 	}
+}
 
+func main() {
 	app := &App{}
 	mgt := &execute.CommandExecutor{}
 

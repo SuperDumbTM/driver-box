@@ -1,43 +1,106 @@
 <script setup lang="ts">
 import BoxArrowUpRight from '@/components/icons/BoxArrowUpRight.vue'
 import { RunAndOutput } from '@/wailsjs/go/execute/CommandExecutor'
-import { AppDriverPath, WebView2Path, WebView2Version } from '@/wailsjs/go/main/App'
+import {
+  AppBinaryType,
+  AppDriverPath,
+  AppVersion,
+  WebView2Path,
+  WebView2Version
+} from '@/wailsjs/go/main/App'
 import { BrowserOpenURL, Environment } from '@/wailsjs/runtime/runtime'
-import { onBeforeMount, ref } from 'vue'
+import * as semver from 'semver'
+import { onBeforeMount, ref, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useLoading } from 'vue-loading-overlay'
+import { useToast } from 'vue-toast-notification'
+import UpdateModal from './components/UpdateModal.vue'
+
+const { t } = useI18n()
+
+const $toast = useToast({ position: 'top-right' })
+
+const $loading = useLoading({ lockScroll: true })
+
+const modal = useTemplateRef('modal')
 
 const info = ref({
   app: {
-    version: '2.2.1',
-    buildType: 'production',
-    pathDriver: ''
+    version: 'na',
+    buildType: 'na',
+    binaryType: 'na',
+    pathDriver: 'na'
   },
   webview: {
-    version: '',
-    location: ''
+    version: 'na',
+    location: 'na'
   }
 })
 
+const onCheck = ref(false)
+
 onBeforeMount(() => {
-  Promise.allSettled([Environment(), AppDriverPath(), WebView2Version(), WebView2Path()]).then(
-    ([env, pdri, vwv2, pwv2]) => {
-      if (env.status != 'rejected') {
-        info.value.app.buildType = env.value.buildType
-      }
-
-      if (pdri.status != 'rejected') {
-        info.value.app.pathDriver = pdri.value
-      }
-
-      if (vwv2.status != 'rejected') {
-        info.value.webview.version = vwv2.value
-      }
-
-      if (pwv2.status != 'rejected') {
-        info.value.webview.location = pwv2.value
-      }
+  Promise.allSettled([
+    AppVersion(),
+    AppBinaryType(),
+    Environment(),
+    AppDriverPath(),
+    WebView2Version(),
+    WebView2Path()
+  ]).then(([ver, btype, env, pdri, vwv2, pwv2]) => {
+    if (ver.status != 'rejected') {
+      info.value.app.version = ver.value
     }
-  )
+
+    if (btype.status != 'rejected') {
+      info.value.app.binaryType = btype.value
+    }
+
+    if (env.status != 'rejected') {
+      info.value.app.buildType = env.value.buildType
+    }
+
+    if (pdri.status != 'rejected') {
+      info.value.app.pathDriver = pdri.value
+    }
+
+    if (vwv2.status != 'rejected') {
+      info.value.webview.version = vwv2.value
+    }
+
+    if (pwv2.status != 'rejected') {
+      info.value.webview.location = pwv2.value
+    }
+  })
 })
+
+function checkUpdate() {
+  if (Object.values(info.value.app).some(v => v == 'na')) {
+    $toast.error(t('checkUpdateFailed'))
+    return
+  }
+
+  const loader = $loading.show()
+
+  fetch('https://raw.githubusercontent.com/SuperDumbTM/driver-box/refs/heads/main/version.json')
+    .then(response => response.json())
+    .then(updateInfo => {
+      if (semver.compare(info.value.app.version, updateInfo.latestVersion) >= 0) {
+        $toast.info(t('noUpdate'))
+      } else {
+        modal.value?.show(
+          { version: info.value.app.version, binaryType: info.value.app.binaryType },
+          updateInfo
+        )
+      }
+    })
+    .catch(reason => {
+      $toast.error(reason)
+    })
+    .finally(() => {
+      loader.hide()
+    })
+}
 </script>
 
 <template>
@@ -49,7 +112,15 @@ onBeforeMount(() => {
 
       <div class="grid grid-cols-7 gap-4">
         <div class="col-span-2">{{ $t('info.version') }}</div>
-        <div class="col-span-5">{{ info.app.version }}</div>
+        <div class="flex col-span-5 gap-x-5">
+          <p>
+            {{ info.app.version }}
+          </p>
+
+          <button class="px-2 bg-gray-200 rounded" @click="checkUpdate()" :disabled="onCheck">
+            {{ $t('info.checkUpdate') }}
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-7 gap-4">
@@ -59,7 +130,7 @@ onBeforeMount(() => {
 
       <div class="grid grid-cols-7 gap-4">
         <div class="col-span-2">{{ $t('info.pathDriver') }}</div>
-        <div class="col-span-5">
+        <div class="col-span-5 break-all">
           {{ info.app.pathDriver }}
 
           <button
@@ -136,4 +207,6 @@ onBeforeMount(() => {
       </div>
     </div>
   </div>
+
+  <UpdateModal ref="modal"></UpdateModal>
 </template>
