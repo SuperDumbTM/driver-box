@@ -82,7 +82,9 @@ function checkUpdate() {
 
   const loader = $loading.show()
 
-  fetch('https://raw.githubusercontent.com/SuperDumbTM/driver-box/refs/heads/main/version.json')
+  fetch(
+    'https://raw.githubusercontent.com/SuperDumbTM/driver-box/refs/heads/main/updater/version.json'
+  )
     .then(response => response.json())
     .then(updateInfo => {
       if (semver.compare(info.value.app.version, updateInfo.latestVersion) >= 0) {
