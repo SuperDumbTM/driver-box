@@ -76,7 +76,7 @@ onBeforeMount(() => {
 
 function checkUpdate() {
   if (Object.values(info.value.app).some(v => v == 'na')) {
-    $toast.error(t('checkUpdateFailed'))
+    $toast.error(t('toast.checkUpdateFailed'))
     return
   }
 
@@ -88,7 +88,7 @@ function checkUpdate() {
     .then(response => response.json())
     .then(updateInfo => {
       if (semver.compare(info.value.app.version, updateInfo.latestVersion) >= 0) {
-        $toast.info(t('noUpdate'))
+        $toast.info(t('toast.noUpdate'))
       } else {
         modal.value?.show(
           { version: info.value.app.version, binaryType: info.value.app.binaryType },
