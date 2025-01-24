@@ -98,7 +98,7 @@ const updateInfo = ref<{
                     return
                   }
 
-                  $toast.info($t('toast.downloadingUpdater'))
+                  $toast.info($t('toast.downloadingUpdater'), { duration: 60 * 1000 })
                   const loader = $loading.show()
 
                   Update(currentInfo.version, updateInfo.latestVersion, currentInfo.binaryType)
