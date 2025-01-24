@@ -70,7 +70,7 @@ def replace_executable(version: str, binary_type: str):
     if resp.headers.get('content-type') not in ('application/zip', 'application/octet-stream'):
         raise ValueError('invalid version or binary type')
 
-    with temporary_directory() as tmpdir:
+    with temporary_directory(dir=os.getcwd()) as tmpdir:
         tmpdir = Path(tmpdir)
         fpath = tmpdir.joinpath(filename)
 
