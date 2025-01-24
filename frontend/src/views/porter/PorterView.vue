@@ -81,7 +81,7 @@ onBeforeMount(() => {
           @click="
             () => {
               if (!exportDirectory) {
-                $toast.warning($t('toast.enterExportPath'))
+                $toast.warning($t('toast.enterExportPath'), { position: 'bottom-right' })
               } else {
                 $refs.progressModal?.export(exportDirectory)
               }

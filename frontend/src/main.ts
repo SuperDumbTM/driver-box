@@ -9,7 +9,11 @@ import './assets/main.css'
 import './index.css'
 import router from './router'
 
-const app = createApp(App).use(router).use(ToastPlugin).use(i18n).use(LoadingPlugin)
+const app = createApp(App)
+  .use(router)
+  .use(ToastPlugin, { position: 'top-right' })
+  .use(i18n)
+  .use(LoadingPlugin)
 
 app.config.globalProperties.$window = window
 
